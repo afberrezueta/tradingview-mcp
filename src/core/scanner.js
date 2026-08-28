@@ -18,6 +18,7 @@ import * as data from './data.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const WATCHLIST_PATH = path.resolve(__dirname, '../../data/tjl_watchlist.json');
 const OUTPUT_DIR = path.resolve(__dirname, '../../');
+const NOTIFY_STATE_PATH = path.resolve(__dirname, '../../data/tjl_notify_state.json');
 
 const NY_TZ = 'America/New_York';
 const GATE_OPEN_MIN = 10 * 60;       // 10:00am
@@ -66,6 +67,47 @@ function outputFilename(nowMs) {
 function writeJson(filePath, obj) {
   fs.writeFileSync(filePath, JSON.stringify(obj, null, 2) + '\n', 'utf8');
   return filePath;
+}
+
+function readNotifyState() {
+  const fallback = { last_run_date: null, last_hit_symbols: [], last_prereq_fail_notified_date: null };
+  if (!fs.existsSync(NOTIFY_STATE_PATH)) return fallback;
+  try { return { ...fallback, ...JSON.parse(fs.readFileSync(NOTIFY_STATE_PATH, 'utf8')) }; }
+  catch { return fallback; }
+}
+
+/**
+ * A failed PREREQ (TradingView/CDP down) during the scan window is worth one
+ * ping — otherwise every 30-min slot fails silently and the user only finds
+ * out at 2pm that nothing ran all day. But it shouldn't re-ping on every
+ * retry once they already know. One notification per calendar day, tracked
+ * separately from the hit-tracking state so a later successful run still
+ * counts as that day's "first run" for hit-diffing purposes.
+ */
+function computePrereqFailureNotifyDecision(todayDateStr) {
+  const prevState = readNotifyState();
+  const already_notified_today = prevState.last_prereq_fail_notified_date === todayDateStr;
+  writeJson(NOTIFY_STATE_PATH, { ...prevState, last_prereq_fail_notified_date: todayDateStr });
+  return { should_notify: !already_notified_today, notify_reason: already_notified_today ? null : 'prereq_failed' };
+}
+
+/**
+ * Decides whether this run is worth pinging the user about, per their rule:
+ * only the first run of the day, or a genuinely new PASS that wasn't a hit
+ * on the immediately preceding run — everything else stays quiet.
+ * Always persists the new state so the next run has something to diff against.
+ */
+function computeNotifyDecision(todayDateStr, currentHitSymbols) {
+  const prevState = readNotifyState();
+  const isFirstRunOfDay = prevState.last_run_date !== todayDateStr;
+  const newHits = isFirstRunOfDay ? [] : currentHitSymbols.filter((s) => !prevState.last_hit_symbols.includes(s));
+
+  const should_notify = isFirstRunOfDay || newHits.length > 0;
+  const notify_reason = isFirstRunOfDay ? 'first_run_of_day' : (newHits.length > 0 ? 'new_hit' : null);
+
+  writeJson(NOTIFY_STATE_PATH, { last_run_date: todayDateStr, last_hit_symbols: currentHitSymbols });
+
+  return { should_notify, notify_reason, new_hit_symbols: newHits, is_first_run_of_day: isFirstRunOfDay };
 }
 
 /** Splits daily bars into the still-forming "today" bar (if present) and completed history. */
@@ -149,8 +191,9 @@ async function analyzeTicker(symbol, nowMs, todayDateStr) {
 
 export async function runTrendJoinLong({ override_time_gate = false, symbols: symbolsOverride } = {}) {
   const nowMs = Date.now();
+  const { dateStr: todayDateStr } = nyParts(nowMs);
 
-  // PREREQ — do not proceed on a dead CDP connection.
+  // PREREQ — do not proceed on a dead CDP connection. Worth one ping/day, not one per retry.
   let health_check;
   try {
     health_check = await health.healthCheck();
@@ -159,6 +202,7 @@ export async function runTrendJoinLong({ override_time_gate = false, symbols: sy
       success: false, stage: 'prereq',
       error: `TradingView CDP connection not available: ${err.message}`,
       hint: 'Launch TradingView with: open -a TradingView --args --remote-debugging-port=9222 — then confirm before I proceed.',
+      notify: computePrereqFailureNotifyDecision(todayDateStr),
     };
   }
   if (!health_check.cdp_connected || !health_check.api_available) {
@@ -167,6 +211,7 @@ export async function runTrendJoinLong({ override_time_gate = false, symbols: sy
       error: 'TradingView is running but the chart API is not available yet.',
       hint: 'Launch TradingView with: open -a TradingView --args --remote-debugging-port=9222 — then confirm before I proceed.',
       health_check,
+      notify: computePrereqFailureNotifyDecision(todayDateStr),
     };
   }
 
@@ -190,7 +235,6 @@ export async function runTrendJoinLong({ override_time_gate = false, symbols: sy
     return { success: false, stage: 'watchlist', error: 'No enabled tickers in data/tjl_watchlist.json.' };
   }
 
-  const { dateStr: todayDateStr } = nyParts(nowMs);
   const all_results = [];
   const hits = [];
   const details = [];
@@ -227,5 +271,7 @@ export async function runTrendJoinLong({ override_time_gate = false, symbols: sy
   const outPath = outputFilename(nowMs);
   writeJson(outPath, outDoc);
 
-  return { success: true, ...outDoc, details, saved_to: outPath, gate_override_used: gate.pass ? false : override_time_gate };
+  const notify = computeNotifyDecision(todayDateStr, hits.map((h) => h.symbol));
+
+  return { success: true, ...outDoc, details, saved_to: outPath, gate_override_used: gate.pass ? false : override_time_gate, notify };
 }
