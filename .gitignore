@@ -5,3 +5,7 @@ temp_*
 *.log
 discovery-log.json
 rules.json
+.mcp.json
+data/
+tjl_watchlist_*.json
+premarket_gappers_*.json

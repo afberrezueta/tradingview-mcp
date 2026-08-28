@@ -14,6 +14,8 @@ import { registerWatchlistTools } from './tools/watchlist.js';
 import { registerUiTools } from './tools/ui.js';
 import { registerPaneTools } from './tools/pane.js';
 import { registerTabTools } from './tools/tab.js';
+import { registerHistoricalTools } from './tools/historical.js';
+import { registerScannerTools } from './tools/scanner.js';
 
 const server = new McpServer(
   {
@@ -22,7 +24,7 @@ const server = new McpServer(
     description: 'AI-assisted TradingView chart analysis and Pine Script development via Chrome DevTools Protocol',
   },
   {
-    instructions: `TradingView MCP — 84 tools for reading and controlling a live TradingView Desktop chart.
+    instructions: `TradingView MCP — 87 tools for reading and controlling a live TradingView Desktop chart, plus local historical data tools that work without CDP.
 
 TOOL SELECTION GUIDE — use this to pick the right tool:
 
@@ -60,6 +62,13 @@ Launch: tv_launch → auto-detect and start TradingView with CDP on any platform
 Panes: pane_list, pane_set_layout (s, 2h, 2v, 4, 6, 8), pane_focus, pane_set_symbol
 Tabs: tab_list, tab_new, tab_close, tab_switch
 
+Local 10-year historical data (works WITHOUT a TradingView/CDP connection — separate from the live chart tools above):
+- historical_list_symbols → see which symbols are available locally + date coverage (call first)
+- historical_get_ohlcv → daily bars for one symbol, by count or date range. ALWAYS pass summary=true unless you need individual bars
+
+Day-trading scanner (requires CDP; only runs 10am-3:30pm NY time):
+- scanner_run_tjl → Trend Join Long breakout scan over data/tjl_watchlist.json (edit that file to enable/disable/add tickers)
+
 CONTEXT MANAGEMENT:
 - ALWAYS use summary=true on data_get_ohlcv
 - ALWAYS use study_filter on pine tools when you know which indicator you want
@@ -84,6 +93,8 @@ registerWatchlistTools(server);
 registerUiTools(server);
 registerPaneTools(server);
 registerTabTools(server);
+registerHistoricalTools(server);
+registerScannerTools(server);
 
 // Startup notice (stderr so it doesn't interfere with MCP stdio protocol)
 process.stderr.write('⚠  tradingview-mcp  |  Unofficial tool. Not affiliated with TradingView Inc. or Anthropic.\n');

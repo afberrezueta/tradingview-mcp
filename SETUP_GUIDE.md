@@ -99,7 +99,31 @@ Use the `tv_health_check` tool. Expected response:
 
 If `cdp_connected: false`, TradingView is not running with `--remote-debugging-port=9222`.
 
-## Step 6: Install CLI (Optional)
+## Step 6: Optional Data Connectors
+
+These are separate MCP servers, unrelated to the CDP/TradingView bridge, that add fundamentals and on-chain data alongside the live chart tools. Add them to the same `mcpServers` object as `tradingview` in `.mcp.json` (project-level, gitignored — never commit real API keys).
+
+**CryptoQuant** (on-chain crypto data — exchange flows, miner data, network indicators):
+
+```json
+{
+  "mcpServers": {
+    "cryptoquant": {
+      "command": "npx",
+      "args": ["-y", "cryptoquant-mcp"],
+      "env": {
+        "CRYPTOQUANT_API_KEY": "<YOUR_CRYPTOQUANT_API_KEY>"
+      }
+    }
+  }
+}
+```
+
+Get a key from your CryptoQuant account. Call `initialize()` first in any session to load the available assets/endpoints before `query_data()`.
+
+**Financial Modeling Prep (FMP)** — stock fundamentals, statements, quotes, screener, SEC filings: this is a hosted Claude connector (OAuth-based), not a local `.mcp.json` entry. Connect it once via Claude Code/claude.ai's Connectors settings; it's then available account-wide across all projects, no per-project config needed.
+
+## Step 7: Install CLI (Optional)
 
 To use the `tv` CLI command globally:
 

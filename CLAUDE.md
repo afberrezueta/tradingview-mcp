@@ -1,6 +1,6 @@
 # TradingView MCP — Claude Instructions
 
-84 tools for reading and controlling a live TradingView Desktop chart via CDP (port 9222).
+87 tools for reading and controlling a live TradingView Desktop chart via CDP (port 9222), plus local 10-year historical data tools that work without a CDP connection.
 
 ## Decision Tree — Which Tool When
 
@@ -83,6 +83,15 @@ Use `study_filter` parameter to target a specific indicator by name substring (e
 ### "TradingView isn't running"
 - `tv_launch` → auto-detect and launch TradingView with CDP on Mac/Win/Linux
 - `tv_health_check` → verify connection is working
+
+### "Give me long-range/historical data" (works without TradingView running)
+Local 10-year daily CSVs, independent of the live CDP connection — currently covers the user's own portfolio symbols.
+1. `historical_list_symbols` → see available symbols + date coverage (call first)
+2. `historical_get_ohlcv` → daily bars by count or date range. Use `summary: true` unless you need individual bars.
+Use this instead of `data_get_ohlcv` when you need more than ~500 bars, a specific date range, or TradingView isn't connected.
+
+### "Scan my watchlist for day-trading entries"
+`scanner_run_tjl` — Trend Join Long breakout scanner. Requires CDP connected; only runs 10:00am-3:30pm New York time (otherwise saves an error JSON and exits). Sequential per ticker (chart_set_symbol → daily OHLCV → quote → 1-min OHLCV) — do not parallelize, TradingView's chart state is single-threaded. Watchlist lives in `data/tjl_watchlist.json` (flip `enabled` or add tickers there, no restart needed). PASS requires both: price above prior daily high with prior close above SMA200, AND price above both premarket high and today's high-so-far. Saves to `./tjl_watchlist_YYYY-MM-DD_HHMMET.json`.
 
 ## Context Management Rules
 
