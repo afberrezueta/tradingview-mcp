@@ -1,0 +1,26 @@
+{
+  "_comment": "ETH accumulation engine (tesis: tokenización/CLARITY). capital_usd=3000 es el presupuesto INICIAL del motor de tramos — ajústalo a tu número real; los tramos se recalculan solos. Zonas calculadas en cada run desde data/historical_10y/ETHUSD_10y_daily.csv + precio vivo.",
+  "asset": "ETHUSD",
+  "coinbase_base": "ETH",
+  "capital_usd": 3000,
+  "num_tranches": 4,
+  "tranche_pcts": [20, 25, 30, 25],
+  "tranche_drawdown_levels_pct": [-30, -40, -50, -60],
+  "swing_lookback_days": 90,
+  "major_drawdown_threshold_pct": -30,
+  "zone_band_pct": 1.5,
+  "thesis_invalidation_fib_level": 0.786,
+  "fundamental_invalidation": {
+    "_comment": "Si AMBAS se cumplen, el motor deja de comprar y alerta — la tesis se revisa, no se promedia a la baja. Las evalúa Andres; el agente alerta si detecta noticias que las sugieran.",
+    "clarity_act_dead_this_congress": false,
+    "ethereum_rwa_share_below_pct": 40
+  },
+  "execution": {
+    "_comment": "Ejecución por agente SOLO en la cuenta Agentic (la única con acceso de agente). La cuenta individual es de solo lectura para agentes: allí el motor únicamente alerta por Telegram y Andres ejecuta a mano.",
+    "agentic_account_number": "933528135",
+    "mode": "review_then_execute",
+    "max_tranches_per_day": 1,
+    "min_cash_buffer_usd": 5,
+    "state_file": "out/eth_state.json"
+  }
+}
