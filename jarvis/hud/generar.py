@@ -87,22 +87,49 @@ def outputs_recientes(n=6):
 
 
 def prioridades_de_hoy():
-    """Saca las 3 prioridades del plan mas reciente."""
+    """Prioridades del plan mas reciente que no sea futuro: (lista, fecha, total)."""
     d = BOVEDA / "outputs"
     if not d.exists():
-        return [], None
-    planes = sorted(d.glob("*-plan.md"), reverse=True)
+        return [], None, 0
+    planes = []
+    for f in d.glob("*-plan.md"):
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}-plan\.md", f.name):
+            continue
+        fd = fecha_de_nombre(f.name)
+        if fd and fd <= HOY:
+            planes.append((fd, f))
     if not planes:
-        return [], None
-    texto = leer(planes[0])
-    fecha = planes[0].name[:10]
-    items = re.findall(r"^##\s+\d+\.\s+(.+)$", texto, re.MULTILINE)
-    return items[:3], fecha
+        return [], None, 0
+    fd, f = max(planes)
+    texto = sin_codigo(leer(f))
+    items = [limpiar_md(t) for t in
+             re.findall(r"^#{2,3}\s+\d+[.)]\s+(.+?)\s*$", texto, re.MULTILINE)]
+    items = [t for t in items if t]
+    return items[:3], fd.isoformat(), len(items)
 
 
 def sin_codigo(texto):
-    """Quita bloques ``` para no contar ejemplos de comandos como enlaces."""
-    return re.sub(r"```.*?```", "", texto, flags=re.DOTALL)
+    """Quita bloques ``` / ~~~ y código inline para no contar ejemplos como datos."""
+    texto = re.sub(r"^(`{3,}|~{3,})[^\n]*\n.*?^\1[^\n]*$", "", texto, flags=re.DOTALL | re.MULTILINE)
+    texto = re.sub(r"```.*?```", "", texto, flags=re.DOTALL)
+    return re.sub(r"`[^`\n]*`", "", texto)
+
+
+def limpiar_md(t):
+    """Deja un título legible: sin negritas, backticks ni corchetes de wikilink."""
+    return re.sub(r"\*\*|`|\[\[|\]\]", "", t).strip()
+
+
+def fecha_de_nombre(nombre):
+    """AAAA-MM-DD al inicio del nombre, o None si no hay o no es una fecha válida."""
+    m = re.match(r"(\d{4}-\d{2}-\d{2})", nombre)
+    if not m:
+        return None
+    try:
+        return date.fromisoformat(m.group(1))
+    except ValueError:
+        print(f"  aviso: fecha inválida en el nombre, se ignora: {nombre}", file=sys.stderr)
+        return None
 
 
 def enlaces_boveda():
@@ -112,6 +139,8 @@ def enlaces_boveda():
         return 0
     total = 0
     for f in wiki.rglob("*.md"):
+        if f.name == "LEEME.md":
+            continue
         total += len(re.findall(r"\[\[([^\]]+)\]\]", sin_codigo(leer(f))))
     return total
 
@@ -120,23 +149,48 @@ def capturas_esta_semana():
     d = BOVEDA / "raw"
     if not d.exists():
         return 0
-    corte = HOY - timedelta(days=7)
+    corte = HOY - timedelta(days=6)  # hoy y los seis días anteriores
     n = 0
     for f in d.glob("*.md"):
-        m = re.match(r"(\d{4}-\d{2}-\d{2})", f.name)
-        if m and date.fromisoformat(m.group(1)) >= corte:
+        fd = fecha_de_nombre(f.name)
+        if fd and fd >= corte:
             n += 1
     return n
 
 
 def parking_lot():
-    texto = leer(BOVEDA / "wiki" / "parking-lot.md")
-    return len(re.findall(r"^-\s+\d{4}-\d{2}-\d{2}\s+", texto, re.MULTILINE))
+    """Cuenta cada idea listada (con o sin fecha), ignorando los ejemplos en código."""
+    texto = sin_codigo(leer(BOVEDA / "wiki" / "parking-lot.md"))
+    return len(re.findall(r"^\s*[-*+]\s+\S", texto, re.MULTILINE))
+
+
+def fundadores_desde_metricas():
+    """Lee 'Fundadores pagando: N / M' de la última corrida de la skill metricas.
+
+    Devuelve (N, fecha) o (None, None) si no hay corrida. Ese número manda sobre
+    la constante de HITOS: así el HUD refleja lo que la skill midió, no lo que
+    alguien editó a mano.
+    """
+    d = BOVEDA / "outputs"
+    if not d.exists():
+        return None, None
+    corridas = [f for f in d.glob("*-metricas.md")
+                if re.fullmatch(r"\d{4}-\d{2}-\d{2}-metricas\.md", f.name) and fecha_de_nombre(f.name)]
+    if not corridas:
+        return None, None
+    ultima = max(corridas, key=lambda f: f.name)
+    m = re.search(r"Fundadores pagando:\s*(\d+)\s*/\s*(\d+)", leer(ultima))
+    if not m:
+        return None, None
+    return int(m.group(1)), ultima.name[:10]
 
 
 def construir_datos():
+    fundadores, fecha_metricas = fundadores_desde_metricas()
     hitos = []
     for nombre, fecha, actual, meta in HITOS:
+        if meta and fundadores is not None:
+            actual = fundadores  # clientes pagando: la skill metricas manda
         dias = (fecha - HOY).days
         hitos.append({
             "nombre": nombre,
@@ -147,7 +201,7 @@ def construir_datos():
             "vencido": dias < 0,
         })
 
-    prios, fecha_plan = prioridades_de_hoy()
+    prios, fecha_plan, total_prios = prioridades_de_hoy()
     plan_viejo = bool(fecha_plan) and fecha_plan != HOY.isoformat()
 
     return {
@@ -163,8 +217,10 @@ def construir_datos():
             "parking": parking_lot(),
         },
         "prioridades": prios,
+        "total_prioridades": total_prios,
         "fecha_plan": fecha_plan,
         "plan_viejo": plan_viejo,
+        "fecha_metricas": fecha_metricas,
         "recientes": outputs_recientes(),
         "comandos": [{"skill": s, "frase": f} for s, f in COMANDOS],
         "directivas": DIRECTIVAS,
@@ -294,7 +350,7 @@ PLANTILLA = r"""<!doctype html>
         <canvas id="grafo"></canvas>
         <div class="sobre">
           <div class="gigante" id="metrica">0<small>/5</small></div>
-          <div class="etiqueta">Miembros fundadores</div>
+          <div class="etiqueta" id="etiqueta">Miembros fundadores</div>
           <div class="cuenta" id="cuenta"></div>
         </div>
       </div>
@@ -326,6 +382,7 @@ PLANTILLA = r"""<!doctype html>
 
 <script>
 const D = __DATOS__;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---- reloj ---- */
 function tic(){
@@ -335,7 +392,15 @@ function tic(){
 }
 tic(); setInterval(tic, 10000);
 document.getElementById('fecha').textContent = D.fecha_larga;
-document.getElementById('generado').textContent = 'Generado ' + D.generado;
+document.getElementById('generado').textContent = 'Generado ' + D.generado
+  + (D.fecha_metricas ? ' · clientes según métricas del ' + D.fecha_metricas : '');
+/* si el cron dejó de correr, que se note: un HUD de hace días parece actual */
+const edadHoras = (Date.now() - new Date(D.generado.replace(' ', 'T'))) / 36e5;
+if (edadHoras > 26){
+  document.getElementById('generado').innerHTML =
+    '<span style="color:var(--ambar)">HUD desactualizado: generado hace ' + Math.round(edadHoras)
+    + ' h. Corre python3 hud/generar.py</span>';
+}
 
 /* ---- vitales ---- */
 const V = D.vitales;
@@ -359,15 +424,16 @@ document.getElementById('hitos').innerHTML = D.hitos.map(h => {
                         : `${h.dias} <span>DIAS</span>`;
   const barra = h.meta ? `<div class="barra"><i style="width:${prog}%"></i></div>` : '';
   return `<div class="hito ${cls}">
-    <div class="nom">${h.nombre}</div>
+    <div class="nom">${esc(h.nombre)}</div>
     <div class="dias">${txt}</div>
     ${barra}</div>`;
 }).join('');
 
 /* ---- metrica central ---- */
-const meta = D.hitos.find(h => h.meta);
+const meta = D.hitos.find(h => h.meta && !h.vencido) || D.hitos.find(h => h.meta);
 if (meta){
   document.getElementById('metrica').innerHTML = `${meta.actual}<small>/${meta.meta}</small>`;
+  document.getElementById('etiqueta').textContent = meta.nombre;
   document.getElementById('cuenta').textContent =
     meta.vencido ? `vencido hace ${Math.abs(meta.dias)} dias`
                  : `faltan ${meta.dias} dias`;
@@ -376,8 +442,11 @@ if (meta){
 /* ---- prioridades ---- */
 const P = document.getElementById('prioridades');
 if (D.prioridades.length){
-  P.innerHTML = '<ol class="prio">' + D.prioridades.map(p=>`<li>${p}</li>`).join('') + '</ol>'
-    + (D.plan_viejo ? `<div class="aviso">El plan mas reciente es del ${D.fecha_plan}. Corre "plan de hoy".</div>` : '');
+  P.innerHTML = '<ol class="prio">' + D.prioridades.map(p=>`<li>${esc(p)}</li>`).join('') + '</ol>'
+    + (D.total_prioridades > 3 ? `<div class="aviso">El plan tiene ${D.total_prioridades} prioridades; la skill pide tres.</div>` : '')
+    + (D.plan_viejo ? `<div class="aviso">El plan mas reciente es del ${esc(D.fecha_plan)}. Corre "plan de hoy".</div>` : '');
+} else if (D.fecha_plan){
+  P.innerHTML = `<div class="vacio">Plan del ${esc(D.fecha_plan)} sin prioridades numeradas (## 1., ## 2. ...).</div>`;
 } else {
   P.innerHTML = '<div class="vacio">Sin plan todavia. Di "plan de hoy" en Claude Code.</div>';
 }
@@ -391,7 +460,7 @@ document.getElementById('directivas').innerHTML = D.directivas.map(
 /* ---- salidas recientes ---- */
 const R = document.getElementById('recientes');
 R.innerHTML = D.recientes.length
-  ? D.recientes.map(r=>`<div class="rec"><b>${r.tipo}</b><i>${r.fecha}</i></div>`).join('')
+  ? D.recientes.map(r=>`<div class="rec"><b>${esc(r.tipo)}</b><i>${esc(r.fecha)}</i></div>`).join('')
   : '<div class="vacio">Nada todavia.</div>';
 
 /* ---- grafo animado: esfera de nodos, densidad proporcional a la boveda ---- */
@@ -475,7 +544,13 @@ R.innerHTML = D.recientes.length
 
 def main():
     datos = construir_datos()
-    html = PLANTILLA.replace("__DATOS__", json.dumps(datos, ensure_ascii=False))
+    # \u003c etc. siguen siendo JSON válido, pero el navegador ya no ve un </script>
+    # ni HTML dentro de los datos, vengan de donde vengan en la bóveda.
+    j = json.dumps(datos, ensure_ascii=False)
+    for c, e in (("<", "\\u003c"), (">", "\\u003e"), ("&", "\\u0026"),
+                 ("\u2028", "\\u2028"), ("\u2029", "\\u2029")):
+        j = j.replace(c, e)
+    html = PLANTILLA.replace("__DATOS__", j)
     destino = RAIZ / "hud" / "hud.html"
     destino.write_text(html, encoding="utf-8")
     v = datos["vitales"]
@@ -484,7 +559,10 @@ def main():
           f"{v['capturas']} capturas · {v['outputs']} salidas")
     for h in datos["hitos"]:
         estado = f"{abs(h['dias'])} días tarde" if h["vencido"] else f"faltan {h['dias']} días"
-        print(f"  {h['nombre']}: {estado}")
+        cuenta = f" · {h['actual']}/{h['meta']}" if h["meta"] else ""
+        print(f"  {h['nombre']}: {estado}{cuenta}")
+    if datos["fecha_metricas"]:
+        print(f"  clientes pagando según métricas del {datos['fecha_metricas']}")
     return 0
 
 

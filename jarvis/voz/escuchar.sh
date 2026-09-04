@@ -30,14 +30,16 @@ echo "🎙  Grabando… presiona Enter para terminar." >&2
 rec -q -r 16000 -c 1 -b 16 "$WAV" >/dev/null 2>&1 &
 REC_PID=$!
 read -r < /dev/tty || true
-kill "$REC_PID" 2>/dev/null || true
+kill -INT "$REC_PID" 2>/dev/null || true   # SIGINT: sox cierra la cabecera del WAV
 wait "$REC_PID" 2>/dev/null || true
 
 [ -s "$WAV" ] || { echo "No se grabó audio. ¿Diste permiso de micrófono a la Terminal?" >&2; exit 1; }
 
 echo "⏳ Transcribiendo…" >&2
 TEXTO="$("$WHISPER" -m "$MODELO" -f "$WAV" -l "$IDIOMA" --no-timestamps --output-txt --output-file "$TMP/out" 2>/dev/null; cat "$TMP/out.txt" 2>/dev/null)"
-TEXTO="$(echo "$TEXTO" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^\[.*\]$' | tr '\n' ' ' | sed 's/  */ /g')"
+# '|| true': con pipefail, si grep filtra todo (solo [BLANK_AUDIO]) el pipeline
+# devuelve 1 y set -e mataría el script antes del mensaje de silencio.
+TEXTO="$(echo "$TEXTO" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^\[.*\]$' | tr '\n' ' ' | sed 's/  */ /g' || true)"
 
 [ -n "${TEXTO// /}" ] || { echo "Silencio — nada que transcribir." >&2; exit 0; }
 

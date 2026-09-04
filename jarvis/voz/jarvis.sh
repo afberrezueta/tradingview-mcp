@@ -31,5 +31,5 @@ while true; do
   printf '%s\n' "$RESPUESTA"
 
   # Lee en voz alta solo los primeros ~600 caracteres; el resto queda en pantalla.
-  printf '%s' "$RESPUESTA" | head -c 600 | "$DIR/hablar.sh"
+  printf '%s' "$RESPUESTA" | head -c 600 | iconv -c -f UTF-8 -t UTF-8 | "$DIR/hablar.sh"
 done

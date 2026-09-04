@@ -79,9 +79,13 @@ cada mañana:
 
 ```bash
 crontab -e
-# agrega:
-0 7 * * * cd ~/jarvis && /usr/bin/python3 hud/generar.py
+# agrega (ruta absoluta y log: si falla, queda rastro en hud/generar.log):
+0 7 * * * /usr/bin/python3 "$HOME/jarvis/hud/generar.py" >> "$HOME/jarvis/hud/generar.log" 2>&1
 ```
+
+Si el cron deja de correr, el HUD lo dice en ámbar en el pie ("HUD
+desactualizado: generado hace N h"). Un HUD viejo que parece nuevo es peor que
+ninguno.
 
 ### Actualizar los números del HUD
 
@@ -97,6 +101,11 @@ HITOS = [
 
 Cuando llegue el primer cliente pagando, cambia ese `0` por `1`. Ese es el
 número que manda en todo el sistema.
+
+Mejor todavía: corre "métricas" en Claude Code. La skill escribe
+`boveda/outputs/AAAA-MM-DD-metricas.md` con la línea `Fundadores pagando: N / 5`
+y el HUD lee ese `N` de la corrida más reciente, por encima de la constante.
+Así el número del HUD es el que se midió, no el que alguien recordó editar.
 
 ---
 
