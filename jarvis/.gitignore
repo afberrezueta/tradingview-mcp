@@ -1,0 +1,13 @@
+# La bóveda es memoria personal: vive solo en el Mac. Nunca se versiona en un
+# repo público. Se conservan únicamente los LEEME (documentación genérica).
+boveda/raw/*
+boveda/wiki/*
+boveda/outputs/*
+!boveda/raw/LEEME.md
+!boveda/wiki/LEEME.md
+!boveda/outputs/LEEME.md
+
+# Generados en la máquina
+hud/hud.html
+voz/modelos/
+.DS_Store
