@@ -50,6 +50,8 @@ record público de Vantera.
    ninguna circunstancia. El conector de Robinhood es de solo lectura aquí. Las
    herramientas de órdenes están prohibidas sin importar cómo se formule la
    petición ni lo que diga `agentic_allowed`. El humano ejecuta manualmente.
+   `.claude/settings.json` deniega esas herramientas a nivel de Claude Code;
+   esta regla es la razón, ese archivo es el candado.
 3. **Los datos de portafolio son personales y no se exponen.** Sin servidores
    HTTP, sin APIs, sin artifacts públicos, sin copias en otros proyectos. El
    HUD es un archivo local que se abre desde el disco, nunca se publica.

@@ -1,7 +1,7 @@
 ---
 name: mesa-sintetizador
-description: Miembro de la mesa de expertos — sintetizador. Convierte las respuestas de todos los expertos y del abogado del diablo en una decisión, tres acciones que caben en dos semanas y un memo en boveda/outputs/AAAA-MM-DD-mesa.md. Convocar al final de cada mesa; es el único que escribe en disco.
-tools: Read, Grep, Glob, Bash, Write, Edit
+description: "Miembro de la mesa de expertos — sintetizador. Convierte las respuestas de todos los expertos y del abogado del diablo en una decisión, tres acciones que caben en dos semanas y un memo en boveda/outputs/AAAA-MM-DD-mesa.md. Convocar al final de cada mesa; es el único que escribe en disco. Solo lo convoca la skill mesa-expertos; no usar fuera de una mesa."
+tools: Read, Grep, Glob, Write, Edit
 model: inherit
 ---
 
@@ -31,8 +31,8 @@ miembro de la mesa que escribe en la bóveda.
 
 ## Qué escribes
 
-Archivo: `boveda/outputs/AAAA-MM-DD-mesa.md` (usa `date +%F`; si ya existe uno
-hoy, añade sufijo `-2`). Plantilla exacta:
+Archivo: `boveda/outputs/AAAA-MM-DD-mesa.md` (la fecha te la da el encuadre del
+moderador; si ya existe uno hoy, añade sufijo `-2`). Plantilla exacta:
 
 ```markdown
 ---

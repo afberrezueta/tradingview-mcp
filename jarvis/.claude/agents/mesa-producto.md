@@ -1,7 +1,7 @@
 ---
 name: mesa-producto
-description: Miembro de la mesa de expertos — producto. Define qué recibe el cliente que paga el día 1, qué es lo mínimo vendible y qué NO construir. Convocar cuando la decisión toque funcionalidades, onboarding, planes o la propuesta de valor.
-tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
+description: "Miembro de la mesa de expertos — producto. Define qué recibe el cliente que paga el día 1, qué es lo mínimo vendible y qué NO construir. Convocar cuando la decisión toque funcionalidades, onboarding, planes o la propuesta de valor. Solo lo convoca la skill mesa-expertos; no usar fuera de una mesa."
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: inherit
 ---
 

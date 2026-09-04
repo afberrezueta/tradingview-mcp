@@ -1,6 +1,6 @@
 ---
 name: mesa-expertos
-description: Convocar una mesa de expertos — varios agentes con ángulos distintos (operador, producto, growth, finanzas, técnico, riesgo, abogado del diablo) opinan en paralelo sobre una decisión y un sintetizador escribe un memo con una decisión y tres acciones. Usar cuando Andres diga "mesa de expertos", "convoca la mesa", "consulta a los expertos", "segunda opinión", "qué opinan los expertos", o cuando una decisión de Vantera implique más de 2 horas de trabajo o sea difícil de revertir.
+description: Convocar una mesa de expertos — varios agentes con ángulos distintos (operador, producto, growth, finanzas, técnico, riesgo, abogado del diablo) opinan en paralelo sobre una decisión y un sintetizador escribe un memo con una decisión y tres acciones. Usar SOLO cuando Andres lo pida explícitamente con frases como "mesa de expertos", "convoca la mesa", "consulta a los expertos", "segunda opinión", "qué opinan los expertos". No convocarla por iniciativa propia; si una decisión parece merecerla, sugerirla en una línea.
 ---
 
 # Mesa de expertos
@@ -45,17 +45,20 @@ Mínimo: operador + dos expertos relevantes + abogado del diablo +
 sintetizador. Por defecto, todos.
 
 Los agentes tienen la lista de herramientas restringida a lectura de disco y
-búsqueda web (el sintetizador además escribe). Ningún miembro puede llamar
-conectores externos: eso hace imposible que la mesa toque Robinhood, Gmail o
-el calendario aunque se lo pidan.
+búsqueda web, sin shell (el sintetizador además escribe, sin web). Ningún
+miembro puede llamar conectores externos: eso hace imposible que la mesa toque
+Robinhood, Gmail o el calendario aunque se lo pidan. Además,
+`.claude/settings.json` deniega a nivel de Claude Code las herramientas de
+órdenes de Robinhood para toda sesión que arranque en esta carpeta — la regla
+"nunca órdenes" no depende de que un prompt la recuerde.
 
 ## Protocolo
 
 ### 0. Guardia (30 segundos)
 
 - ¿Es un proyecto congelado o nuevo? → parking lot, no se convoca.
-- ¿Hay ya un `boveda/outputs/*-mesa.md` de esta semana sobre lo mismo?
-  (`ls -t boveda/outputs/*-mesa.md | head -3`) → léelo, resume la decisión,
+- ¿Hay ya un memo de esta semana sobre lo mismo? (`ls -t boveda/outputs/*-mesa*.md
+  | head -3`; el patrón cubre los sufijos `-2`) → léelo, resume la decisión,
   no se convoca.
 
 ### 1. Encuadre (lo escribe el moderador — esta sesión)
@@ -85,8 +88,9 @@ ejemplo `mesa-producto`), pasándole a cada uno el encuadre completo. Así
 corren a la vez. No los lances uno por uno.
 
 Si un agente no está disponible (por ejemplo, las skills se copiaron al scope
-de usuario sin la carpeta `agents/`), usa el agente general con el contenido
-de `.claude/agents/<nombre>.md` como prompt, seguido del encuadre.
+de usuario sin la carpeta `agents/`), **no** lo sustituyas por el agente
+general: ese agente hereda todos los conectores y rompe la garantía de que la
+mesa no toca Robinhood ni el correo. Detén la mesa y di qué falta.
 
 ### 3. Segunda ronda — contrainterrogatorio
 

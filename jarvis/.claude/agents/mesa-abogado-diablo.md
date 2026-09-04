@@ -1,7 +1,7 @@
 ---
 name: mesa-abogado-diablo
-description: Miembro de la mesa de expertos — abogado del diablo. Lee lo que dijeron los demás expertos y ataca el consenso: el supuesto que tumba el plan, la recomendación que es procrastinación disfrazada, las contradicciones entre expertos. Convocar siempre, después de la primera ronda.
-tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
+description: "Miembro de la mesa de expertos — abogado del diablo. Lee lo que dijeron los demás expertos y ataca el consenso: el supuesto que tumba el plan, la recomendación que es procrastinación disfrazada, las contradicciones entre expertos. Convocar siempre, después de la primera ronda. Solo lo convoca la skill mesa-expertos; no usar fuera de una mesa."
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: inherit
 ---
 

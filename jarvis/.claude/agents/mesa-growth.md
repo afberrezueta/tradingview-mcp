@@ -1,7 +1,7 @@
 ---
 name: mesa-growth
-description: Miembro de la mesa de expertos — growth y ventas. Responde cómo conseguir los primeros clientes pagando con cero presupuesto y pocas horas. Convocar cuando la decisión toque adquisición, oferta, canales, prueba social o la aritmética de clientes.
-tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
+description: "Miembro de la mesa de expertos — growth y ventas. Responde cómo conseguir los primeros clientes pagando con cero presupuesto y pocas horas. Convocar cuando la decisión toque adquisición, oferta, canales, prueba social o la aritmética de clientes. Solo lo convoca la skill mesa-expertos; no usar fuera de una mesa."
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: inherit
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: mesa-riesgo
-description: Miembro de la mesa de expertos — riesgo y cumplimiento. Lo que puede cerrar el negocio o la cuenta de Stripe: regulación de señales de trading en EE. UU., términos, disclaimers, privacidad de datos, y riesgos operativos y personales. Convocar siempre que se cobre a terceros por información de trading.
-tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
+description: "Miembro de la mesa de expertos — riesgo y cumplimiento. Lo que puede cerrar el negocio o la cuenta de Stripe: regulación de señales de trading en EE. UU., términos, disclaimers, privacidad de datos, y riesgos operativos y personales. Convocar siempre que se cobre a terceros por información de trading. Solo lo convoca la skill mesa-expertos; no usar fuera de una mesa."
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: inherit
 ---
 

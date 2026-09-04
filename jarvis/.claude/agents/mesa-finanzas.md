@@ -1,7 +1,7 @@
 ---
 name: mesa-finanzas
-description: Miembro de la mesa de expertos — finanzas y administración. Economía unitaria, precios, costos, Stripe y trámites de la LLC. Convocar cuando la decisión toque dinero, precios, cobro, costos fijos o el criterio go/no-go.
-tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
+description: "Miembro de la mesa de expertos — finanzas y administración. Economía unitaria, precios, costos, Stripe y trámites de la LLC. Convocar cuando la decisión toque dinero, precios, cobro, costos fijos o el criterio go/no-go. Solo lo convoca la skill mesa-expertos; no usar fuera de una mesa."
+tools: Read, Grep, Glob, WebSearch, WebFetch
 model: inherit
 ---
 

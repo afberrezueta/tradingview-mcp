@@ -58,7 +58,10 @@ cp -R ~/jarvis/.claude/skills/* ~/.claude/skills/
 ```
 
 Yo no lo haría todavía. Úsalas un par de semanas desde `~/jarvis` primero — vas
-a querer editarlas, y es más fácil con una sola copia.
+a querer editarlas, y es más fácil con una sola copia. Si lo haces, copia
+también `.claude/agents/` o la mesa de expertos no tendrá miembros, y ten en
+cuenta que `.claude/settings.json` (el bloqueo de órdenes de Robinhood) solo
+aplica a sesiones que arrancan dentro de `~/jarvis`.
 
 ---
 
@@ -139,7 +142,11 @@ En Claude Code, con Gmail y Google Calendar conectados, `bandeja` te da correo y
 agenda de verdad en vez de decir "sin dato".
 
 Con el conector de Robinhood, `metricas` lee el portafolio — **solo lectura**.
-La regla está escrita en `CLAUDE.md` y en la skill: nunca coloca órdenes.
+La regla está escrita en `CLAUDE.md` y en la skill, y además está impuesta:
+`.claude/settings.json` deniega las herramientas de órdenes de Robinhood
+(`place_*`, `cancel_*`, `exercise_option`, `preview_*`, `review_*`) para
+cualquier sesión de Claude Code que arranque en `~/jarvis`. Si Robinhood
+renombra sus herramientas, actualiza esa lista.
 
 ---
 
