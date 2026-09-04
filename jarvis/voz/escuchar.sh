@@ -20,6 +20,8 @@ elif command -v whisper-cpp >/dev/null 2>&1; then WHISPER=whisper-cpp
 else echo "whisper no instalado. Corre: $DIR/instalar.sh" >&2; exit 1; fi
 
 [ -f "$MODELO" ] || { echo "Falta el modelo. Corre: $DIR/instalar.sh" >&2; exit 1; }
+# Un modelo a medio bajar (Ctrl-C, red) existe pero no sirve: ~148 MB esperados.
+[ "$(wc -c < "$MODELO" | tr -d ' ')" -ge 100000000 ] || { echo "El modelo está incompleto ($(wc -c < "$MODELO" | tr -d ' ') bytes). Corre: $DIR/instalar.sh" >&2; exit 1; }
 
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
@@ -36,10 +38,15 @@ wait "$REC_PID" 2>/dev/null || true
 [ -s "$WAV" ] || { echo "No se grabó audio. ¿Diste permiso de micrófono a la Terminal?" >&2; exit 1; }
 
 echo "⏳ Transcribiendo…" >&2
-TEXTO="$("$WHISPER" -m "$MODELO" -f "$WAV" -l "$IDIOMA" --no-timestamps --output-txt --output-file "$TMP/out" 2>/dev/null; cat "$TMP/out.txt" 2>/dev/null)"
+# Si whisper falla (modelo corrupto, flag no soportado), que se vea por qué:
+# antes su stderr iba a /dev/null y 'set -e' cortaba en el 'cat' sin mensaje.
+if ! "$WHISPER" -m "$MODELO" -f "$WAV" -l "$IDIOMA" --no-timestamps --output-txt --output-file "$TMP/out" >/dev/null 2>"$TMP/err"; then
+  echo "whisper falló:" >&2; tail -5 "$TMP/err" >&2; exit 1
+fi
+TEXTO="$(cat "$TMP/out.txt" 2>/dev/null || true)"
 # '|| true': con pipefail, si grep filtra todo (solo [BLANK_AUDIO]) el pipeline
 # devuelve 1 y set -e mataría el script antes del mensaje de silencio.
-TEXTO="$(echo "$TEXTO" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^\[.*\]$' | tr '\n' ' ' | sed 's/  */ /g' || true)"
+TEXTO="$(echo "$TEXTO" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^\[.*\]$' | tr '\n' ' ' | sed 's/  */ /g;s/^ //;s/ $//' || true)"
 
 [ -n "${TEXTO// /}" ] || { echo "Silencio — nada que transcribir." >&2; exit 0; }
 

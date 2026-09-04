@@ -35,7 +35,14 @@ Un barrido de la mañana en menos de 60 segundos de lectura.
 Escribe en `boveda/outputs/AAAA-MM-DD-bandeja.md` y muestra en el chat:
 
 ```markdown
-# Bandeja — jueves 3 de septiembre
+---
+titulo: Bandeja AAAA-MM-DD
+tipo: bandeja
+fecha: AAAA-MM-DD
+tags: [bandeja, vantera]
+---
+
+# Bandeja — <día> <D> de <mes>
 
 **Horas libres hoy: ~2** (turno 15:00–23:00)
 **Vantera: faltan 27 días para los 5 fundadores**

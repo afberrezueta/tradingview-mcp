@@ -35,6 +35,8 @@ En `escuchar.sh` y `jarvis.sh`: Enter empieza a grabar, Enter termina.
 
 ```bash
 export JARVIS_VOZ="Paulina"      # ver opciones con:  say -v '?'
+# En macOS moderno los nombres llevan espacios: usa comillas y el nombre
+# completo tal como aparece en la lista, p. ej. JARVIS_VOZ="Mónica (Enhanced)".
 export JARVIS_VELOCIDAD=185      # palabras por minuto
 export JARVIS_IDIOMA=es          # o 'en'
 ```
@@ -44,6 +46,14 @@ Ponlos en tu `~/.zshrc` para que queden fijos.
 ## Si algo no funciona
 
 **"No se grabó audio"** — falta el permiso de micrófono a la Terminal (arriba).
+
+**"whisper falló: …"** — el script muestra las últimas líneas del error real.
+Lo más común es un modelo a medio bajar: `./instalar.sh` lo detecta por tamaño
+y lo vuelve a descargar.
+
+**`jarvis.sh` responde pero no escribe en la bóveda** — el bucle pasa
+`--permission-mode acceptEdits` a `claude -p`; sin eso, en modo no interactivo
+toda escritura se deniega. Los errores quedan en `voz/jarvis.log`.
 
 **Transcripción mala en español** — cambia el modelo a `small`. Es ~3× más
 lento pero bastante mejor:

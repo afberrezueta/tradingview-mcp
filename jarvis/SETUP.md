@@ -5,6 +5,14 @@ recurrente más allá de lo que ya pagas por Claude Code.
 
 ---
 
+## 0. Requisitos (una vez)
+
+- **Command Line Tools de Apple**: `xcode-select --install`. Sin esto,
+  `/usr/bin/python3` es solo un lanzador del instalador y el HUD (y su cron)
+  no corren. Comprueba con `python3 -V`.
+- **Claude Code CLI** instalado (`claude --version`).
+- **Homebrew**, solo si vas a usar la voz (paso 4).
+
 ## 1. Poner la carpeta en su lugar (2 min)
 
 Descomprime el zip y muévelo a tu home:
@@ -47,8 +55,14 @@ Prueba también:
 > métricas
 ```
 
-**Importante:** las skills solo funcionan si arrancas Claude Code *desde dentro*
-de `~/jarvis`. Desde otra carpeta no las ve.
+**Importante:** arranca Claude Code *desde dentro* de `~/jarvis`. Si arrancas
+en una carpeta padre, las skills se cargan solo cuando Claude toca un archivo
+de `jarvis/`, y los agentes de la mesa y `.claude/settings.json` (el candado
+de órdenes) no se cargan en absoluto.
+
+Para que el candado aplique en **cualquier** carpeta, copia el bloque
+`permissions.deny` de `.claude/settings.json` a `~/.claude/settings.json`
+(scope de usuario). Deja el de proyecto como refuerzo.
 
 Si quieres que las skills estén disponibles en cualquier carpeta, cópialas a tu
 scope de usuario:
@@ -78,7 +92,9 @@ No levanta servidor — se abre directo del disco, así que tus números nunca
 salen de la máquina.
 
 Regenéralo cuando quieras ver el estado actualizado. Para que se actualice solo
-cada mañana:
+cada mañana (la primera vez, macOS puede pedir "Acceso total al disco" para
+`cron`: Ajustes → Privacidad y seguridad → Acceso total al disco → añade
+`/usr/sbin/cron`; revisa `hud/generar.log` al día siguiente):
 
 ```bash
 crontab -e
@@ -165,11 +181,15 @@ sintetizador escribe `boveda/outputs/AAAA-MM-DD-mesa.md` con una decisión y
 tres acciones que caben en dos semanas. Tarda 10–20 minutos.
 
 Úsala para decisiones de más de 2 horas o difíciles de revertir. Para el plan
-del día sigue siendo `plan de hoy`. Los agentes solo pueden leer disco y buscar
-en la web — no tienen acceso a Robinhood, Gmail ni al calendario, por diseño.
+del día sigue siendo `plan de hoy`. Los seis expertos y el abogado del diablo
+solo leen disco y buscan en la web; el sintetizador escribe en la bóveda y no
+tiene web. Ninguno tiene acceso a Robinhood, Gmail ni al calendario, por
+diseño.
 
-La primera mesa ya está en la bóveda: `boveda/outputs/2026-09-03-mesa.md`.
-Léela antes de convocar otra sobre lo mismo.
+La primera mesa (3 sep 2026) está en la bóveda que recibiste con el sistema:
+`boveda/outputs/2026-09-03-mesa.md`. Léela antes de convocar otra sobre lo
+mismo. Si clonaste el sistema desde git, la bóveda no viene incluida (ver
+`boveda/wiki/LEEME.md`).
 
 ---
 

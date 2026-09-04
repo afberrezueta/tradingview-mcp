@@ -78,7 +78,9 @@ boveda/
 
 Reglas de escritura:
 
-- Cada nota lleva frontmatter YAML: `titulo`, `tipo`, `fecha`, `tags`.
+- Cada nota lleva frontmatter YAML: `titulo`, `tipo`, `fecha`, `tags`. Vale
+  también para todo lo que las skills escriben en `outputs/` (`tipo`: bandeja,
+  plan, metricas, cierre, semana, mesa).
 - Los enlaces son `[[nombre-de-archivo-sin-extension]]`. Compatible con Obsidian.
 - `raw/` es append-only. Nunca edites una captura vieja; escribe una nueva.
 - `wiki/` sí se edita y se condensa. Si una nota pasa de ~200 líneas, divídela.

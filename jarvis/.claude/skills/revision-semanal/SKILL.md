@@ -12,13 +12,20 @@ Dos modos. Elige por el día de la semana o por lo que pida Andres.
 ## Modo A — cierre de día (5 minutos)
 
 1. Lee `boveda/outputs/AAAA-MM-DD-plan.md` de hoy.
-2. Por cada una de las 3 prioridades: ¿se cumplió el "terminado se ve así"?
-   Sí / No / Parcial. Sin narrativa.
+2. Por cada prioridad del plan (una a tres): ¿se cumplió el "terminado se ve
+   así"? Sí / No / Parcial. Sin narrativa.
 3. Pregunta a Andres qué pasó con las que no. Una línea basta.
 4. Escribe `boveda/outputs/AAAA-MM-DD-cierre.md`:
 
 ```markdown
-# Cierre — 2026-09-03
+---
+titulo: Cierre AAAA-MM-DD
+tipo: cierre
+fecha: AAAA-MM-DD
+tags: [cierre, vantera]
+---
+
+# Cierre — AAAA-MM-DD
 
 1. Stripe abierto — ✅
 2. Supabase Auth cableado — ❌ (no hubo tiempo, turno se alargó)
@@ -53,7 +60,9 @@ aritmética y muéstrala. Si el ritmo actual no llega, dilo con el número.
 Revisa `boveda/wiki/parking-lot.md` y las capturas de la semana. ¿Cuántas horas
 se fueron en cosas que no eran Vantera? Repórtalo sin adornos.
 
-4. Escribe `boveda/outputs/AAAA-MM-DD-semana.md`.
+4. Escribe `boveda/outputs/AAAA-MM-DD-semana.md`, con el frontmatter estándar
+   (`titulo`, `tipo: semana`, `fecha`, `tags`) y las cuatro respuestas en ese
+   orden.
 
 ---
 

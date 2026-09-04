@@ -54,7 +54,14 @@ llama desde esta skill ni desde ninguna otra. Solo lectura, siempre.
 Escribe en `boveda/outputs/AAAA-MM-DD-metricas.md`:
 
 ```markdown
-# Métricas — 2026-09-03
+---
+titulo: Métricas AAAA-MM-DD
+tipo: metricas
+fecha: AAAA-MM-DD
+tags: [metricas, vantera]
+---
+
+# Métricas — AAAA-MM-DD
 
 ## Vantera
 Fundadores pagando: 0 / 5 — faltan 27 días

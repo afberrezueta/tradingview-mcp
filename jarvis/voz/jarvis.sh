@@ -25,11 +25,24 @@ while true; do
 
   printf '\033[1m› %s\033[0m\n' "$PREGUNTA"
 
-  # --continue mantiene el hilo entre turnos.
-  RESPUESTA="$(claude -p "$PREGUNTA" --continue 2>/dev/null || claude -p "$PREGUNTA")"
+  # --continue mantiene el hilo entre turnos. En modo -p no hay quien apruebe
+  # permisos: sin --permission-mode, toda escritura en la bóveda se deniega y
+  # las skills solo podrían leer. acceptEdits permite editar archivos del
+  # proyecto; los comandos de lectura que usan las skills van en allowedTools.
+  # El candado de órdenes de Robinhood (.claude/settings.json) sigue aplicando.
+  # Errores a voz/jarvis.log en vez de /dev/null, para poder diagnosticar.
+  OPCIONES=(--permission-mode acceptEdits
+            --allowedTools "Bash(date:*),Bash(ls:*),Bash(grep:*),Bash(find:*),Bash(cat:*),Bash(head:*),Bash(tail:*)")
+  RESPUESTA="$(claude -p "$PREGUNTA" --continue "${OPCIONES[@]}" 2>>"$DIR/jarvis.log" \
+            || claude -p "$PREGUNTA" "${OPCIONES[@]}" 2>>"$DIR/jarvis.log" || true)"
 
   printf '%s\n' "$RESPUESTA"
 
   # Lee en voz alta solo los primeros ~600 caracteres; el resto queda en pantalla.
-  printf '%s' "$RESPUESTA" | head -c 600 | iconv -c -f UTF-8 -t UTF-8 | "$DIR/hablar.sh"
+  # Corte por caracteres con expansión de bash (respeta UTF-8), no por bytes:
+  # 'head -c' podía partir una tilde y, con pipefail, tumbar el bucle.
+  # '|| true': que un fallo de la voz no termine la sesión.
+  if [ -n "${RESPUESTA// /}" ]; then
+    "$DIR/hablar.sh" "${RESPUESTA:0:600}" || true
+  fi
 done

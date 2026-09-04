@@ -22,10 +22,21 @@ mkdir -p "$MODELOS"
 # base = rápido y suficiente para español. Si quieres más precisión a costa de
 # velocidad, cambia base por small y actualiza MODELO en escuchar.sh.
 MODELO_URL="https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin"
-if [ ! -f "$MODELOS/ggml-base.bin" ]; then
-  curl -L --fail -o "$MODELOS/ggml-base.bin" "$MODELO_URL"
-else
+DEST="$MODELOS/ggml-base.bin"
+MIN=100000000   # ~148 MB reales; menos que esto es una descarga a medias
+if [ -f "$DEST" ] && [ "$(wc -c < "$DEST" | tr -d ' ')" -ge "$MIN" ]; then
   echo "   Ya estaba descargado."
+else
+  # Se baja a .part y se renombra al final: un Ctrl-C no deja un modelo roto
+  # que luego pase por "ya descargado".
+  rm -f "$DEST"
+  curl -L --fail -o "$DEST.part" "$MODELO_URL"
+  if [ "$(wc -c < "$DEST.part" | tr -d ' ')" -ge "$MIN" ]; then
+    mv "$DEST.part" "$DEST"
+  else
+    echo "   Descarga incompleta ($(wc -c < "$DEST.part" | tr -d ' ') bytes). Vuelve a correr este script." >&2
+    rm -f "$DEST.part"; exit 1
+  fi
 fi
 
 echo "→ Verificando el binario de whisper…"
