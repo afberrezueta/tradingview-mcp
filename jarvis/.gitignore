@@ -9,5 +9,18 @@ boveda/outputs/*
 
 # Generados en la máquina
 hud/hud.html
+hud/generar.log
 voz/modelos/
 .DS_Store
+
+# Capturas, audio y cualquier archivo con posición real: nunca al repo
+*.png
+*.jpg
+*.jpeg
+*.wav
+*.m4a
+*.plist
+analisis/capturas/
+analisis/datos/*posicion*
+CLAUDE.local.md
+__pycache__/

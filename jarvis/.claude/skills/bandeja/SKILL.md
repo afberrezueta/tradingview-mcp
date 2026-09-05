@@ -21,8 +21,8 @@ Un barrido de la mañana en menos de 60 segundos de lectura.
 **Calendario** (conector de Google Calendar, si está disponible):
 
 - Eventos de hoy y de mañana.
-- Calcula las **horas libres reales** de hoy: el hueco entre el turno del
-  hotel y el resto. Ese número va arriba del resumen — determina si el plan
+- Calcula las **horas libres reales** de hoy: el hueco entre el turno de
+  trabajo y el resto. Ese número va arriba del resumen — determina si el plan
   de hoy es de tres tareas o de una.
 
 **Sistema:**
@@ -55,7 +55,7 @@ tags: [bandeja, vantera]
 - <línea>
 
 ## Agenda
-- 15:00 turno del hotel
+- 15:00 turno de trabajo
 - (mañana) 09:00 —
 
 ## Sin cerrar

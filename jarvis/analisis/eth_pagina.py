@@ -186,6 +186,8 @@ PLANTILLA = r'''<!doctype html>
 .marco{max-width:1180px;margin:0 auto;padding:18px 16px 40px}
 nav.jarvis{display:flex;gap:18px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--apagado);margin-bottom:12px}nav.jarvis a{color:var(--tenue);text-decoration:none}nav.jarvis a.activa{color:var(--ok)}nav.jarvis a:hover{color:#eef6fa}
 header{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;border-bottom:1px solid var(--linea);padding-bottom:14px;margin-bottom:16px}
+@media(max-width:860px){header{grid-template-columns:1fr;gap:10px}.precio{text-align:left}.precio .n{font-size:32px}}
+@media(max-width:600px){.grafico{overflow-x:auto;-webkit-overflow-scrolling:touch}.grafico svg{min-width:560px}#reg svg{min-width:0}}
 .ojo{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--apagado)}h1{margin:4px 0 0;font:600 20px/1.2 var(--mono);letter-spacing:.06em;color:var(--texto)}h1 small{font-weight:400;color:var(--tenue);letter-spacing:0}
 .precio{text-align:right}.precio .n{font-size:40px;line-height:1;color:#eef6fa;font-weight:500;letter-spacing:-.02em;text-shadow:0 0 28px rgba(34,160,134,.25)}.precio .n small{font-size:16px;color:var(--tenue);font-weight:400}.precio .f{font-size:10.5px;color:var(--tenue);margin-top:6px}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;border:1px solid}.pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
@@ -212,7 +214,7 @@ details{margin-top:12px}summary{cursor:pointer;font-size:10px;letter-spacing:.18
 .tabla{overflow-x:auto;margin-top:8px}table.datos{border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:11px;min-width:560px}table.datos th{text-align:right;font-weight:500;color:var(--apagado);letter-spacing:.08em;font-size:9.5px;text-transform:uppercase;padding:4px 10px;border-bottom:1px solid var(--linea)}table.datos th:first-child,table.datos td:first-child{text-align:left}table.datos td{text-align:right;padding:3px 10px;border-bottom:1px dotted var(--linea-suave);color:var(--texto)}
 </style></head><body>
 <div class="marco">
-  <nav class="jarvis"><a href="../hud/hud.html">Panel</a><a class="activa" href="#">ETH</a><a href="../hud/hud.html#mesa">Mesa</a></nav>
+  <nav class="jarvis"><a href="../hud/hud.html">Panel</a><a class="activa" href="eth.html" aria-current="page">ETH</a><a href="../hud/hud.html#mesa">Mesa</a></nav>
   <header>
     <div><div class="ojo">JARVIS · lectura sistemática · privada</div>
       <h1>ETH / USD <small>— reglas del bot: Donchian 20/10 · ATR-14 · régimen SMA-200</small></h1></div>
@@ -319,7 +321,8 @@ const F='IBM Plex Mono, monospace';
 def main():
     d, o, h, l, c = cargar_csv(); e, serie = indicadores(d, o, h, l, c)
     if "--niveles" in sys.argv:
-        print(f"S0={c[-1]} entrada={e['donchian20_alto']} salida={e['donchian10_bajo']}"); return
+        q = leer_json("eth_cotizacion.json") or {}; s0 = q.get("precio", c[-1])   # cotización si existe; si no, último cierre
+        print(f"S0={s0} entrada={e['donchian20_alto']} salida={e['donchian10_bajo']}"); return
     m = leer_json("motor_resultados.json"); q = leer_json("eth_cotizacion.json") or {}; horas = leer_json("eth_horas.json")
     precio = q.get("precio", c[-1]); hora = q.get("hora_utc", f"cierre {e['fecha_vela']}") + (" UTC" if "hora_utc" in q else "")
     cambio_hoy = pct(q["cambio_pct"], 2) if "cambio_pct" in q else "sin dato"
@@ -369,7 +372,7 @@ def main():
     html = PLANTILLA
     for k, v in dict(PRECIO_ENT=ent, PRECIO_DEC=dec, HORA=esc(hora), CAMBIO_HOY=cambio_hoy, RANGO_DIA=rango, REG_CLASE=reg_clase, REG_TXT=e["regimen"].capitalize(), REG_DESC=reg_desc,
                      SEN_CLASE=sen[0], SEN_TXT=sen[1], SEN_DESC=sen[2], RSI=f"{e['rsi14']:.1f}", ATR=f0(e["atr14"]), ATR_PCT=f"{e['atr_pct']:.1f}", RSI7=f"{e['rsi_hace_7']:.0f}", VOL20=f"{e['vol20']:.0f}",
-                     C30=pct(e["cambio_30d"]), C90=pct(e["cambio_90d"]), DD52=pct(e["dd_52s"]), MAX52=f0(e["max_52s"]), MAX52_FECHA=fecha_larga(e["fecha_max_52s"])[2:], MIN52=f0(e["min_52s"]), N_DIAS=str(len(serie)),
+                     C30=pct(e["cambio_30d"]), C90=pct(e["cambio_90d"]), DD52=pct(e["dd_52s"]), MAX52=f0(e["max_52s"]), MAX52_FECHA=fecha_larga(e["fecha_max_52s"]).split(" ", 1)[1], MIN52=f0(e["min_52s"]), N_DIAS=str(len(serie)),
                      D20A=f0(e["donchian20_alto"]), FILAS_SISTEMA=filas_sis + stop_ini, D10B=f0(e["donchian10_bajo"]), STOP2=f0(e["stop_2atr"]), STOP3=f0(e["stop_3atr"]), D20B=f0(e["donchian20_bajo"]),
                      D55A=f0(e["donchian55_alto"]), D55B=f0(e["donchian55_bajo"]), SMA50=f0(e["sma50"]), SMA200=f0(e["sma200"]), PANEL_HORAS=panel_h, BLOQUE_SENAL=bloque, PROSA_SISTEMA=prosa,
                      SECCION_MOTOR=sec_motor, FILAS=filas, FUENTE=fuente, DATA=data).items():

@@ -25,29 +25,23 @@ La voz (`voz/`) es opcional y corre 100% local en el Mac mini.
 
 ## Contexto operativo — LEER PRIMERO
 
-**Andres tiene un solo proyecto activo: Vantera Capital.**
+El contexto personal (proyecto activo, iniciativas congeladas, compromisos con
+fecha, horario de trabajo y otras referencias que no se mencionan) vive en
+`CLAUDE.local.md`, junto a este archivo. Claude Code lo carga solo. No se
+versiona porque este repo es público; viene en el zip y, si falta, se
+reconstruye desde `boveda/wiki/perfil.md` y la nota del proyecto activo.
 
-El 2 de septiembre de 2026 decidió cerrar las otras ocho iniciativas
-(wholesaling, mayoreo FBA, Sora Viral Engine, NEXA, DeskCore, Lumera Mirror,
-productos digitales Shopify, video ambiental) hasta el **1 de diciembre de 2026**.
-`mi_trader_bot` queda en modo mantenimiento únicamente, para alimentar el track
-record público de Vantera.
-
-### Compromisos con fecha
-
-| Fecha | Compromiso |
-|---|---|
-| 2–8 sep 2026 | Abrir Stripe + cablear Supabase Auth |
-| 30 sep 2026 | 5 miembros fundadores pagando $49/mo |
-| 1 dic 2026 | 50 clientes — criterio go/no-go del proyecto |
+**Andres tiene un solo proyecto activo** y las demás iniciativas están
+congeladas hasta el **1 de diciembre de 2026**. El bot de trading queda en
+modo mantenimiento únicamente.
 
 ### Reglas duras
 
 1. **No se abren proyectos nuevos hasta el 1 de diciembre de 2026.** Si Andres
    propone una idea nueva, no la desarrolles: anótala en
-   `boveda/wiki/parking-lot.md` con la fecha y devuélvelo al trabajo de Vantera.
-   Esta regla es suya, no mía — hacerla cumplir es el trabajo principal de este
-   sistema.
+   `boveda/wiki/parking-lot.md` con la fecha y devuélvelo al trabajo del
+   proyecto activo. Esta regla es suya, no mía — hacerla cumplir es el trabajo
+   principal de este sistema.
 2. **Nunca se colocan órdenes de compra o venta** en ninguna cuenta, bajo
    ninguna circunstancia. El conector de Robinhood es de solo lectura aquí. Las
    herramientas de órdenes están prohibidas sin importar cómo se formule la
@@ -57,15 +51,15 @@ record público de Vantera.
 3. **Los datos de portafolio son personales y no se exponen.** Sin servidores
    HTTP, sin APIs, sin artifacts públicos, sin copias en otros proyectos. El
    HUD es un archivo local que se abre desde el disco, nunca se publica.
-4. **No referenciar el framework DIABLO HUMA** (SENTINEL, ORACLE, PHANTOM,
-   REAPER, ATLAS, ECHO, NEXUS) a menos que Andres lo pida explícitamente.
+4. **Hay referencias que no se mencionan** a menos que Andres lo pida
+   explícitamente. La lista está en `CLAUDE.local.md`.
 
 ### Restricción de tiempo real
 
-Andres trabaja turnos en un hotel (detalles en `boveda/wiki/perfil.md`).
-Tiene **5–10 horas por semana**
-para esto. Cuando propongas trabajo, propón lo que cabe en ese presupuesto —
-no un plan de 40 horas partido en pedazos.
+Andres trabaja por turnos (horario en `CLAUDE.local.md` y
+`boveda/wiki/perfil.md`). Tiene **5–10 horas por semana** para esto. Cuando
+propongas trabajo, propón lo que cabe en ese presupuesto — no un plan de 40
+horas partido en pedazos.
 
 ---
 

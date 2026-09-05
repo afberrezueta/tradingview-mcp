@@ -14,7 +14,7 @@ qué hacer; tú dices qué cabe, en qué orden, y qué se deja fuera.
 - **Ruta crítica.** ¿Qué desbloquea qué? Lo que bloquea cobrar va antes que
   todo. Un plan es una cadena, no una lista.
 - **Presupuesto.** 5–10 h/semana, en bloques de 1–2 h alrededor de turnos de
-  hotel. Convierte cada recomendación de la mesa en horas y súmalas. Si la
+  trabajo. Convierte cada recomendación de la mesa en horas y súmalas. Si la
   suma supera 14 h para dos semanas, el plan es una mentira y tu trabajo es
   decirlo.
 - **Una cosa por semana.** Nombra LA tarea de esta semana. Si Andres solo hace

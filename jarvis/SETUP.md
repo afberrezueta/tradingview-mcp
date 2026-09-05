@@ -28,7 +28,12 @@ Verifica que quedó completo:
 ls -R | head -30
 ```
 
-Deberías ver `CLAUDE.md`, `.claude/skills/`, `.claude/agents/`, `boveda/`, `voz/`, `hud/`.
+Deberías ver `CLAUDE.md`, `CLAUDE.local.md`, `.claude/skills/`, `.claude/agents/`,
+`boveda/`, `voz/`, `hud/` y `analisis/`.
+
+`CLAUDE.local.md` lleva el contexto personal (proyecto activo, compromisos con
+fecha, horario). Viene en el zip pero no en git: si clonaste el repo, créalo
+con ese contenido antes de arrancar.
 
 ---
 
@@ -189,7 +194,9 @@ renombra sus herramientas, actualiza esa lista.
 `analisis/` trae la página terminada (`eth.html`) con la última instantánea de
 datos, el motor probabilístico (`motor_probabilidad.py`, necesita numpy:
 `pip3 install numpy`) y el generador (`eth_pagina.py`). Se abre desde la
-pestaña **ETH** del HUD o con `open ~/jarvis/analisis/eth.html`.
+pestaña **ETH** del HUD o con `open ~/jarvis/analisis/eth.html`. Genera el
+HUD primero (sección 3): el enlace **Panel** de la página apunta a
+`hud/hud.html` y hasta entonces no existe.
 
 Para refrescarla con datos del día, en Claude Code desde `~/jarvis`:
 
@@ -197,9 +204,17 @@ Para refrescarla con datos del día, en Claude Code desde `~/jarvis`:
 > actualiza ETH
 ```
 
-La skill `lectura-eth` baja las velas y la cotización con el conector de FMP,
-corre el motor (~1 min) y regenera la página. Sin conector, la página se
-regenera con los datos que ya están en `analisis/datos/` y lo dice en el pie.
+La skill `lectura-eth` baja las velas nuevas y la cotización con el conector
+de FMP, corre el motor (~1 min) y regenera la página. Sin conector, la página
+se regenera con los datos que ya están en `analisis/datos/` y lo dice en el
+pie. A mano, sin Claude Code:
+
+```
+cd ~/jarvis/analisis
+python3 eth_pagina.py --niveles      # imprime S0, entrada y salida
+python3 motor_probabilidad.py datos/eth_diario.csv <S0> <entrada> <salida>
+python3 eth_pagina.py && open eth.html
+```
 
 ## 7. Mesa de expertos (cuando una decisión importa)
 

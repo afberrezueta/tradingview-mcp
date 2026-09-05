@@ -384,7 +384,8 @@ PLANTILLA = r"""<!doctype html>
   .nav a:hover{color:var(--texto)}
   .nav a[hidden]{display:none}
   .mesa{margin-top:14px}
-  .memo{font-size:12px;line-height:1.55;max-width:80ch}
+  .memo{font-size:12px;line-height:1.55;max-width:80ch;overflow-wrap:anywhere}
+  .memo a{color:var(--acento);word-break:break-all}
   .memo h2{font-size:13px;color:var(--texto);margin:14px 0 6px;letter-spacing:.04em}
   .memo h3{font-size:11px;color:var(--tenue);letter-spacing:.14em;text-transform:uppercase;margin:12px 0 4px}
   .memo p{margin:0 0 8px}

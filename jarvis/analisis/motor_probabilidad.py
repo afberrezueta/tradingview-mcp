@@ -9,16 +9,28 @@ Tres piezas, todas sobre velas diarias (FMP, 2019-01-01 → hoy):
   3. Tasa base: backtest del sistema Turtle 20/10 long-only con stop inicial 2×ATR, y el subconjunto
      condicionado a "14 días sin cierre nuevo por encima de la entrada" (la situación de hoy).
 
-Uso:  python3 motor_probabilidad.py eth_long.json [precio_actual] [entrada] [salida]
-Salida: motor_resultados.json + resumen por stdout. Solo lectura de datos: no coloca órdenes.
+Uso:  python3 motor_probabilidad.py datos/eth_diario.csv [precio_actual] [entrada] [salida]
+      (también acepta un JSON [{d,o,h,l,c}]). Salida: motor_resultados.json junto a los datos
+      + resumen por stdout. Solo lectura de datos: no coloca órdenes.
 """
-import json, sys, math
-import numpy as np
+import json, sys, math, os, argparse
+try:
+    import numpy as np
+except ImportError:  # mensaje claro en vez de un traceback
+    sys.exit("Falta numpy. Instálalo una vez con:  pip3 install numpy")
 
 SEED = 20260905
 
 def cargar(ruta):
-    rows = json.load(open(ruta))
+    """Acepta el CSV de analisis/datos (fecha,open,high,low,close) o el JSON [{d,o,h,l,c}]."""
+    ruta = str(ruta)
+    if ruta.lower().endswith(".csv"):
+        import csv
+        with open(ruta, encoding="utf-8") as f:
+            rows = [dict(d=r["fecha"], o=float(r["open"]), h=float(r["high"]), l=float(r["low"]), c=float(r["close"])) for r in csv.DictReader(f)]
+    else:
+        rows = json.load(open(ruta))
+    rows.sort(key=lambda r: r["d"])
     c = np.array([r["c"] for r in rows]); h = np.array([r["h"] for r in rows]); l = np.array([r["l"] for r in rows])
     o = np.array([r["o"] for r in rows]); d = [r["d"] for r in rows]
     return d, o, h, l, c
@@ -171,11 +183,22 @@ def stats(tr):
                 percentiles_R={q: float(np.percentile(R, q)) for q in (5, 25, 50, 75, 95)})
 
 # ---------------------------------------------------------------- main
+def argumentos():
+    ap = argparse.ArgumentParser(description="Motor probabilístico de ETH (régimen HMM, barreras Monte Carlo, tasa base Turtle 20/10). Solo lectura: no coloca órdenes.",
+                                 epilog="Ejemplo: python3 motor_probabilidad.py datos/eth_diario.csv 4300 4769 4200")
+    ap.add_argument("datos", help="CSV con cabecera fecha,open,high,low,close (o JSON [{d,o,h,l,c}])")
+    ap.add_argument("precio_actual", nargs="?", type=float, help="precio de referencia S0 (por defecto, el último cierre)")
+    ap.add_argument("entrada", nargs="?", type=float, help="barrera superior: máximo de los 20 días anteriores (por defecto se calcula)")
+    ap.add_argument("salida", nargs="?", type=float, help="barrera inferior: mínimo de los 10 días anteriores (por defecto se calcula)")
+    return ap.parse_args()
+
 def main():
-    ruta = sys.argv[1]; S0 = float(sys.argv[2]) if len(sys.argv) > 2 else None
+    a = argumentos(); ruta = a.datos
+    if not os.path.exists(ruta): sys.exit(f"No existe {ruta}. Genera el CSV con la skill lectura-eth (ver analisis/LEEME.md).")
     d, o, h, l, c = cargar(ruta); atr = atr14(h, l, c)
-    if S0 is None: S0 = float(c[-1])
-    U = float(sys.argv[3]) if len(sys.argv) > 3 else float(h[-20:].max()); L = float(sys.argv[4]) if len(sys.argv) > 4 else float(l[-10:].min())
+    S0 = a.precio_actual if a.precio_actual is not None else float(c[-1])
+    # niveles por defecto = los "días anteriores", sin contar la vela de hoy (misma definición que eth_pagina.py)
+    U = a.entrada if a.entrada is not None else float(h[-21:-1].max()); L = a.salida if a.salida is not None else float(l[-11:-1].min())
     r = np.diff(np.log(c))
     # 1. HMM (3 estados) sobre todo el histórico; comparación con 2 estados por BIC
     m3 = hmm_mejor(r, 3); m2 = hmm_mejor(r, 2)
@@ -218,7 +241,9 @@ def main():
     dist = dict(hmm_20d=dict(p_positivo=float((ret20 > 0).mean()), percentiles_pct={q: float(np.percentile(ret20, q) * 100) for q in (5, 25, 50, 75, 95)},
                              es5_pct=float(ret20[ret20 <= np.percentile(ret20, 5)].mean() * 100)))
     out = dict(fecha_datos=d[-1], velas=len(c), precio_ref=S0, atr14=float(atr[-1]), regimen=regimen, barreras=barreras, tasa_base=tasa_base, distribucion=dist, semilla=SEED)
-    json.dump(out, open("motor_resultados.json", "w"), indent=1, default=float)
+    destino = os.path.join(os.path.dirname(os.path.abspath(ruta)), "motor_resultados.json")  # junto a los datos
+    json.dump(out, open(destino, "w"), indent=1, default=float)
+    print(f"escrito {destino}")
     # resumen
     print(f"Datos {d[0]} → {d[-1]} ({len(c)} velas). S0={S0} entrada={U} salida={L} ATR14={atr[-1]:.1f}")
     print("\n[1] RÉGIMEN (HMM 3 estados)")

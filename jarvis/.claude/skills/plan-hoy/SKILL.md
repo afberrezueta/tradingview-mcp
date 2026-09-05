@@ -16,14 +16,14 @@ de deseos.
    Lo que quedó abierto ayer es candidato número uno para hoy.
 3. Lee `boveda/wiki/vantera-capital.md` — los compromisos con fecha mandan.
 4. Si hay conector de Calendar disponible, mira los eventos de hoy. Los turnos
-   del hotel definen cuántas horas reales quedan.
+   de trabajo definen cuántas horas reales quedan.
 
 ## Cómo elegir
 
 Filtro, en orden:
 
 1. **¿Mueve Vantera hacia el próximo compromiso con fecha?** Si no, casi nunca
-   entra. Los compromisos vivos están en `CLAUDE.md`.
+   entra. Los compromisos vivos están en `CLAUDE.local.md`.
 2. **¿Cabe en las horas que quedan hoy?** Andres tiene 5–10 h/semana. Un día
    típico son 1–2 horas reales. Tres tareas de 3 horas no es un plan, es una
    mentira.
