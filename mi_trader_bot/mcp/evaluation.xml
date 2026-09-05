@@ -1,0 +1,44 @@
+<evaluation>
+  <!-- Preguntas de solo lectura sobre los CSVs congelados (data/historical_10y, hasta 2026-08-28)
+       y la config del repo. Respuestas estables mientras no se regeneren los CSVs. -->
+  <qa_pair>
+    <question>¿Cuántos símbolos con CSV histórico diario tiene disponible el servidor mi-trader-bot?</question>
+    <answer>23</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Según bot_eth_zones sin pasar precio actual, ¿cuál es el swing high de 90 días de ETHUSD en dólares?</question>
+    <answer>2515.8</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>¿A qué precio objetivo en dólares está el tramo 3 (drawdown −50%) de la escalera de acumulación de ETH?</question>
+    <answer>1257.9</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>¿Cuántos dólares asigna la configuración al tramo 4 (25% de un capital de $3,000) de la acumulación de ETH?</question>
+    <answer>750</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Según bot_donchian_signal, ¿cuál es la banda superior del canal Donchian(20) de NVDA en su última barra?</question>
+    <answer>230.47</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>¿Cuál es el ATR(14) de TQQQ en la última barra del CSV, según bot_donchian_signal?</question>
+    <answer>3.09</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>En la última barra del dataset, ¿cuántos de los 4 filtros del TJL v2 aproximado pasa NVDA?</question>
+    <answer>2</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>¿Qué CAGR en % reporta bot_backtest para el motor agentic con sus parámetros por defecto?</question>
+    <answer>11.8</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>¿Qué drawdown máximo en % reporta bot_backtest para el motor tjl con sus parámetros por defecto?</question>
+    <answer>21.4</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Si se backtestea el motor agentic bajando el riesgo por trade al 1%, ¿qué CAGR en % reporta?</question>
+    <answer>3.8</answer>
+  </qa_pair>
+</evaluation>
