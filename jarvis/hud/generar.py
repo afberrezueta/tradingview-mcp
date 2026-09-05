@@ -185,6 +185,64 @@ def fundadores_desde_metricas():
     return int(m.group(1)), ultima.name[:10]
 
 
+def md_a_html(texto):
+    """Conversor mínimo de Markdown (lo que escriben las skills) a HTML seguro."""
+    import html as _h
+    lineas = texto.split("\n"); out = []; lista = None; tabla = []; parrafo = []
+    def inline(t):
+        t = _h.escape(t)
+        t = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", t); t = re.sub(r"`([^`]+)`", r"<code>\1</code>", t)
+        t = re.sub(r"\*(?!\s)(.+?)\*", r"<i>\1</i>", t); t = re.sub(r"\[\[([^\]]+)\]\]", r"<u>\1</u>", t)
+        return t
+    def cierra_parrafo():
+        if parrafo: out.append("<p>" + inline(" ".join(parrafo)) + "</p>"); parrafo.clear()
+    def cierra_lista():
+        nonlocal lista
+        if lista: out.append(f"</{lista}>"); lista = None
+    def cierra_tabla():
+        if tabla:
+            filas = [f for f in tabla if not re.match(r"^\|?\s*:?-{2,}", f)]
+            html_f = []
+            for k, f in enumerate(filas):
+                celdas = [c.strip() for c in f.strip().strip("|").split("|")]
+                tag = "th" if k == 0 else "td"
+                html_f.append("<tr>" + "".join(f"<{tag}>{inline(c)}</{tag}>" for c in celdas) + "</tr>")
+            out.append("<table>" + "".join(html_f) + "</table>"); tabla.clear()
+    en_codigo = False
+    for ln in lineas:
+        if ln.startswith("```"):
+            cierra_parrafo(); cierra_lista(); cierra_tabla()
+            if en_codigo: out.append("</pre>")
+            else: out.append("<pre>")
+            en_codigo = not en_codigo; continue
+        if en_codigo: out.append(_h.escape(ln)); continue
+        if ln.strip().startswith("|"): cierra_parrafo(); cierra_lista(); tabla.append(ln); continue
+        cierra_tabla()
+        m = re.match(r"^(#{1,4})\s+(.*)", ln)
+        if m: cierra_parrafo(); cierra_lista(); out.append(f"<h{len(m.group(1))+1}>{inline(m.group(2))}</h{len(m.group(1))+1}>"); continue
+        m = re.match(r"^\s*(?:[-*]|\d+[.)])\s+(.*)", ln)
+        if m:
+            cierra_parrafo(); tipo = "ol" if re.match(r"^\s*\d", ln) else "ul"
+            if lista != tipo: cierra_lista(); out.append(f"<{tipo}>"); lista = tipo
+            out.append(f"<li>{inline(m.group(1))}</li>"); continue
+        if not ln.strip(): cierra_parrafo(); cierra_lista(); continue
+        parrafo.append(ln.strip())
+    cierra_parrafo(); cierra_lista(); cierra_tabla()
+    return "\n".join(out)
+
+
+def memo_mesa():
+    """Último memo de la mesa de expertos (outputs/*-mesa*.md), ya convertido a HTML."""
+    d = BOVEDA / "outputs"
+    if not d.exists(): return None
+    memos = [f for f in d.glob("*-mesa*.md") if fecha_de_nombre(f.name)]
+    if not memos: return None
+    f = max(memos, key=lambda f: f.name)
+    texto = leer(f)
+    cuerpo = re.sub(r"^---.*?---\s*", "", texto, count=1, flags=re.DOTALL)
+    return {"archivo": f.name, "fecha": f.name[:10], "html": md_a_html(cuerpo)}
+
+
 def construir_datos():
     fundadores, fecha_metricas = fundadores_desde_metricas()
     hitos = []
@@ -222,6 +280,8 @@ def construir_datos():
         "plan_viejo": plan_viejo,
         "fecha_metricas": fecha_metricas,
         "recientes": outputs_recientes(),
+        "mesa": memo_mesa(),
+        "eth": (RAIZ / "analisis" / "eth.html").exists(),
         "comandos": [{"skill": s, "frase": f} for s, f in COMANDOS],
         "directivas": DIRECTIVAS,
     }
@@ -317,6 +377,27 @@ PLANTILLA = r"""<!doctype html>
   .rec b{color:var(--texto);font-weight:400}
   .rec i{color:var(--apagado);font-style:normal}
 
+  .nav{display:flex;gap:18px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+       color:var(--apagado);margin-bottom:10px}
+  .nav a{color:var(--tenue);text-decoration:none}
+  .nav a.activa{color:var(--acento)}
+  .nav a:hover{color:var(--texto)}
+  .nav a[hidden]{display:none}
+  .mesa{margin-top:14px}
+  .memo{font-size:12px;line-height:1.55;max-width:80ch}
+  .memo h2{font-size:13px;color:var(--texto);margin:14px 0 6px;letter-spacing:.04em}
+  .memo h3{font-size:11px;color:var(--tenue);letter-spacing:.14em;text-transform:uppercase;margin:12px 0 4px}
+  .memo p{margin:0 0 8px}
+  .memo b{color:#eef6fa;font-weight:500}
+  .memo ul,.memo ol{margin:0 0 8px;padding-left:18px}
+  .memo li{margin:2px 0}
+  .memo li::marker{color:var(--acento)}
+  .memo code{color:var(--acento);font-size:11px}
+  .memo table{border-collapse:collapse;margin:6px 0 10px;font-variant-numeric:tabular-nums}
+  .memo th,.memo td{border-bottom:1px dotted #141c24;padding:3px 10px 3px 0;text-align:left;vertical-align:top}
+  .memo th{color:var(--apagado);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+  .memo pre{background:#080c10;border:1px solid var(--linea);padding:8px 10px;overflow-x:auto;font-size:11px}
+  .memo .vacio{color:var(--apagado);font-style:italic}
   footer{margin-top:14px;padding-top:9px;border-top:1px solid var(--linea);
          display:flex;justify-content:space-between;color:var(--apagado);
          font-size:9.5px;letter-spacing:.1em;flex-wrap:wrap;gap:8px}
@@ -324,7 +405,12 @@ PLANTILLA = r"""<!doctype html>
 </head><body>
 <div class="marco">
 
-  <header>
+  <nav class="nav" id="nav">
+    <a href="#panel" class="activa">Panel</a>
+    <a href="../analisis/eth.html" id="nav-eth">ETH</a>
+    <a href="#mesa">Mesa</a>
+  </nav>
+  <header id="panel">
     <div>
       <div class="logo">J A R V I S</div>
       <div class="sub">Inteligencia centralizada &middot; local</div>
@@ -373,6 +459,11 @@ PLANTILLA = r"""<!doctype html>
     </div>
 
   </div>
+
+  <section class="panel mesa" id="mesa">
+    <h2 class="titulo">Mesa de expertos &middot; <span id="mesa-fecha"></span></h2>
+    <div id="mesa-cuerpo" class="memo"></div>
+  </section>
 
   <footer>
     <span id="generado"></span>
@@ -458,6 +549,16 @@ document.getElementById('comandos').innerHTML = D.comandos.map(
   c => `<div class="cmd"><b>${c.skill}</b><i>"${c.frase}"</i></div>`).join('');
 document.getElementById('directivas').innerHTML = D.directivas.map(
   d => `<li>${d}</li>`).join('');
+
+/* ---- mesa de expertos ---- */
+if (!D.eth) document.getElementById('nav-eth').hidden = true;
+if (D.mesa){
+  document.getElementById('mesa-fecha').textContent = D.mesa.fecha;
+  document.getElementById('mesa-cuerpo').innerHTML = D.mesa.html;   // HTML generado por md_a_html, ya escapado
+} else {
+  document.getElementById('mesa-fecha').textContent = 'sin memo';
+  document.getElementById('mesa-cuerpo').innerHTML = '<div class="vacio">Todavia no hay memos. Di "convoca la mesa: ..." en Claude Code.</div>';
+}
 
 /* ---- salidas recientes ---- */
 const R = document.getElementById('recientes');

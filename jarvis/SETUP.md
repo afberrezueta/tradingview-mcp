@@ -184,7 +184,24 @@ renombra sus herramientas, actualiza esa lista.
 
 ---
 
-## 6. Mesa de expertos (cuando una decisión importa)
+## 6. Lectura de ETH (la página de análisis)
+
+`analisis/` trae la página terminada (`eth.html`) con la última instantánea de
+datos, el motor probabilístico (`motor_probabilidad.py`, necesita numpy:
+`pip3 install numpy`) y el generador (`eth_pagina.py`). Se abre desde la
+pestaña **ETH** del HUD o con `open ~/jarvis/analisis/eth.html`.
+
+Para refrescarla con datos del día, en Claude Code desde `~/jarvis`:
+
+```
+> actualiza ETH
+```
+
+La skill `lectura-eth` baja las velas y la cotización con el conector de FMP,
+corre el motor (~1 min) y regenera la página. Sin conector, la página se
+regenera con los datos que ya están en `analisis/datos/` y lo dice en el pie.
+
+## 7. Mesa de expertos (cuando una decisión importa)
 
 No hay nada que instalar: son ocho agentes en `.claude/agents/` y la skill
 `mesa-expertos`. Se cargan solos al arrancar Claude Code desde `~/jarvis`.
@@ -222,6 +239,7 @@ mismo. Si clonaste el sistema desde git, la bóveda no viene incluida (ver
 | Domingo | "revisión semanal" | Horas reales trabajadas y si el ritmo llega al 1 dic |
 | Cualquier momento | "recuerda que…" / "qué sabes de…" | Escribe y lee la bóveda |
 | Decisión de más de 2 h | "convoca la mesa: …" | Siete ángulos, un memo con decisión y 3 acciones |
+| Cuando importe ETH | "actualiza ETH" | Régimen, niveles y probabilidades en `analisis/eth.html` |
 
 ---
 

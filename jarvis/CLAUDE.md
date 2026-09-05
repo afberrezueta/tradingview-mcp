@@ -15,7 +15,9 @@ Un sistema de tres piezas:
    juego cuando la skill `mesa-expertos` los convoca.
 2. **Bóveda** (`boveda/`) — la memoria. Todo es Markdown. Sin base de datos.
    Si no está en la bóveda, no pasó.
-3. **HUD** (`hud/`) — una sola pantalla que muestra el estado real del sistema.
+3. **HUD** (`hud/`) — una sola pantalla que muestra el estado real del sistema,
+   con pestañas Panel, ETH y Mesa. La pestaña ETH abre `analisis/eth.html`,
+   la lectura sistemática que genera `analisis/eth_pagina.py`.
 
 La voz (`voz/`) es opcional y corre 100% local en el Mac mini.
 
@@ -103,3 +105,4 @@ Reglas de escritura:
 | "cierra el día" / "revisión semanal" | `revision-semanal` |
 | "recuerda que…" / "qué sabes de…" | `boveda` |
 | "mesa de expertos" / "convoca la mesa" | `mesa-expertos` |
+| "actualiza ETH" / "lectura de ETH" | `lectura-eth` |
