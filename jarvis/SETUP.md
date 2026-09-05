@@ -106,6 +106,24 @@ Si el cron deja de correr, el HUD lo dice en ámbar en el pie ("HUD
 desactualizado: generado hace N h"). Un HUD viejo que parece nuevo es peor que
 ninguno.
 
+### Tenerlo en la pantalla, siempre
+
+Dos archivos en `hud/`, para no volver a abrir la Terminal:
+
+1. **`hud/abrir.command`** — doble clic en Finder: regenera el HUD y lo abre
+   en una ventana propia (Chrome en modo app si lo tienes; si no, tu
+   navegador). Pulsa ctrl+cmd+F para pantalla completa y déjalo ahí: la
+   página se recarga sola cada 10 minutos. La primera vez macOS puede decir
+   que no puede verificar el archivo: clic derecho → Abrir, una sola vez.
+2. **`hud/instalar-launchd.sh`** — córrelo una vez desde la Terminal
+   (`bash ~/jarvis/hud/instalar-launchd.sh`): instala un agente de `launchd`
+   que regenera el HUD cada 10 minutos y al iniciar sesión, sin cron y sin
+   permisos especiales. Con eso, lo que está en la pantalla siempre es lo
+   último de la bóveda. Para quitarlo, las dos líneas comentadas al inicio
+   del script.
+
+El cron del paso anterior queda como alternativa; no hacen falta los dos.
+
 ### Actualizar los números del HUD
 
 Los hitos y el contador de fundadores están al inicio de `hud/generar.py`:

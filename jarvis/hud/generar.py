@@ -391,6 +391,8 @@ function tic(){
     String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
 }
 tic(); setInterval(tic, 10000);
+/* pantalla viva: recarga el archivo cada 10 min para tomar la ultima regeneracion */
+setInterval(() => location.reload(), 10 * 60 * 1000);
 document.getElementById('fecha').textContent = D.fecha_larga;
 document.getElementById('generado').textContent = 'Generado ' + D.generado
   + (D.fecha_metricas ? ' · clientes según métricas del ' + D.fecha_metricas : '');
