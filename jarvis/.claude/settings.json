@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "deny": [
+      "mcp__robinhood__place_equity_order",
+      "mcp__robinhood__place_option_order",
+      "mcp__robinhood__place_crypto_order",
+      "mcp__robinhood__preview_crypto_order",
+      "mcp__robinhood__review_equity_order",
+      "mcp__robinhood__review_option_order",
+      "mcp__robinhood__cancel_equity_order",
+      "mcp__robinhood__cancel_option_order",
+      "mcp__robinhood__cancel_crypto_order",
+      "mcp__robinhood__exercise_option",
+      "mcp__robinhood__cancel_option_exercise"
+    ]
+  }
+}
