@@ -9,6 +9,14 @@
 <meta property="og:title" content="Lectura sistemática de ETH">
 <meta property="og:description" content="Régimen, niveles y probabilidades de Ethereum, con intervalos de confianza y sin promesas de rentabilidad.">
 <meta property="og:type" content="website">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#07090c">
+<link rel="icon" href="/icono.svg" type="image/svg+xml">
+<link rel="icon" href="/icono-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lectura ETH">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap">
@@ -170,9 +178,10 @@ footer .marco{display:grid;gap:16px}
         antes que el de salida</b>. No es una opinión ni una señal de un grupo de Telegram. Es un cálculo
         reproducible, con semilla fija e intervalos de confianza, que admite cuándo no sabe.
       </p>
-      <div class="acciones">
+        <div class="acciones">
         <a class="boton" href="#en-vivo">Ver el estado de hoy</a>
         <a class="boton secundario" href="#como">Cómo se calcula</a>
+        <button class="boton secundario" id="instalar" hidden>Instalar como app</button>
       </div>
     </div>
 
@@ -546,6 +555,31 @@ footer .marco{display:grid;gap:16px}
         estadoPulso(true);
       })
       .catch(respaldo);
+  }
+
+  // ------------------------------------------------ app instalable
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').catch(function () { /* sin conexión: da igual */ });
+    });
+  }
+  // Android y escritorio ofrecen instalar; iOS no dispara este evento y se
+  // instala desde Compartir → Añadir a pantalla de inicio.
+  var peticionInstalar = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    peticionInstalar = e;
+    var b = $('instalar');
+    if (b) b.hidden = false;
+  });
+  var botonInstalar = $('instalar');
+  if (botonInstalar) {
+    botonInstalar.addEventListener('click', function () {
+      if (!peticionInstalar) return;
+      peticionInstalar.prompt();
+      peticionInstalar = null;
+      botonInstalar.hidden = true;
+    });
   }
 
   // ------------------------------------------------ arranque
