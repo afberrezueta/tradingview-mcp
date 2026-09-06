@@ -73,10 +73,23 @@ UTC. Convierte siempre antes de guardar.
    Tarda ~1 minuto y escribe `datos/motor_resultados.json` junto al CSV.
    Necesita numpy (`pip3 install numpy` una vez); sin argumentos de niveles
    calcula los mismos valores por defecto. `--help` explica los parámetros.
-5. **Página.** Desde `analisis/`, `python3 eth_pagina.py` escribe
+5. **Página local.** Desde `analisis/`, `python3 eth_pagina.py` escribe
    `analisis/eth.html`. Ábrela con `open analisis/eth.html` o desde la
    pestaña ETH del HUD (genera el HUD antes para que el enlace Panel exista).
-6. **Captura.** Anota `boveda/raw/AAAA-MM-DD-eth.md` con frontmatter
+6. **Web pública.** Desde `analisis/`, `python3 exportar_web.py` escribe
+   `web/datos/publico.json` (régimen, niveles y serie: la capa abierta) y
+   `web/datos/motor.json` (probabilidades y tasa base: la capa de pago).
+   Para que el sitio publicado se actualice hay que subirlo, porque Vercel
+   despliega en cada empujón a la rama:
+
+   ```
+   cd ~/jarvis/.. && git add web/datos && git commit -m "Refresh ETH data" && git push
+   ```
+
+   El precio de la web no depende de esto: lo sirve `api/precio.js` en vivo.
+   Lo que se publica aquí es el cálculo pesado del motor, que tarda ~80 s y por
+   eso no cabe en una función serverless.
+7. **Captura.** Anota `boveda/raw/AAAA-MM-DD-eth.md` con frontmatter
    (`titulo`, `tipo: captura`, `fecha`, `tags: [eth, bot]`) y la señal en
    formato bot (LONG/FLAT, entrada, salida, régimen, probabilidades del
    motor) o "sin señal nueva" si aplica.

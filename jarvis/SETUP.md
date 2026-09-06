@@ -243,6 +243,41 @@ mismo. Si clonaste el sistema desde git, la bóveda no viene incluida (ver
 
 ---
 
+## 8. La web pública (lo único que sale de esta máquina)
+
+Todo lo anterior vive en el Mac. La excepción deliberada es `web/`, en la raíz
+del repositorio: un sitio estático que Vercel despliega en cada empujón a la
+rama. Solo publica **datos públicos de mercado**. Nada de portafolio sale de
+aquí, y la regla dura 3 sigue intacta: el HUD nunca se publica.
+
+| Pieza | Dónde corre | Qué hace |
+|---|---|---|
+| `web/index.html` | navegador del visitante | La página. Capa abierta visible, capa de pago tapada. |
+| `web/datos/publico.json` | estático | Régimen, niveles y serie de precio. Lo genera `exportar_web.py`. |
+| `web/datos/motor.json` | estático | Probabilidades y tasa base. Generado, todavía no revelado. |
+| `api/precio.js` | función serverless de Vercel | Cotización en vivo. Cachea 20 s en el borde. |
+| `vercel.json` | despliegue | Fija el proyecto como sitio estático sin framework. |
+
+**Por qué está partido así.** El motor tarda unos 80 segundos en correr: no cabe
+en una función serverless, así que su resultado se publica como instantánea
+desde el Mac. El precio sí es barato de consultar, así que va en vivo.
+
+**Para que el precio venga de FMP** (la misma fuente que usa el motor, para que
+web y análisis no se contradigan), añade la clave en Vercel:
+
+```
+Project → Settings → Environment Variables → FMP_API_KEY
+```
+
+Sin esa variable el sitio no se rompe: cae a fuentes públicas sin clave. Si
+ninguna responde, muestra el último dato guardado y lo dice, en vez de inventar
+un número.
+
+**Para actualizar lo que ve el público:** corre `actualiza ETH` y después sube
+`web/datos/`. Vercel redespliega solo.
+
+---
+
 ## Cómo se usa un día normal
 
 | Momento | Comando | Qué pasa |
