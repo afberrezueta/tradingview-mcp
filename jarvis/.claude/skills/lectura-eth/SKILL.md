@@ -90,7 +90,14 @@ UTC. Convierte siempre antes de guardar.
    El precio de la web no depende de esto: lo sirve `api/precio.js` en vivo.
    Lo que se publica aquí es el cálculo pesado del motor, que tarda ~80 s y por
    eso no cabe en una función serverless.
-7. **Captura.** Anota `boveda/raw/AAAA-MM-DD-eth.md` con frontmatter
+7. **Alertas.** Desde `analisis/`, `python3 alertas.py` compara la lectura de
+   hoy con la última guardada y dice qué cambió: cruce del máximo de 20 días,
+   pérdida del mínimo de 10, cambio de régimen, cambio de estado del modelo, o
+   precio a menos de media ATR de un nivel. Escribe el detalle en
+   `privado/alertas.json` y el aviso público, sin cifras del motor, en
+   `web/datos/aviso.json`, que la web muestra como una franja arriba. Si no
+   cambió nada no escribe ningún aviso: una franja permanente deja de leerse.
+8. **Captura.** Anota `boveda/raw/AAAA-MM-DD-eth.md` con frontmatter
    (`titulo`, `tipo: captura`, `fecha`, `tags: [eth, bot]`) y la señal en
    formato bot (LONG/FLAT, entrada, salida, régimen, probabilidades del
    motor) o "sin señal nueva" si aplica.

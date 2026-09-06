@@ -127,6 +127,16 @@ table.mini2 td{padding:4px 6px 4px 0;border-top:1px dotted var(--linea-suave)}
 table.mini2 td:not(:first-child),table.mini2 th:not(:first-child){text-align:right}
 table.mini2 b{color:var(--claro);font-weight:500}
 
+/* ---------- aviso de cambio de estado ---------- */
+.aviso{border-bottom:1px solid var(--linea);background:var(--panel)}
+.aviso .marco{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 14px;padding-top:11px;padding-bottom:11px}
+.aviso .sello{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;border:1px solid;border-radius:999px;padding:2px 9px;flex:none}
+.aviso .t{color:var(--claro);font-size:13px}
+.aviso .d{color:var(--tenue);font:12.5px/1.5 var(--sans)}
+.aviso.alta .sello{color:var(--ok);border-color:rgba(78,201,176,.4)}
+.aviso.media .sello{color:var(--aviso);border-color:rgba(215,165,90,.4)}
+.aviso.baja .sello{color:var(--tenue);border-color:var(--linea)}
+
 /* ---------- motores ---------- */
 .motores{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 @media(max-width:860px){.motores{grid-template-columns:1fr}}
@@ -166,6 +176,8 @@ footer .marco{display:grid;gap:16px}
     <span class="pulso frio" id="pulso-barra"><i></i><span id="pulso-texto">conectando</span></span>
   </div>
 </header>
+
+<div id="avisos"></div>
 
 <div class="heroe">
   <div class="marco">
@@ -556,6 +568,30 @@ footer .marco{display:grid;gap:16px}
       })
       .catch(respaldo);
   }
+
+  // ------------------------------------------------ aviso de cambio de estado
+  // Solo aparece si hoy pasó algo. Un banner permanente deja de leerse.
+  fetch('datos/aviso.json', { cache: 'no-cache' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (a) {
+      if (!a || !a.avisos || !a.avisos.length) return;
+      var cont = $('avisos');
+      a.avisos.forEach(function (av) {
+        var barra = document.createElement('div');
+        barra.className = 'aviso ' + (av.severidad || 'baja');
+        var marco = document.createElement('div');
+        marco.className = 'marco';
+        var sello = document.createElement('span');
+        sello.className = 'sello';
+        sello.textContent = av.tipo === 'cerca' ? 'cerca del nivel' : av.tipo;
+        var t = document.createElement('span'); t.className = 't'; t.textContent = av.titulo;
+        var d = document.createElement('span'); d.className = 'd'; d.textContent = av.detalle;
+        marco.appendChild(sello); marco.appendChild(t); marco.appendChild(d);
+        barra.appendChild(marco);
+        cont.appendChild(barra);
+      });
+    })
+    .catch(function () { /* sin aviso, sin banner */ });
 
   // ------------------------------------------------ app instalable
   if ('serviceWorker' in navigator) {

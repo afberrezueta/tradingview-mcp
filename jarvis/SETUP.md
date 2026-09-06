@@ -260,6 +260,7 @@ aquí, y la regla dura 3 sigue intacta: el HUD nunca se publica.
 | `web/datos/publico.json` | estático | Régimen, niveles y serie de precio. Lo genera `exportar_web.py`. |
 | `privado/motor.json` | solo en el Mac | Probabilidades y tasa base: la capa que se cobra. Fuera de `web/` y sin versionar. |
 | `api/precio.js` | función serverless de Vercel | Cotización en vivo. Cachea 20 s en el borde. |
+| `web/datos/aviso.json` | estático | Qué cambió hoy. Vacío casi siempre, y eso es correcto. |
 | `vercel.json` | despliegue | Fija el proyecto como sitio estático sin framework. |
 
 **Por qué está partido así.** El motor tarda unos 80 segundos en correr: no cabe
