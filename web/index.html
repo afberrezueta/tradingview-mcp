@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lectura sistemática de ETH — JARVIS</title>
+<meta name="description" content="Régimen, niveles y probabilidades de Ethereum calculados con un modelo oculto de Markov, Monte Carlo y una tasa base de 2019 a hoy. Datos públicos de mercado, en vivo.">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="Lectura sistemática de ETH">
+<meta property="og:description" content="Régimen, niveles y probabilidades de Ethereum, con intervalos de confianza y sin promesas de rentabilidad.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#07090c; --panel:#0c1015; --linea:#1b2530; --linea-suave:#141c24;
+  --texto:#c8d4de; --tenue:#7d8f9c; --apagado:#3d4a56; --claro:#eef6fa;
+  --s1:#22a086; --s2:#b9843a;
+  --ok:#4ec9b0; --aviso:#d7a55a; --critico:#d1605e;
+  --banda:rgba(200,212,222,.055);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--texto);font:13px/1.5 var(--mono);-webkit-font-smoothing:antialiased}
+a{color:var(--ok);text-decoration:none}
+a:hover{color:var(--claro)}
+:focus-visible{outline:2px solid var(--ok);outline-offset:2px}
+.marco{max-width:1120px;margin:0 auto;padding:0 16px}
+
+/* ---------- barra ---------- */
+.barra{position:sticky;top:0;z-index:10;background:rgba(7,9,12,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea)}
+.barra .marco{display:flex;align-items:center;justify-content:space-between;gap:16px;height:52px}
+.logo{font-size:12px;letter-spacing:.34em;color:var(--ok);font-weight:600}
+.barra nav{display:flex;gap:18px;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
+.barra nav a{color:var(--tenue)}
+@media(max-width:700px){.barra nav{display:none}}
+
+/* ---------- héroe ---------- */
+.heroe{padding:56px 0 40px;border-bottom:1px solid var(--linea)}
+.heroe .marco{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:40px;align-items:center}
+@media(max-width:860px){.heroe{padding:36px 0 28px}.heroe .marco{grid-template-columns:1fr;gap:26px}}
+.ojo{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--apagado);margin-bottom:12px}
+h1{margin:0 0 14px;font:600 30px/1.22 var(--mono);letter-spacing:-.01em;color:var(--claro)}
+@media(max-width:860px){h1{font-size:24px}}
+.entrada{font:16px/1.6 var(--sans);color:var(--texto);max-width:56ch;margin:0 0 20px}
+.entrada b{color:var(--claro);font-weight:500}
+.acciones{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.boton{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 18px;border:1px solid var(--ok);color:var(--ok);font-size:12px;letter-spacing:.06em;background:transparent;cursor:pointer;font-family:var(--mono)}
+.boton:hover{background:rgba(78,201,176,.1);color:var(--claro)}
+.boton.secundario{border-color:var(--linea);color:var(--tenue)}
+.boton.secundario:hover{border-color:var(--tenue);color:var(--texto);background:transparent}
+
+/* ---------- ficha de precio ---------- */
+.ficha{background:var(--panel);border:1px solid var(--linea);padding:20px}
+.ficha .k{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--apagado);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pulso{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.14em;color:var(--ok)}
+.pulso i{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;animation:latir 2.4s ease-in-out infinite}
+.pulso.frio{color:var(--tenue)}.pulso.frio i{background:var(--tenue);animation:none}
+@keyframes latir{0%,100%{opacity:1}50%{opacity:.25}}
+@media(prefers-reduced-motion:reduce){.pulso i{animation:none}}
+.precio{font-size:44px;line-height:1.05;color:var(--claro);font-weight:500;letter-spacing:-.02em;margin:12px 0 2px;font-variant-numeric:tabular-nums;text-shadow:0 0 30px rgba(34,160,134,.22)}
+.precio small{font-size:18px;color:var(--tenue);font-weight:400}
+.precio-pie{font-size:11px;color:var(--tenue);min-height:17px}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--linea);border:1px solid var(--linea);margin-top:16px}
+.mini div{background:var(--panel);padding:9px 11px}
+.mini .e{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--apagado)}
+.mini .v{font-size:15px;color:var(--claro);font-variant-numeric:tabular-nums;margin-top:3px}
+
+/* ---------- secciones ---------- */
+section{padding:48px 0;border-bottom:1px solid var(--linea)}
+.titulo{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--apagado);margin:0 0 6px}
+h2{margin:0 0 10px;font:600 21px/1.3 var(--mono);color:var(--claro);letter-spacing:-.005em}
+.bajada{font:14.5px/1.65 var(--sans);color:var(--tenue);max-width:64ch;margin:0 0 26px}
+.bajada b{color:var(--texto);font-weight:500}
+
+.rejilla{display:grid;grid-template-columns:minmax(0,2fr) minmax(260px,1fr);gap:14px;align-items:start}
+@media(max-width:860px){.rejilla{grid-template-columns:1fr}}
+.rejilla>*,.tres>*,.motores>*{min-width:0}
+.tarjeta{background:var(--panel);border:1px solid var(--linea);padding:14px 15px;min-width:0}
+.tarjeta h3{margin:0 0 12px;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--apagado);font-weight:500;padding-bottom:8px;border-bottom:1px solid var(--linea);display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.leyenda{display:flex;gap:14px;font-size:10px;letter-spacing:0;text-transform:none;color:var(--tenue);flex-wrap:wrap}
+.leyenda span{display:inline-flex;align-items:center;gap:6px}
+.leyenda i{display:inline-block;width:14px;height:2px;background:currentColor;flex:none}
+.leyenda .caja i{height:8px;background:var(--banda);border:1px solid var(--linea)}
+
+.grafico{position:relative}
+.grafico svg{display:block;width:100%;height:auto;overflow:visible}
+@media(max-width:600px){.grafico{overflow-x:auto}.grafico svg{min-width:560px}}
+
+table.niveles{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.niveles td{padding:7px 0;border-top:1px dotted var(--linea-suave);vertical-align:baseline}
+table.niveles tr:first-child td{border-top:0}
+table.niveles td:first-child{overflow-wrap:anywhere}
+table.niveles td:last-child{text-align:right;color:var(--claro);font-weight:500;white-space:nowrap;width:1%;padding-left:10px}
+table.niveles .sub{display:block;font-size:10px;color:var(--apagado);margin-top:2px;overflow-wrap:anywhere}
+table.niveles tr.alta td:last-child{color:var(--ok)}
+table.niveles tr.baja td:last-child{color:var(--critico)}
+.pastilla{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;border:1px solid}
+.pastilla i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block;flex:none}
+.pastilla.ok{color:var(--ok);border-color:rgba(78,201,176,.35)}
+.pastilla.aviso{color:var(--aviso);border-color:rgba(215,165,90,.35)}
+.pastilla.critico{color:var(--critico);border-color:rgba(209,96,94,.35)}
+
+/* ---------- capa de pago ---------- */
+.cerrado{position:relative}
+.cerrado .tapa{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px;
+  background:radial-gradient(ellipse at center,rgba(7,9,12,.94) 0%,rgba(7,9,12,.86) 45%,rgba(7,9,12,.62) 100%)}
+.cerrado .tapa .t{font-size:13px;color:var(--claro)}
+.cerrado .tapa .s{font-size:11.5px;color:var(--tenue);max-width:44ch;font-family:var(--sans);line-height:1.6}
+.borroso{filter:blur(3px);opacity:.72;user-select:none;pointer-events:none}
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media(max-width:860px){.tres{grid-template-columns:1fr}}
+table.mini2{width:100%;border-collapse:collapse;font-size:11.5px;font-variant-numeric:tabular-nums}
+table.mini2 th{text-align:left;font-weight:500;color:var(--apagado);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:0 6px 5px 0}
+table.mini2 td{padding:4px 6px 4px 0;border-top:1px dotted var(--linea-suave)}
+table.mini2 td:not(:first-child),table.mini2 th:not(:first-child){text-align:right}
+table.mini2 b{color:var(--claro);font-weight:500}
+
+/* ---------- motores ---------- */
+.motores{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media(max-width:860px){.motores{grid-template-columns:1fr}}
+.motor{background:var(--panel);border:1px solid var(--linea);padding:16px 16px 18px}
+.motor .n{font-size:10px;letter-spacing:.2em;color:var(--s1)}
+.motor h3{margin:8px 0 8px;font-size:15px;color:var(--claro);font-weight:500;letter-spacing:0;border:0;padding:0;text-transform:none}
+.motor p{margin:0;font:13px/1.65 var(--sans);color:var(--tenue)}
+.motor p b{color:var(--texto);font-weight:500}
+
+/* ---------- honestidad ---------- */
+.lista{display:grid;gap:12px;max-width:70ch}
+.lista li{list-style:none;display:grid;grid-template-columns:20px 1fr;gap:12px;align-items:start;font:13.5px/1.65 var(--sans);color:var(--tenue)}
+.lista li b{color:var(--texto);font-weight:500}
+.lista ul{margin:0;padding:0}
+.marca{margin-top:5px}
+
+/* ---------- pie ---------- */
+footer{padding:34px 0 46px;font-size:11px;color:var(--apagado);line-height:1.7}
+footer .marco{display:grid;gap:16px}
+.legal{font:11.5px/1.7 var(--sans);color:var(--apagado);max-width:78ch;border:1px solid var(--linea);padding:14px 15px;background:var(--panel)}
+.legal b{color:var(--tenue);font-weight:500}
+.pie-fila{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;border-top:1px solid var(--linea);padding-top:14px}
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="marco">
+    <span class="logo">JARVIS</span>
+    <nav>
+      <a href="#en-vivo">En vivo</a>
+      <a href="#motor">El motor</a>
+      <a href="#como">Cómo funciona</a>
+      <a href="#limites">Lo que no es</a>
+      <a href="#acceso">Acceso</a>
+    </nav>
+    <span class="pulso frio" id="pulso-barra"><i></i><span id="pulso-texto">conectando</span></span>
+  </div>
+</header>
+
+<div class="heroe">
+  <div class="marco">
+    <div>
+      <div class="ojo">Lectura sistemática · Ethereum · datos públicos de mercado</div>
+      <h1>El precio no dice nada.<br>La distribución sí.</h1>
+      <p class="entrada">
+        Cada día, tres modelos independientes leen <b>2.804 velas diarias de ETH desde 2019</b> y responden
+        una sola pregunta: dado dónde está el precio hoy, <b>qué probabilidad hay de tocar el nivel de entrada
+        antes que el de salida</b>. No es una opinión ni una señal de un grupo de Telegram. Es un cálculo
+        reproducible, con semilla fija e intervalos de confianza, que admite cuándo no sabe.
+      </p>
+      <div class="acciones">
+        <a class="boton" href="#en-vivo">Ver el estado de hoy</a>
+        <a class="boton secundario" href="#como">Cómo se calcula</a>
+      </div>
+    </div>
+
+    <div class="ficha">
+      <div class="k">
+        <span>ETH / USD</span>
+        <span class="pulso frio" id="pulso-ficha"><i></i><span id="fuente-precio">cargando</span></span>
+      </div>
+      <div class="precio" id="precio">—</div>
+      <div class="precio-pie" id="precio-pie">Consultando la cotización…</div>
+      <div class="mini">
+        <div><div class="e">Mínimo del día</div><div class="v" id="min-dia">—</div></div>
+        <div><div class="e">Máximo del día</div><div class="v" id="max-dia">—</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="en-vivo">
+  <div class="marco">
+    <p class="titulo">Capa abierta</p>
+    <h2>Lo que se ve sin pagar</h2>
+    <p class="bajada">
+      El régimen, los niveles del sistema y el gráfico están abiertos, siempre. Son la parte del trabajo que
+      cualquiera puede reproducir con precios públicos y una hoja de cálculo. <b>Lo que se cobra es lo otro:</b>
+      la distribución de resultados y la tasa base histórica, que requieren el motor.
+    </p>
+
+    <div class="rejilla">
+      <div class="tarjeta">
+        <h3>
+          <span>Cierre diario · canal Donchian de 20 días</span>
+          <span class="leyenda">
+            <span style="color:var(--s1)"><i></i>Cierre</span>
+            <span style="color:var(--s2)"><i></i>SMA-200</span>
+            <span class="caja" style="color:var(--tenue)"><i></i>Canal 20 d</span>
+          </span>
+        </h3>
+        <div class="grafico" id="grafico"></div>
+      </div>
+
+      <div class="tarjeta">
+        <h3><span>Estado y niveles</span><span id="fecha-datos" style="color:var(--apagado)">—</span></h3>
+        <table class="niveles">
+          <tr><td>Régimen<span class="sub" id="regimen-desc">—</span></td><td><span class="pastilla aviso" id="regimen"><i></i>—</span></td></tr>
+          <tr class="alta"><td>Entrada del sistema<span class="sub">cierre diario por encima del máximo de 20 días</span></td><td id="nivel-entrada">—</td></tr>
+          <tr class="baja"><td>Salida del sistema<span class="sub">cierre por debajo del mínimo de 10 días</span></td><td id="nivel-salida">—</td></tr>
+          <tr><td>ATR-14<span class="sub">volatilidad media diaria reciente</span></td><td id="nivel-atr">—</td></tr>
+          <tr><td>SMA-50 / SMA-200<span class="sub">medias de 50 y 200 días</span></td><td id="nivel-smas">—</td></tr>
+          <tr><td>Historial usado<span class="sub" id="historial-desde">—</span></td><td id="historial-velas">—</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="motor">
+  <div class="marco">
+    <p class="titulo">Capa cerrada</p>
+    <h2>Lo que hay detrás del muro</h2>
+    <p class="bajada">
+      Tres estimaciones independientes de la misma probabilidad, la tasa base del sistema desde 2019 con sus
+      intervalos de confianza, y la distribución del retorno a 20 días. <b>Se muestran las etiquetas reales
+      y se ocultan los números</b>, porque eso es exactamente lo que se vende.
+    </p>
+
+    <div class="cerrado">
+      <div class="borroso">
+        <div class="tres">
+          <div class="tarjeta">
+            <h3><span>Régimen · modelo oculto de Markov</span></h3>
+            <table class="mini2">
+              <tr><th>Estado</th><th>Vol. anual</th><th>Hoy</th></tr>
+              <tr><td>calma</td><td>29 %</td><td><b>19 %</b></td></tr>
+              <tr><td>normal</td><td>74 %</td><td><b>78 %</b></td></tr>
+              <tr><td>turbulencia</td><td>176 %</td><td><b>3 %</b></td></tr>
+            </table>
+          </div>
+          <div class="tarjeta">
+            <h3><span>Barreras · 3 métodos</span></h3>
+            <table class="mini2">
+              <tr><th>Método</th><th>5 d</th><th>10 d</th><th>20 d</th></tr>
+              <tr><td>Mezcla HMM</td><td>0.41</td><td><b>0.50</b></td><td>0.53</td></tr>
+              <tr><td>Bootstrap</td><td>0.31</td><td><b>0.42</b></td><td>0.48</td></tr>
+              <tr><td>Browniano</td><td>0.43</td><td><b>0.47</b></td><td>0.47</td></tr>
+            </table>
+          </div>
+          <div class="tarjeta">
+            <h3><span>Tasa base · Turtle 20/10</span></h3>
+            <table class="mini2">
+              <tr><td>Operaciones</td><td><b>40</b></td></tr>
+              <tr><td>P(ganar) · IC 95 %</td><td><b>0.50</b></td></tr>
+              <tr><td>R media · IC 95 %</td><td><b>+1.27</b></td></tr>
+              <tr><td>Profit factor</td><td><b>3.3</b></td></tr>
+              <tr><td>Últimas 10</td><td><b>0.30</b></td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="tapa">
+        <svg width="22" height="24" viewBox="0 0 22 24" aria-hidden="true" style="opacity:.7">
+          <rect x="3" y="10" width="16" height="12" rx="2" fill="none" stroke="#4ec9b0" stroke-width="1.6"></rect>
+          <path d="M7 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="#4ec9b0" stroke-width="1.6"></path>
+        </svg>
+        <div class="t">Probabilidades, tasa base y distribución</div>
+        <div class="s">El acceso de pago todavía no está abierto. Cuando lo esté, este bloque muestra las
+          cifras del día con su intervalo de confianza y el aviso cuando el sistema cambia de estado.</div>
+        <a class="boton" href="#acceso">Cómo enterarse</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="como">
+  <div class="marco">
+    <p class="titulo">Cómo funciona</p>
+    <h2>Tres motores, ninguna opinión</h2>
+    <p class="bajada">
+      Todo el cálculo corre sobre velas diarias públicas, con semilla fija: los mismos datos producen siempre
+      el mismo resultado. El código del motor está en el repositorio, y se puede leer línea por línea.
+    </p>
+    <div class="motores">
+      <div class="motor">
+        <div class="n">01</div>
+        <h3>Régimen</h3>
+        <p>Un <b>modelo oculto de Markov gaussiano de tres estados</b>, ajustado con Baum-Welch sobre los
+          log-retornos diarios. Separa calma, normal y turbulencia por volatilidad, y dice en cuál estamos hoy
+          con su probabilidad. La elección de tres estados frente a dos se justifica por criterio de información
+          bayesiano, no por gusto.</p>
+      </div>
+      <div class="motor">
+        <div class="n">02</div>
+        <h3>Barreras</h3>
+        <p>La probabilidad de tocar el nivel de entrada antes que el de salida, estimada por <b>tres caminos
+          independientes</b>: mezcla de regímenes del modelo, bootstrap por bloques del último año y browniano
+          sin deriva con volatilidad realizada. Cuando los tres coinciden, la señal es sólida. Cuando discrepan,
+          también se dice.</p>
+      </div>
+      <div class="motor">
+        <div class="n">03</div>
+        <h3>Tasa base</h3>
+        <p>El sistema Donchian 20/10 con stop de 2×ATR, aplicado a <b>todo el historial desde 2019</b>, con
+          intervalos de Wilson sobre la tasa de acierto y bootstrap sobre el retorno medio. Incluye el
+          subconjunto condicionado a la situación exacta de hoy, y el efecto de los costos de operación.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="limites">
+  <div class="marco">
+    <p class="titulo">Antes de que preguntes</p>
+    <h2>Lo que esto no es</h2>
+    <p class="bajada">
+      La razón por la que la mayoría de los servicios de señales no dura es que promete lo que no puede cumplir.
+      Estas cuatro frases son parte del producto, no letra pequeña.
+    </p>
+    <ul class="lista">
+      <li>
+        <svg class="marca" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#d1605e" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span><b>No coloca órdenes.</b> El sistema no se conecta a ninguna cuenta para operar y no lo hará.
+        Calcula y muestra; la decisión y la ejecución son enteramente tuyas.</span>
+      </li>
+      <li>
+        <svg class="marca" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#d1605e" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span><b>No promete rentabilidad.</b> Con 40 operaciones históricas, el intervalo de confianza del
+        retorno medio incluye el cero. El propio informe lo dice cada día, con el número delante.</span>
+      </li>
+      <li>
+        <svg class="marca" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#d1605e" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span><b>No es asesoría personalizada.</b> Nadie mira tu cartera, tu tolerancia al riesgo ni tu
+        situación fiscal. Es un análisis general del mismo activo para todos los que lo leen.</span>
+      </li>
+      <li>
+        <svg class="marca" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#d1605e" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span><b>No esconde los malos resultados.</b> Las últimas diez operaciones del sistema se muestran
+        aunque hayan sido peores que la media histórica. Hoy lo son.</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section id="acceso">
+  <div class="marco">
+    <p class="titulo">Estado del proyecto</p>
+    <h2>El acceso de pago todavía no está abierto</h2>
+    <p class="bajada">
+      Prefiero decirlo antes que poner un botón que no cobra. El motor funciona y esta página se actualiza,
+      pero <b>el cobro, los planes y el aviso por correo aún no están en marcha</b>. Mientras tanto, la capa
+      abierta de arriba es real y se refresca con cada nueva vela diaria.
+    </p>
+    <div class="acciones">
+      <a class="boton" href="https://github.com/afberrezueta/tradingview-mcp" rel="noopener">Leer el código del motor</a>
+      <a class="boton secundario" href="#en-vivo">Volver al estado de hoy</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="marco">
+    <div class="legal">
+      <b>Aviso.</b> Esta página publica análisis general de un mercado, no asesoría de inversión, y no está
+      dirigida a la situación financiera de ninguna persona en particular. Nada de lo que aparece aquí es una
+      recomendación de compra o venta. Los resultados históricos y las simulaciones no predicen resultados
+      futuros; una probabilidad calculada no es una promesa. Operar con criptomonedas puede hacerte perder la
+      totalidad del capital. Los precios provienen de fuentes públicas de mercado y pueden llegar con retraso o
+      con error. Quien opere lo hace por su cuenta y bajo su propio riesgo.
+    </div>
+    <div class="pie-fila">
+      <span>Datos del motor al <span id="pie-fecha">—</span> · semilla fija, cálculo reproducible</span>
+      <span>Precio en vivo vía <span id="pie-fuente">—</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var nf0 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+  var nf2 = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var f0 = function (v) { return v == null ? '—' : nf0.format(v); };
+  var f2 = function (v) { return v == null ? '—' : nf2.format(v); };
+
+  var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  function fechaLarga(s) {
+    if (!s) return '—';
+    var p = s.split('-');
+    return parseInt(p[2], 10) + ' ' + MESES[parseInt(p[1], 10) - 1] + ' ' + p[0];
+  }
+
+  // ------------------------------------------------ capa abierta (instantánea)
+  var publico = null;
+
+  function pintarNiveles(d) {
+    var i = d.indicadores;
+    $('fecha-datos').textContent = 'cierre del ' + fechaLarga(i.fecha);
+    $('pie-fecha').textContent = fechaLarga(i.fecha);
+    $('nivel-entrada').textContent = f0(i.entrada);
+    $('nivel-salida').textContent = f0(i.salida);
+    $('nivel-atr').textContent = f0(i.atr14) + '  (' + f2(i.atr_pct) + ' %)';
+    $('nivel-smas').textContent = f0(i.sma50) + ' / ' + f0(i.sma200);
+    $('historial-velas').textContent = nf0.format(i.velas) + ' velas';
+    $('historial-desde').textContent = 'diarias, desde el ' + fechaLarga(i.desde);
+
+    var clases = { alcista: 'ok', mixto: 'aviso', bajista: 'critico' };
+    var p = $('regimen');
+    p.className = 'pastilla ' + (clases[i.regimen] || 'aviso');
+    p.innerHTML = '<i></i>' + i.regimen;
+    $('regimen-desc').textContent = i.sobre_sma200 == null
+      ? 'sin dato suficiente'
+      : 'cierre ' + (i.sobre_sma200 > 0 ? '+' : '') + f2(i.sobre_sma200) + ' % sobre la SMA-200';
+  }
+
+  // ------------------------------------------------ gráfico
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(nombre, atributos, padre) {
+    var n = document.createElementNS(NS, nombre);
+    for (var k in atributos) n.setAttribute(k, atributos[k]);
+    if (padre) padre.appendChild(n);
+    return n;
+  }
+
+  function pintarGrafico(serie) {
+    var cont = $('grafico');
+    if (!cont || !serie || !serie.length) return;
+    cont.textContent = '';
+    var W = 720, H = 320, m = { t: 14, r: 58, b: 24, l: 8 };
+    var svg = el('svg', {
+      viewBox: '0 0 ' + W + ' ' + H, role: 'img',
+      'aria-label': 'Cierre diario de ETH de los últimos ' + serie.length + ' días, con el canal Donchian de 20 días y la media de 200 días'
+    }, cont);
+
+    var lo = Infinity, hi = -Infinity;
+    serie.forEach(function (p) {
+      lo = Math.min(lo, p.b, p.c, p.s); hi = Math.max(hi, p.a, p.c, p.s);
+    });
+    var pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+    var n = serie.length;
+    var x = function (i) { return m.l + (i * (W - m.l - m.r)) / (n - 1); };
+    var y = function (v) { return m.t + ((hi - v) * (H - m.t - m.b)) / (hi - lo); };
+
+    // rejilla horizontal
+    var paso = Math.pow(10, Math.floor(Math.log10(hi - lo))) / 2;
+    for (var v = Math.ceil(lo / paso) * paso; v <= hi; v += paso) {
+      el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: '#141c24' }, svg);
+      el('text', {
+        x: W - m.r + 8, y: y(v) + 3.5, fill: '#5a6b7a', 'font-size': '10', 'font-family': 'IBM Plex Mono, monospace'
+      }, svg).textContent = nf0.format(v);
+    }
+
+    // canal Donchian como banda cerrada
+    var arriba = serie.map(function (p, i) { return x(i) + ',' + y(p.a); });
+    var abajo = serie.map(function (p, i) { return x(i) + ',' + y(p.b); }).reverse();
+    el('path', { d: 'M' + arriba.join('L') + 'L' + abajo.join('L') + 'Z', fill: 'rgba(200,212,222,.055)', stroke: '#1b2530' }, svg);
+
+    // SMA-200 y cierre
+    el('path', {
+      d: 'M' + serie.map(function (p, i) { return x(i) + ',' + y(p.s); }).join('L'),
+      stroke: '#b9843a', 'stroke-width': 2, fill: 'none'
+    }, svg);
+    el('path', {
+      d: 'M' + serie.map(function (p, i) { return x(i) + ',' + y(p.c); }).join('L'),
+      stroke: '#22a086', 'stroke-width': 2, fill: 'none', 'stroke-linejoin': 'round'
+    }, svg);
+
+    // etiquetas de mes
+    serie.forEach(function (p, i) {
+      if (p.d.slice(8, 10) === '01') {
+        el('text', {
+          x: x(i), y: H - 6, fill: '#5a6b7a', 'font-size': '10', 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono, monospace'
+        }, svg).textContent = MESES[parseInt(p.d.slice(5, 7), 10) - 1];
+      }
+    });
+
+    // último cierre
+    var u = serie[n - 1];
+    el('circle', { cx: x(n - 1), cy: y(u.c), r: 3.5, fill: '#22a086', stroke: '#0c1015', 'stroke-width': 2 }, svg);
+    el('text', {
+      x: x(n - 1) + 7, y: y(u.c) + 4, fill: '#c8d4de', 'font-size': '10.5', 'font-weight': '600', 'font-family': 'IBM Plex Mono, monospace'
+    }, svg).textContent = nf0.format(u.c);
+  }
+
+  // ------------------------------------------------ precio en vivo
+  function estadoPulso(vivo, texto) {
+    ['pulso-barra', 'pulso-ficha'].forEach(function (id) {
+      var e = $(id);
+      if (e) e.className = 'pulso' + (vivo ? '' : ' frio');
+    });
+    $('pulso-texto').textContent = vivo ? 'en vivo' : texto;
+  }
+
+  function pintarPrecio(q) {
+    var entero = Math.floor(q.precio);
+    var dec = Math.round((q.precio - entero) * 100);
+    $('precio').innerHTML = '$' + nf0.format(entero) + '<small>.' + String(dec).padStart(2, '0') + '</small>';
+    var partes = [];
+    if (q.cambio_pct != null) partes.push((q.cambio_pct > 0 ? '+' : '') + f2(q.cambio_pct) + ' % hoy');
+    if (q.hora_utc) partes.push(q.hora_utc + ' UTC');
+    $('precio-pie').textContent = partes.join(' · ') || 'sin marca de tiempo';
+    $('min-dia').textContent = q.min_dia == null ? '—' : f0(q.min_dia);
+    $('max-dia').textContent = q.max_dia == null ? '—' : f0(q.max_dia);
+    $('fuente-precio').textContent = q.fuente || 'fuente pública';
+    $('pie-fuente').textContent = q.fuente || 'fuente pública';
+  }
+
+  function respaldo() {
+    if (!publico) return;
+    var r = publico.cotizacion_respaldo || {};
+    if (r.precio) {
+      pintarPrecio({
+        precio: r.precio, cambio_pct: null, min_dia: null, max_dia: null,
+        hora_utc: r.hora_utc, fuente: 'instantánea guardada'
+      });
+    } else if (publico.indicadores) {
+      pintarPrecio({
+        precio: publico.indicadores.cierre, cambio_pct: null, min_dia: null, max_dia: null,
+        hora_utc: null, fuente: 'último cierre diario'
+      });
+    }
+    $('precio-pie').textContent = 'sin conexión con la fuente en vivo · último dato guardado';
+    estadoPulso(false, 'sin conexión');
+  }
+
+  function refrescarPrecio() {
+    fetch('/api/precio', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); })
+      .then(function (q) {
+        if (!q || !q.en_vivo || q.precio == null) throw new Error('sin dato en vivo');
+        pintarPrecio(q);
+        estadoPulso(true);
+      })
+      .catch(respaldo);
+  }
+
+  // ------------------------------------------------ arranque
+  fetch('datos/publico.json', { cache: 'no-cache' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      publico = d;
+      pintarNiveles(d);
+      pintarGrafico(d.serie);
+      refrescarPrecio();
+      setInterval(refrescarPrecio, 30000);
+    })
+    .catch(function () {
+      $('precio-pie').textContent = 'No se pudieron cargar los datos. Recarga la página.';
+      estadoPulso(false, 'sin datos');
+    });
+})();
+</script>
+</body>
+</html>
