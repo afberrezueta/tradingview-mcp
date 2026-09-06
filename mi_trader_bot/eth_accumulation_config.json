@@ -1,12 +1,22 @@
 {
-  "_comment": "ETH accumulation engine (tesis: tokenización/CLARITY). capital_usd=3000 es el presupuesto INICIAL del motor de tramos — ajústalo a tu número real; los tramos se recalculan solos. Zonas calculadas en cada run desde data/historical_10y/ETHUSD_10y_daily.csv + precio vivo.",
+  "_comment": "ETH accumulation engine (tesis: tokenizacion/CLARITY). Tesis CONFIRMADA por Andres (6-sep-2026): acumular el drawdown actual desde el maximo (~$4,715-4,950), NO esperar una caida futura desde niveles recientes. Por eso swing_lookback_days=365 y no 90: con 90 dias el swing high era $2,516 y el motor no habria comprado nada. capital_usd es el presupuesto del motor de tramos.",
   "asset": "ETHUSD",
   "coinbase_base": "ETH",
   "capital_usd": 3000,
   "num_tranches": 4,
-  "tranche_pcts": [20, 25, 30, 25],
-  "tranche_drawdown_levels_pct": [-30, -40, -50, -60],
-  "swing_lookback_days": 90,
+  "tranche_pcts": [
+    20,
+    25,
+    30,
+    25
+  ],
+  "tranche_drawdown_levels_pct": [
+    -30,
+    -40,
+    -50,
+    -60
+  ],
+  "swing_lookback_days": 365,
   "major_drawdown_threshold_pct": -30,
   "zone_band_pct": 1.5,
   "thesis_invalidation_fib_level": 0.786,
