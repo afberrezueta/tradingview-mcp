@@ -191,12 +191,16 @@ renombra sus herramientas, actualiza esa lista.
 
 ## 6. Lectura de ETH (la página de análisis)
 
-`analisis/` trae la página terminada (`eth.html`) con la última instantánea de
-datos, el motor probabilístico (`motor_probabilidad.py`, necesita numpy:
-`pip3 install numpy`) y el generador (`eth_pagina.py`). Se abre desde la
-pestaña **ETH** del HUD o con `open ~/jarvis/analisis/eth.html`. Genera el
-HUD primero (sección 3): el enlace **Panel** de la página apunta a
-`hud/hud.html` y hasta entonces no existe.
+`analisis/` trae el motor probabilístico (`motor_probabilidad.py`, necesita
+numpy: `pip3 install numpy`), el generador (`eth_pagina.py`) y el exportador de
+la web (`exportar_web.py`). La página `eth.html` y la salida del motor
+`datos/motor_resultados.json` **no se versionan**: vienen en el zip, pero un
+clon de git no las trae y se regeneran con los pasos de abajo. Es a propósito:
+el repositorio es público y el resultado del día es lo que se cobra.
+
+La página se abre desde la pestaña **ETH** del HUD o con
+`open ~/jarvis/analisis/eth.html`. Genera el HUD primero (sección 3): el enlace
+**Panel** de la página apunta a `hud/hud.html` y hasta entonces no existe.
 
 Para refrescarla con datos del día, en Claude Code desde `~/jarvis`:
 
@@ -254,13 +258,19 @@ aquí, y la regla dura 3 sigue intacta: el HUD nunca se publica.
 |---|---|---|
 | `web/index.html` | navegador del visitante | La página. Capa abierta visible, capa de pago tapada. |
 | `web/datos/publico.json` | estático | Régimen, niveles y serie de precio. Lo genera `exportar_web.py`. |
-| `web/datos/motor.json` | estático | Probabilidades y tasa base. Generado, todavía no revelado. |
+| `privado/motor.json` | solo en el Mac | Probabilidades y tasa base: la capa que se cobra. Fuera de `web/` y sin versionar. |
 | `api/precio.js` | función serverless de Vercel | Cotización en vivo. Cachea 20 s en el borde. |
 | `vercel.json` | despliegue | Fija el proyecto como sitio estático sin framework. |
 
 **Por qué está partido así.** El motor tarda unos 80 segundos en correr: no cabe
 en una función serverless, así que su resultado se publica como instantánea
 desde el Mac. El precio sí es barato de consultar, así que va en vivo.
+
+**Por qué la capa de pago no está en `web/`.** Todo lo que vive bajo `web/`
+queda descargable por cualquiera que adivine la URL, y además este repositorio
+es público: cualquier archivo versionado se lee desde GitHub. Por eso el
+resultado del motor sale a `privado/`, que está en `.gitignore`. Lo que sí es
+público es el código del motor. Se vende el cálculo del día, no el método.
 
 **Para que el precio venga de FMP** (la misma fuente que usa el motor, para que
 web y análisis no se contradigan), añade la clave en Vercel:

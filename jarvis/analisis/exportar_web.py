@@ -2,20 +2,25 @@
 """
 Exporta las salidas del motor a JSON estáticos que sirve la web pública (web/datos/).
 
-Separa lo público de lo privado a propósito:
-  publico.json  — régimen, niveles, serie de precio. Es lo que ve cualquiera.
-  motor.json    — probabilidades y tasa base. Es lo que se cobra.
-Ninguno de los dos contiene datos de portafolio: todo se deriva de precios públicos.
+Separa lo público de lo que se cobra, y los escribe en sitios distintos a propósito:
+  web/datos/publico.json  — régimen, niveles, serie de precio. Se publica.
+  privado/motor.json      — probabilidades y tasa base. NO se publica ni se versiona.
+
+La capa de pago no puede vivir dentro de web/: todo lo que hay ahí queda
+descargable por cualquiera que sepa la URL, y el repositorio es público. Se
+vende el cálculo del día, no el método: el método está en el código, a la vista.
 
 Uso:  python3 exportar_web.py            (desde jarvis/analisis/)
-      python3 exportar_web.py --salida ../../web/datos
+      python3 exportar_web.py --salida ../../web/datos --privado ../../privado
 """
 import csv, json, math, sys, os
 from pathlib import Path
 
 AQUI = Path(__file__).resolve().parent
 DATOS = AQUI / "datos"
-SALIDA_POR_DEFECTO = AQUI.parent.parent / "web" / "datos"
+RAIZ = AQUI.parent.parent
+SALIDA_POR_DEFECTO = RAIZ / "web" / "datos"
+PRIVADO_POR_DEFECTO = RAIZ / "privado"
 
 
 def leer_json(nombre):
@@ -94,7 +99,9 @@ def serie(filas, dias=180):
 
 def main():
     salida = Path(sys.argv[sys.argv.index("--salida") + 1]) if "--salida" in sys.argv else SALIDA_POR_DEFECTO
+    privado = Path(sys.argv[sys.argv.index("--privado") + 1]) if "--privado" in sys.argv else PRIVADO_POR_DEFECTO
     salida.mkdir(parents=True, exist_ok=True)
+    privado.mkdir(parents=True, exist_ok=True)
 
     filas = leer_velas()
     ind = indicadores(filas)
@@ -117,7 +124,7 @@ def main():
     if motor:
         b = motor.get("barreras", {})
         tb = motor.get("tasa_base", {})
-        privado = dict(
+        pago = dict(
             fecha_datos=motor.get("fecha_datos"),
             velas=motor.get("velas"),
             semilla=motor.get("semilla"),
@@ -130,8 +137,9 @@ def main():
             tasa_base={k: v for k, v in tb.items() if k != "abierta"},
             distribucion=motor.get("distribucion"),
         )
-        (salida / "motor.json").write_text(json.dumps(privado, separators=(",", ":")), encoding="utf-8")
-        print(f"escrito {salida/'motor.json'}")
+        destino = privado / "motor.json"
+        destino.write_text(json.dumps(pago, separators=(",", ":")), encoding="utf-8")
+        print(f"escrito {destino}  (capa de pago: fuera de web/, sin versionar)")
     else:
         print("aviso: no hay motor_resultados.json; la web mostrará solo la capa pública")
 

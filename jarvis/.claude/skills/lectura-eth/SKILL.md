@@ -78,7 +78,8 @@ UTC. Convierte siempre antes de guardar.
    pestaña ETH del HUD (genera el HUD antes para que el enlace Panel exista).
 6. **Web pública.** Desde `analisis/`, `python3 exportar_web.py` escribe
    `web/datos/publico.json` (régimen, niveles y serie: la capa abierta) y
-   `web/datos/motor.json` (probabilidades y tasa base: la capa de pago).
+   `privado/motor.json` (probabilidades y tasa base: la capa de pago, que no se
+   versiona ni se publica porque este repositorio es público).
    Para que el sitio publicado se actualice hay que subirlo, porque Vercel
    despliega en cada empujón a la rama:
 

@@ -5,3 +5,10 @@ temp_*
 *.log
 discovery-log.json
 rules.json
+
+# La capa que se cobra nunca se versiona: este repositorio es público.
+# Se publica el método (el código del motor), no el resultado del día.
+privado/
+web/datos/motor.json
+jarvis/analisis/datos/motor_resultados.json
+jarvis/analisis/eth.html
