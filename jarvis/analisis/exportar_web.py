@@ -44,6 +44,23 @@ def sma(valores, periodo, i):
     return sum(valores[i - periodo + 1:i + 1]) / periodo
 
 
+def rsi14(c, i, p=14):
+    ag = sum(max(c[k] - c[k - 1], 0) for k in range(1, p + 1)) / p
+    al = sum(max(c[k - 1] - c[k], 0) for k in range(1, p + 1)) / p
+    for k in range(p + 1, i + 1):
+        ch = c[k] - c[k - 1]
+        ag = (ag * (p - 1) + max(ch, 0)) / p
+        al = (al * (p - 1) + max(-ch, 0)) / p
+    return 100.0 if al == 0 else 100 - 100 / (1 + ag / al)
+
+
+def vol20(c, i):
+    r = [math.log(c[k] / c[k - 1]) for k in range(i - 19, i + 1)]
+    m = sum(r) / len(r)
+    var = sum((x - m) ** 2 for x in r) / (len(r) - 1)
+    return math.sqrt(var * 365) * 100
+
+
 def indicadores(filas):
     """Régimen y niveles: derivados solo de precio, sin el motor. Esto es lo público."""
     c = [float(r["close"]) for r in filas]
@@ -74,6 +91,8 @@ def indicadores(filas):
         atr_pct=round(a / c[i] * 100, 2),
         entrada=round(entrada, 2),
         salida=round(salida, 2),
+        rsi14=round(rsi14(c, i), 1),
+        vol20_anual=round(vol20(c, i), 1),
         velas=len(c),
         desde=filas[0]["fecha"],
     )
@@ -108,6 +127,22 @@ def main():
     cot = leer_json("eth_cotizacion.json") or {}
     motor = leer_json("motor_resultados.json")
 
+    # La auditoría de calibración es la prueba, no el producto: se publica entera.
+    # Convence a quien duda, y el que la lee todavía no sabe la probabilidad de hoy.
+    auditoria = None
+    ruta_cal = RAIZ / "privado" / "calibracion.json"
+    if ruta_cal.exists():
+        with open(ruta_cal, encoding="utf-8") as f:
+            cal = json.load(f)
+        auditoria = dict(
+            generado=cal.get("generado"),
+            horizonte=cal.get("horizonte"),
+            metodo=cal.get("metodo"),
+            calibracion=cal.get("calibracion"),
+            tasa_base=cal.get("tasa_base"),
+            persistencia=cal.get("persistencia"),
+        )
+
     publico = dict(
         simbolo="ETHUSD",
         generado=ind["fecha"],
@@ -118,6 +153,14 @@ def main():
             fuente=cot.get("fuente"),
         ),
         serie=serie(filas),
+        auditoria=auditoria,
+        # Una sola celda de la tabla de pago se deja a la vista, siempre la misma.
+        # Regalar uno de nueve números demuestra que la tabla existe sin vaciarla.
+        muestra=(lambda b: dict(
+            metodo="Mezcla de régimen (HMM)", horizonte_dias=20,
+            p_entrada_primero=b["hmm"]["20"]["p_entrada_primero"],
+            p_salida_primero=b["hmm"]["20"]["p_salida_primero"],
+        ) if motor and "hmm" in b and "20" in b["hmm"] else None)((motor or {}).get("barreras", {})),
     )
     (salida / "publico.json").write_text(json.dumps(publico, separators=(",", ":")), encoding="utf-8")
 
