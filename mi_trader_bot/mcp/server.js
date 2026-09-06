@@ -13,19 +13,21 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import * as lib from './lib.js';
+import * as cq from './cryptoquant.js';
 
 const server = new McpServer(
   { name: 'mi-trader-bot', version: '1.0.0', description: 'Motores de trading de mi_trader_bot: zonas ETH, señales Donchian/TJL, backtests, estado y Telegram' },
   {
     instructions: `mi-trader-bot MCP — herramientas de análisis del bot de trading personal.
 
-- bot_eth_zones → escalera de tramos de acumulación de ETH (swing high 90d, drawdown, tramo activo). Pasa current_price con el precio vivo de Robinhood/Coinbase para precisión; sin él usa el último cierre del CSV.
+- bot_eth_zones → escalera de tramos de acumulación de ETH (swing high (ventana configurable, hoy 365d), drawdown, tramo activo). Pasa current_price con el precio vivo de Robinhood/Coinbase para precisión; sin él usa el último cierre del CSV.
 - bot_donchian_signal → señal del motor Agentic para un símbolo (ruptura Donchian20, ATR, stop, régimen TQQQ/SOXL, sizing opcional).
 - bot_tjl_signal → señal TJL v2 aproximada a diario (ruptura, SMA200, semanal, volumen) con cada filtro desglosado.
 - bot_backtest → backtest de cartera de un motor ('agentic' o 'tjl') sobre los CSVs de 10 años; parámetros opcionales de universo y riesgo.
 - bot_scan_status → últimos reportes de agentic_scan/eth_scan y estado de tramos ejecutados.
 - bot_list_symbols → símbolos con datos históricos disponibles.
 - bot_telegram_send → envía un mensaje al Telegram del bot (misma credencial que los scans). ÚSALO solo cuando el usuario pida notificar.
+- bot_onchain_netflow / bot_onchain_valuation → métricas on-chain de CryptoQuant (flujo neto de exchanges, MVRV, SOPR) para respaldar o refutar la tesis de acumulación. Requieren CRYPTOQUANT_API_KEY (plan Professional).
 
 Todo excepto bot_telegram_send es de solo lectura y opera sobre datos locales. Este servidor NO ejecuta órdenes en ningún broker.`,
   },
@@ -39,7 +41,7 @@ const fail = (err) => jsonResult({ success: false, error: err.message }, true);
 
 server.tool(
   'bot_eth_zones',
-  'Calcula la escalera de tramos de acumulación de ETH: swing high de 90 días, drawdown actual, precio objetivo/importe/estado de cada tramo y cuál está activo. Pasa current_price (precio vivo) para precisión; sin él usa el último cierre del CSV local.',
+  'Calcula la escalera de tramos de acumulación de ETH: swing high del periodo configurado (hoy 365 días), drawdown actual, precio objetivo/importe/estado de cada tramo y cuál está activo. Pasa current_price (precio vivo) para precisión; sin él usa el último cierre del CSV local.',
   { current_price: z.coerce.number().positive().optional().describe('Precio actual de ETH-USD (ej. 2452.83). Opcional.') },
   async ({ current_price }) => {
     try { return jsonResult(lib.ethZones({ currentPrice: current_price })); }
@@ -112,6 +114,52 @@ server.tool(
   { message: z.string().min(1).max(4096).describe('Texto del mensaje (máx 4096 caracteres).') },
   async ({ message }) => {
     try { return jsonResult(await lib.telegramSend(message)); }
+    catch (err) { return fail(err); }
+  },
+);
+
+server.tool(
+  'bot_onchain_netflow',
+  'Flujo neto de un activo hacia/desde exchanges (CryptoQuant). Netflow negativo = retiradas netas (sesgo acumulación); positivo = depósitos netos (sesgo distribución). Útil para confirmar si la tesis de acumulación la acompaña el resto del mercado. Requiere CRYPTOQUANT_API_KEY.',
+  {
+    asset: z.string().default('eth').describe("Activo: 'eth', 'btc'. Default eth."),
+    window: z.enum(['day', 'hour', 'block']).default('day').describe('Granularidad. Default day.'),
+    exchange: z.string().default('all_exchange').describe("Exchange o 'all_exchange' (default)."),
+    limit: z.coerce.number().int().min(1).max(100).default(14).describe('Puntos a devolver (default 14).'),
+  },
+  async (args) => {
+    try { return jsonResult(await cq.exchangeNetflow(args)); }
+    catch (err) { return fail(err); }
+  },
+);
+
+server.tool(
+  'bot_onchain_valuation',
+  'Indicadores de valoración on-chain de CryptoQuant: MVRV (market value / realized value — bajo 1 es zona histórica de suelo) y SOPR (bajo 1 = ventas en pérdida / capitulación). Devuelve ambos. Requiere CRYPTOQUANT_API_KEY.',
+  {
+    asset: z.string().default('eth').describe("Activo: 'eth', 'btc'. Default eth."),
+    limit: z.coerce.number().int().min(1).max(100).default(14).describe('Puntos por métrica (default 14).'),
+  },
+  async ({ asset, limit }) => {
+    const out = { success: true, asset };
+    try { out.mvrv = await cq.mvrv({ asset, limit }); }
+    catch (err) { out.mvrv = { success: false, error: err.message }; }
+    try { out.sopr = await cq.sopr({ asset, limit }); }
+    catch (err) { out.sopr = { success: false, error: err.message }; }
+    const bothFailed = out.mvrv.success === false && out.sopr.success === false;
+    return jsonResult(out, bothFailed);
+  },
+);
+
+server.tool(
+  'bot_onchain_metric',
+  'Llamada genérica a cualquier endpoint de la CryptoQuant Data API, para métricas no cubiertas por las herramientas específicas. Pasa la ruta sin /v1 (ej. "eth/network-indicator/nupl") y los parámetros del endpoint. Consulta cryptoquant.dev/resource/api para las rutas. Requiere CRYPTOQUANT_API_KEY.',
+  {
+    path: z.string().min(1).describe('Ruta del endpoint sin /v1, ej. "eth/network-indicator/nupl".'),
+    params: z.record(z.string(), z.string()).optional().describe('Parámetros de query del endpoint, ej. {"window":"day","limit":"10"}.'),
+  },
+  async ({ path, params }) => {
+    try { return jsonResult({ success: true, path, data: await cq.fetchMetric(path, params || {}) }); }
     catch (err) { return fail(err); }
   },
 );

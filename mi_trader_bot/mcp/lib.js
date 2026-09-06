@@ -167,7 +167,7 @@ export function ethZones({ currentPrice } = {}) {
     config_source: source,
     price_used: +price.toFixed(2),
     price_source: currentPrice ? 'caller' : `último cierre CSV (${rows[rows.length - 1].date})`,
-    swing_high_90d: +swingHigh.toFixed(2),
+    swing_high: +swingHigh.toFixed(2),
     drawdown_from_swing_pct: +drawdownPct.toFixed(2),
     capital_usd: capital,
     tranches,

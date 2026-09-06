@@ -26,11 +26,15 @@ disponible en cualquier directorio.)
 | `bot_scan_status` | Últimos reportes de `agentic_scan`/`eth_scan`, colas de logs y `eth_state.json`. |
 | `bot_list_symbols` | Símbolos con CSV disponible. |
 | `bot_telegram_send` | Envía un mensaje al Telegram del bot (única herramienta con efecto externo). |
+| `bot_onchain_netflow` | Flujo neto de exchanges (CryptoQuant): negativo = acumulación, positivo = distribución. |
+| `bot_onchain_valuation` | MVRV y SOPR (CryptoQuant): valoración on-chain y capitulación. |
+| `bot_onchain_metric` | Llamada genérica a cualquier endpoint de la CryptoQuant Data API. |
 
 ## Rutas
 
 - `MI_TRADER_BOT_DIR` — carpeta del bot (default `~/Documents/mi_trader_bot`): config, `.env`, `out/`.
 - `MI_TRADER_DATA_DIR` — CSVs diarios (default `<repo>/data/historical_10y`, con fallback a `$MI_TRADER_BOT_DIR/data/historical_10y`).
+- `CRYPTOQUANT_API_KEY` — clave de la CryptoQuant Data API (requiere plan Professional; el plan Free NO incluye API). Sin ella, las 3 herramientas on-chain devuelven un error accionable y el resto del servidor funciona igual.
 
 ## Evaluación
 

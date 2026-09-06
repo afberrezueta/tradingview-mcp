@@ -6,12 +6,12 @@
     <answer>23</answer>
   </qa_pair>
   <qa_pair>
-    <question>Según bot_eth_zones sin pasar precio actual, ¿cuál es el swing high de 90 días de ETHUSD en dólares?</question>
-    <answer>2515.8</answer>
+    <question>Según bot_eth_zones con la configuración vigente (ventana de 365 días), ¿cuál es el swing high de ETHUSD en dólares?</question>
+    <answer>4714.66</answer>
   </qa_pair>
   <qa_pair>
     <question>¿A qué precio objetivo en dólares está el tramo 3 (drawdown −50%) de la escalera de acumulación de ETH?</question>
-    <answer>1257.9</answer>
+    <answer>2357.33</answer>
   </qa_pair>
   <qa_pair>
     <question>¿Cuántos dólares asigna la configuración al tramo 4 (25% de un capital de $3,000) de la acumulación de ETH?</question>
