@@ -19,7 +19,7 @@ disponible en cualquier directorio.)
 
 | Tool | Qué hace |
 |---|---|
-| `bot_eth_zones` | Escalera de tramos ETH: swing high 90d, drawdown, precio/importe/estado por tramo. Pasa `current_price` con el precio vivo para precisión. |
+| `bot_eth_zones` | Escalera de tramos ETH: swing high del periodo configurado (hoy 365d), drawdown, precio/importe/estado por tramo. Pasa `current_price` con el precio vivo para precisión. |
 | `bot_donchian_signal` | Señal del motor Agentic para un símbolo: ruptura Donchian(20), ATR14, stop, régimen TQQQ/SOXL, sizing opcional. |
 | `bot_tjl_signal` | Señal TJL v2 aproximada a diario, con los 4 filtros desglosados (los filtros intradía del TJL real no se evalúan). |
 | `bot_backtest` | Backtest de cartera del motor `agentic` o `tjl`; universo/riesgo configurables. Sin breakers ni slippage — para comparar motores. |
