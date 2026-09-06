@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lectura sistemática de ETH — una lectura al día con su margen de error</title>
+<meta name="description" content="Régimen, niveles y probabilidad de barrera de Ethereum sobre velas diarias cerradas desde 2019. Se publica antes del hecho, con su intervalo de confianza, y no se corrige después.">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="Una lectura de ETH al día, con su margen de error">
+<meta property="og:description" content="Probabilidad de barrera calculada por tres métodos independientes, con la curva de calibración publicada. Nunca se coloca una orden.">
+<meta property="og:type" content="website">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#07090c">
+<link rel="icon" href="/icono.svg" type="image/svg+xml">
+<link rel="icon" href="/icono-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lectura ETH">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#07090c; --panel:#0c1015; --linea:#1b2530; --linea-suave:#141c24;
+  --texto:#c8d4de; --tenue:#7d8f9c; --apagado:#3d4a56; --claro:#eef6fa;
+  --s1:#22a086; --s2:#b9843a;
+  --ok:#4ec9b0; --aviso:#d7a55a; --critico:#d1605e;
+  --banda:rgba(200,212,222,.055);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--texto);font:13px/1.5 var(--mono);-webkit-font-smoothing:antialiased}
+a{color:var(--ok);text-decoration:none}
+a:hover{color:var(--claro)}
+:focus-visible{outline:2px solid var(--ok);outline-offset:2px}
+.marco{max-width:1080px;margin:0 auto;padding:0 16px}
+h1,h2,h3{letter-spacing:-.005em}
+
+/* barra */
+.barra{position:sticky;top:0;z-index:10;background:rgba(7,9,12,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--linea)}
+.barra .marco{display:flex;align-items:center;justify-content:space-between;gap:14px;height:50px}
+.logo{font-size:11.5px;letter-spacing:.2em;color:var(--ok);font-weight:600;white-space:nowrap}
+.barra nav{display:flex;gap:16px;font-size:11px;color:var(--tenue)}
+.barra nav a{color:var(--tenue)}
+@media(max-width:640px){.barra nav a.opcional{display:none}}
+
+/* aviso */
+.aviso{border-bottom:1px solid var(--linea);background:var(--panel)}
+.aviso .marco{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;padding-top:11px;padding-bottom:11px}
+.aviso .sello{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;border:1px solid;border-radius:999px;padding:2px 9px;flex:none}
+.aviso .t{color:var(--claro);font-size:13px}
+.aviso .d{color:var(--tenue);font:12.5px/1.5 var(--sans)}
+.aviso.alta .sello{color:var(--ok);border-color:rgba(78,201,176,.4)}
+.aviso.media .sello{color:var(--aviso);border-color:rgba(215,165,90,.4)}
+.aviso.baja .sello{color:var(--tenue);border-color:var(--linea)}
+
+/* héroe */
+.heroe{padding:52px 0 34px}
+.heroe .marco{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:36px;align-items:start}
+@media(max-width:880px){.heroe{padding:32px 0 24px}.heroe .marco{grid-template-columns:1fr;gap:24px}}
+h1{margin:0 0 16px;font:600 31px/1.24 var(--mono);color:var(--claro)}
+@media(max-width:880px){h1{font-size:24px}}
+.entrada{font:15.5px/1.62 var(--sans);color:var(--texto);max-width:54ch;margin:0 0 22px}
+.entrada b{color:var(--claro);font-weight:500}
+.acciones{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.boton{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border:1px solid var(--ok);color:var(--ok);font-size:12.5px;background:transparent;cursor:pointer;font-family:var(--mono)}
+.boton:hover{background:rgba(78,201,176,.1);color:var(--claro)}
+.boton.secundario{border-color:var(--linea);color:var(--tenue)}
+.boton.secundario:hover{border-color:var(--tenue);color:var(--texto)}
+.boton[disabled]{opacity:.45;cursor:not-allowed;border-color:var(--linea);color:var(--tenue)}
+.enlace-bajo{display:inline-block;margin-top:12px;font-size:12px;color:var(--tenue);border-bottom:1px solid var(--linea)}
+.enlace-bajo:hover{color:var(--ok);border-color:var(--ok)}
+
+/* módulo vivo */
+.vivo{background:var(--panel);border:1px solid var(--linea)}
+.vivo .cab{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--linea);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--apagado)}
+.pulso{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;letter-spacing:.12em;color:var(--ok);text-align:right}
+.pulso i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block;flex:none;animation:latir 2.4s ease-in-out infinite}
+.pulso.frio{color:var(--tenue)}.pulso.frio i{animation:none}
+@keyframes latir{0%,100%{opacity:1}50%{opacity:.25}}
+@media(prefers-reduced-motion:reduce){.pulso i{animation:none}}
+.vivo .cuerpo{padding:16px}
+.precio{font-size:40px;line-height:1.05;color:var(--claro);font-weight:500;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.precio small{font-size:17px;color:var(--tenue);font-weight:400}
+.precio-pie{font-size:11px;color:var(--tenue);margin-top:4px;min-height:16px}
+.filas{margin-top:14px;border-top:1px solid var(--linea)}
+.fila{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:9px 0;border-bottom:1px dotted var(--linea-suave)}
+.fila .e{color:var(--tenue);font-size:12px}
+.fila .v{color:var(--claro);font-variant-numeric:tabular-nums;font-weight:500;text-align:right;white-space:nowrap}
+.fila .e small{display:block;color:var(--apagado);font-size:10px;margin-top:2px}
+.pastilla{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;border:1px solid}
+.pastilla i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block;flex:none}
+.pastilla.ok{color:var(--ok);border-color:rgba(78,201,176,.35)}
+.pastilla.aviso{color:var(--aviso);border-color:rgba(215,165,90,.35)}
+.pastilla.critico{color:var(--critico);border-color:rgba(209,96,94,.35)}
+.impersonal{margin:12px 0 0;font:11.5px/1.55 var(--sans);color:var(--apagado)}
+
+/* franja */
+.franja{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);background:var(--panel)}
+.franja .marco{padding:12px 16px;font-size:11.5px;color:var(--tenue);display:flex;flex-wrap:wrap;gap:6px 20px}
+.franja b{color:var(--texto);font-weight:500}
+
+/* secciones */
+section{padding:52px 0;border-bottom:1px solid var(--linea)}
+.titulo{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--apagado);margin:0 0 8px}
+h2{margin:0 0 12px;font:600 23px/1.32 var(--mono);color:var(--claro);max-width:26ch}
+@media(max-width:880px){h2{font-size:19px}}
+.bajada{font:14.5px/1.68 var(--sans);color:var(--tenue);max-width:66ch;margin:0 0 24px}
+.bajada b{color:var(--texto);font-weight:500}
+.nota{font:12px/1.6 var(--sans);color:var(--apagado);max-width:70ch;margin:12px 0 0}
+
+.rejilla{display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:14px;align-items:start}
+@media(max-width:880px){.rejilla{grid-template-columns:1fr}}
+.rejilla>*,.motores>*,.precios>*,.prueba>*{min-width:0}
+.tarjeta{background:var(--panel);border:1px solid var(--linea);padding:14px 15px;min-width:0}
+.tarjeta h3{margin:0 0 12px;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--apagado);font-weight:500;padding-bottom:8px;border-bottom:1px solid var(--linea);display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.leyenda{display:flex;gap:12px;font-size:10px;letter-spacing:0;text-transform:none;color:var(--tenue);flex-wrap:wrap}
+.leyenda span{display:inline-flex;align-items:center;gap:6px}
+.leyenda i{display:inline-block;width:14px;height:2px;background:currentColor;flex:none}
+.leyenda .caja i{height:8px;background:var(--banda);border:1px solid var(--linea)}
+.grafico{position:relative}
+.grafico svg{display:block;width:100%;height:auto;overflow:visible}
+@media(max-width:600px){.grafico{overflow-x:auto}.grafico svg{min-width:560px}}
+
+table.niveles{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.niveles td{padding:7px 0;border-top:1px dotted var(--linea-suave);vertical-align:baseline}
+table.niveles tr:first-child td{border-top:0}
+table.niveles td:first-child{overflow-wrap:anywhere}
+table.niveles td:last-child{text-align:right;color:var(--claro);font-weight:500;white-space:nowrap;width:1%;padding-left:10px}
+table.niveles .sub{display:block;font-size:10px;color:var(--apagado);margin-top:2px;overflow-wrap:anywhere}
+table.niveles tr.alta td:last-child{color:var(--ok)}
+table.niveles tr.baja td:last-child{color:var(--critico)}
+
+/* muro */
+.muro{border:1px solid var(--linea);background:var(--panel);margin-top:16px}
+.muro .cab{padding:13px 16px;border-bottom:1px solid var(--linea);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.muro .cab h3{margin:0;font-size:13px;color:var(--claro);font-weight:500;letter-spacing:0}
+.muro .cuerpo{padding:16px;overflow-x:auto}
+table.barreras{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums;min-width:420px}
+table.barreras th{text-align:right;font-weight:500;color:var(--apagado);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:0 8px 7px 0}
+table.barreras th:first-child{text-align:left}
+table.barreras td{padding:8px 8px 8px 0;border-top:1px dotted var(--linea-suave);text-align:right;color:var(--tenue)}
+table.barreras td:first-child{text-align:left;color:var(--texto)}
+.tapado{color:var(--apagado);letter-spacing:.14em;user-select:none}
+.destapado{color:var(--claro);font-weight:600}
+.muro .pie{padding:14px 16px;border-top:1px solid var(--linea);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.muro .pie p{margin:0;font:12.5px/1.6 var(--sans);color:var(--tenue);max-width:52ch}
+
+/* la prueba */
+.prueba{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(270px,1fr);gap:14px;align-items:start}
+@media(max-width:880px){.prueba{grid-template-columns:1fr}}
+table.cal{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+table.cal th{text-align:right;font-weight:500;color:var(--apagado);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:0 8px 7px 0}
+table.cal th:first-child{text-align:left}
+table.cal td{padding:7px 8px 7px 0;border-top:1px dotted var(--linea-suave);text-align:right}
+table.cal td:first-child{text-align:left;color:var(--tenue)}
+table.cal .ocurre{color:var(--claro);font-weight:600}
+table.cal .n{color:var(--apagado)}
+.cifra{display:flex;flex-direction:column;gap:3px;padding:13px 0;border-bottom:1px dotted var(--linea-suave)}
+.cifra:last-child{border-bottom:0}
+.cifra .g{font-size:26px;color:var(--claro);font-weight:500;line-height:1.1;font-variant-numeric:tabular-nums}
+.cifra .g.bien{color:var(--ok)}
+.cifra .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--apagado)}
+.cifra .d{font:11.5px/1.55 var(--sans);color:var(--tenue)}
+.cifra .d b{color:var(--texto);font-weight:500}
+
+/* motores */
+.motores{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media(max-width:880px){.motores{grid-template-columns:1fr}}
+.motor{background:var(--panel);border:1px solid var(--linea);padding:16px}
+.motor .n{font-size:10px;letter-spacing:.18em;color:var(--s1)}
+.motor h3{margin:8px 0;font-size:14.5px;color:var(--claro);font-weight:500;border:0;padding:0;text-transform:none;letter-spacing:0}
+.motor p{margin:0 0 10px;font:12.5px/1.65 var(--sans);color:var(--tenue)}
+.motor .lim{margin:0;font:11.5px/1.6 var(--sans);color:var(--apagado);border-top:1px dotted var(--linea-suave);padding-top:9px}
+.motor .lim b{color:var(--tenue);font-weight:500}
+
+/* verdad incómoda */
+.incomoda{max-width:72ch}
+.incomoda p{font:14.5px/1.72 var(--sans);color:var(--tenue);margin:0 0 16px}
+.incomoda p b{color:var(--claro);font-weight:500}
+.incomoda .destacado{color:var(--texto);border-left:2px solid var(--s2);padding-left:16px}
+.legal{font:11px/1.62 var(--sans);color:var(--apagado);border:1px solid var(--linea);background:var(--panel);padding:14px 15px;margin-top:20px;max-width:76ch}
+.legal b{color:var(--tenue);font-weight:500}
+
+/* listas */
+.lista{display:grid;gap:13px;max-width:72ch;margin:0;padding:0}
+.lista li{list-style:none;display:grid;grid-template-columns:18px 1fr;gap:12px;align-items:start;font:13.5px/1.66 var(--sans);color:var(--tenue)}
+.lista li b{color:var(--texto);font-weight:500}
+.marca{margin-top:5px;flex:none}
+
+/* precios */
+.precios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+@media(max-width:880px){.precios{grid-template-columns:1fr}}
+.plan{background:var(--panel);border:1px solid var(--linea);padding:18px 16px;display:flex;flex-direction:column;gap:11px}
+.plan.destacado{border-color:rgba(78,201,176,.4)}
+.plan .etiqueta{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--apagado)}
+.plan.destacado .etiqueta{color:var(--ok)}
+.plan .p{font-size:27px;color:var(--claro);font-weight:500;line-height:1.1;font-variant-numeric:tabular-nums}
+.plan .p small{font-size:12.5px;color:var(--tenue);font-weight:400}
+.plan .eq{font-size:11px;color:var(--tenue)}
+.plan ul{margin:0;padding:0;display:grid;gap:7px;flex:1}
+.plan li{list-style:none;display:grid;grid-template-columns:14px 1fr;gap:9px;font:12.5px/1.5 var(--sans);color:var(--tenue)}
+.plan li.no{color:var(--apagado)}
+
+/* preguntas */
+.preguntas{display:grid;max-width:76ch}
+.preguntas details{border-bottom:1px solid var(--linea)}
+.preguntas summary{cursor:pointer;padding:14px 0;color:var(--claro);font-size:13.5px;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.preguntas summary::-webkit-details-marker{display:none}
+.preguntas summary::after{content:"+";color:var(--apagado);font-size:16px;flex:none}
+.preguntas details[open] summary::after{content:"–"}
+.preguntas .r{margin:0;padding:0 0 16px;font:13.5px/1.7 var(--sans);color:var(--tenue);max-width:66ch}
+
+/* pie */
+footer{padding:30px 0 44px;font-size:11px;color:var(--apagado);line-height:1.75}
+footer .marco{display:grid;gap:14px}
+.pie-fila{display:flex;flex-wrap:wrap;gap:6px 20px;justify-content:space-between;border-top:1px solid var(--linea);padding-top:14px}
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="marco">
+    <span class="logo">JARVIS · ETH</span>
+    <nav>
+      <a href="#lectura">La lectura</a>
+      <a href="#prueba" class="opcional">La prueba</a>
+      <a href="#como" class="opcional">Cómo se calcula</a>
+      <a href="#precio">Precio</a>
+    </nav>
+    <span class="pulso frio" id="pulso-barra"><i></i><span id="pulso-texto">conectando</span></span>
+  </div>
+</header>
+
+<div id="avisos"></div>
+
+<div class="heroe">
+  <div class="marco">
+    <div>
+      <h1>Una lectura de ETH al día, con su margen de error.</h1>
+      <p class="entrada">
+        Régimen de mercado, niveles del sistema y probabilidad de barrera, calculados sobre
+        <b>velas diarias cerradas desde 2019</b>. Se publica antes del hecho y no se corrige después.
+        Cada cifra sale con su intervalo de confianza, también cuando el intervalo es incómodo.
+      </p>
+      <div class="acciones">
+        <a class="boton" href="#lectura">Ver la lectura de hoy</a>
+        <a class="boton secundario" href="#prueba">Ver si acierta</a>
+        <button class="boton secundario" id="instalar" hidden>Instalar como app</button>
+      </div>
+      <a class="enlace-bajo" href="#como">Cómo se calcula, paso a paso</a>
+    </div>
+
+    <div class="vivo">
+      <div class="cab">
+        <span>ETH / USD · ahora</span>
+        <span class="pulso frio" id="pulso-ficha"><i></i><span id="fuente-precio">cargando</span></span>
+      </div>
+      <div class="cuerpo">
+        <div class="precio" id="precio">—</div>
+        <div class="precio-pie" id="precio-pie">Consultando la cotización…</div>
+        <div class="filas">
+          <div class="fila"><span class="e">Régimen<small id="regimen-desc">—</small></span>
+            <span class="v"><span class="pastilla aviso" id="regimen"><i></i>—</span></span></div>
+          <div class="fila"><span class="e">Señal de hoy<small id="senal-desc">—</small></span>
+            <span class="v"><span class="pastilla aviso" id="senal"><i></i>—</span></span></div>
+          <div class="fila"><span class="e">Entrada nueva<small>cierre diario por encima</small></span>
+            <span class="v" id="h-entrada">—</span></div>
+          <div class="fila"><span class="e">Salida<small>cierre diario por debajo</small></span>
+            <span class="v" id="h-salida">—</span></div>
+        </div>
+        <p class="impersonal">Esta lectura es la misma para todos. No se adapta a tu cartera, tu capital ni tu perfil.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="franja">
+  <div class="marco">
+    <span><b id="f-velas">—</b> velas diarias desde <b id="f-desde">—</b></span>
+    <span>tres métodos independientes por probabilidad</span>
+    <span>semilla fija, resultado reproducible</span>
+    <span>nunca se coloca una orden</span>
+  </div>
+</div>
+
+<section id="problema">
+  <div class="marco">
+    <p class="titulo">El problema</p>
+    <h2>El precio no te dice qué probabilidad tiene de llegar a tu stop antes que a tu objetivo.</h2>
+    <p class="bajada">
+      Sabes dónde está ETH. Sabes dónde pondrías la entrada y dónde el stop. Lo que ningún gráfico te dice
+      es cuántas veces, sobre una muestra que se pueda contar, el precio tocó primero una barrera y no la
+      otra, ni cuánto de ese número es señal y cuánto es ruido de una muestra pequeña.
+      <b>Esa es la única pregunta que este sistema responde.</b>
+    </p>
+  </div>
+</section>
+
+<section id="lectura">
+  <div class="marco">
+    <p class="titulo">Capa abierta</p>
+    <h2>La lectura de hoy, completa y sin registro</h2>
+    <p class="bajada">
+      Todo lo de esta sección es aritmética sobre precio que cualquiera puede replicar en su propio gráfico.
+      Está abierta siempre, sin cuenta y sin correo. <b>Lo que se cobra empieza donde termina el precio y
+      empieza la probabilidad.</b>
+    </p>
+
+    <div class="rejilla">
+      <div class="tarjeta">
+        <h3>
+          <span>Cierre diario · canal Donchian de 20 días</span>
+          <span class="leyenda">
+            <span style="color:var(--s1)"><i></i>Cierre</span>
+            <span style="color:var(--s2)"><i></i>SMA-200</span>
+            <span class="caja" style="color:var(--tenue)"><i></i>Canal 20 d</span>
+          </span>
+        </h3>
+        <div class="grafico" id="grafico"></div>
+        <p class="nota">
+          Los niveles se calculan con las velas anteriores a la de hoy: el máximo de 20 días excluye la
+          sesión en curso. Por eso la lectura de un martes sigue diciendo el martes lo mismo que dijo el
+          martes. Puedes comprobarlo con el canal Donchian de cualquier plataforma de gráficos.
+        </p>
+      </div>
+
+      <div class="tarjeta">
+        <h3><span>Niveles del sistema</span><span id="fecha-datos" style="color:var(--apagado)">—</span></h3>
+        <table class="niveles">
+          <tr class="alta"><td>Entrada nueva<span class="sub">cierre &gt; máximo de 20 días</span></td><td id="nivel-entrada">—</td></tr>
+          <tr class="baja"><td>Salida Turtle<span class="sub">cierre &lt; mínimo de 10 días</span></td><td id="nivel-salida">—</td></tr>
+          <tr><td>ATR-14<span class="sub">recorrido medio diario</span></td><td id="nivel-atr">—</td></tr>
+          <tr><td>RSI-14<span class="sub">fuerza relativa</span></td><td id="nivel-rsi">—</td></tr>
+          <tr><td>Volatilidad 20 d<span class="sub">anualizada</span></td><td id="nivel-vol">—</td></tr>
+          <tr><td>SMA-50 / SMA-200<span class="sub">medias de 50 y 200 días</span></td><td id="nivel-smas">—</td></tr>
+          <tr><td>Historial<span class="sub" id="historial-desde">—</span></td><td id="historial-velas">—</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="muro">
+      <div class="cab">
+        <svg width="15" height="17" viewBox="0 0 22 24" aria-hidden="true" style="opacity:.75;flex:none">
+          <rect x="3" y="10" width="16" height="12" rx="2" fill="none" stroke="#4ec9b0" stroke-width="1.8"></rect>
+          <path d="M7 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="#4ec9b0" stroke-width="1.8"></path>
+        </svg>
+        <h3>Probabilidad de barrera</h3>
+        <span style="color:var(--apagado);font-size:11px">P(cierre &gt; entrada antes que cierre &lt; salida)</span>
+      </div>
+      <div class="cuerpo">
+        <table class="barreras">
+          <tr><th>Método</th><th>5 días</th><th>10 días</th><th>20 días</th></tr>
+          <tr><td>Mezcla de régimen (HMM)</td><td class="tapado">•••</td><td class="tapado">•••</td><td class="destapado" id="muestra-hmm20">—</td></tr>
+          <tr><td>Bootstrap del último año</td><td class="tapado">•••</td><td class="tapado">•••</td><td class="tapado">•••</td></tr>
+          <tr><td>Browniano, volatilidad 20 d</td><td class="tapado">•••</td><td class="tapado">•••</td><td class="tapado">•••</td></tr>
+        </table>
+      </div>
+      <div class="pie">
+        <p>Una de las nueve celdas se deja siempre a la vista. Las ocho restantes, la distribución del
+          retorno a 20 días y la tasa base con sus intervalos están detrás de la suscripción.</p>
+        <a class="boton" href="#precio">Ver el precio</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="prueba">
+  <div class="marco">
+    <p class="titulo">La prueba</p>
+    <h2>Cuando el motor dice una probabilidad, ¿ocurre?</h2>
+    <p class="bajada">
+      Un modelo puede estar bien construido y aun así mentir. La única forma de saberlo es caminar la
+      historia hacia adelante: en cada fecha, predecir usando <b>solo datos anteriores a esa fecha</b>, y
+      después mirar qué pasó. Esta tabla es el resultado de ese ejercicio, sobre ventanas que no se solapan.
+      Está abierta porque es lo que convence, y quien la lee todavía no sabe la probabilidad de hoy.
+    </p>
+
+    <div class="prueba">
+      <div class="tarjeta">
+        <h3><span>Lo dicho contra lo ocurrido</span><span id="cal-n" style="color:var(--apagado)">—</span></h3>
+        <table class="cal">
+          <thead><tr><th>Cuando el motor dijo</th><th>casos</th><th>dijo</th><th>ocurrió</th><th>IC 95 %</th></tr></thead>
+          <tbody id="cal-cuerpo"></tbody>
+        </table>
+        <p class="nota" id="cal-metodo">—</p>
+      </div>
+      <div class="tarjeta">
+        <h3><span>Qué significa</span></h3>
+        <div class="cifra">
+          <span class="k">Puntuación de Brier</span>
+          <span class="g bien" id="cal-brier">—</span>
+          <span class="d">Mide el error de una probabilidad, y cero es perfecto. Decir siempre la tasa base
+            da <b id="cal-brier-base">—</b>.</span>
+        </div>
+        <div class="cifra">
+          <span class="k">Mejora sobre no saber nada</span>
+          <span class="g bien" id="cal-mejora">—</span>
+          <span class="d">Lo que aporta el modelo frente a repetir siempre la media histórica. Si fuera
+            negativo, el motor estorbaría.</span>
+        </div>
+        <div class="cifra">
+          <span class="k">Predicciones evaluadas</span>
+          <span class="g" id="cal-casos">—</span>
+          <span class="d">Ventanas independientes, sin solapamiento, fuera de muestra. Una muestra pequeña
+            se dice, no se esconde.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="como">
+  <div class="marco">
+    <p class="titulo">Cómo se calcula</p>
+    <h2>Tres motores, ninguna opinión</h2>
+    <p class="bajada">
+      Cada tarjeta lleva su limitación declarada. No en una nota al pie: en la propia tarjeta, con el mismo
+      tamaño de letra que la virtud.
+    </p>
+    <div class="motores">
+      <div class="motor">
+        <div class="n">01</div>
+        <h3>Régimen</h3>
+        <p><b>Modelo oculto de Markov gaussiano de tres estados.</b> Separa los días de ETH en calma, normal
+          y turbulencia, ajustado con Baum-Welch sobre los log-retornos diarios. No predice: clasifica en qué
+          tipo de mercado estamos hoy.</p>
+        <p class="lim"><b>Limitación declarada.</b> Los estados duran entre cuatro y seis días. A veinte días
+          la mezcla ya es la estacionaria, así que el régimen de hoy no cambia el pronóstico a veinte días.</p>
+      </div>
+      <div class="motor">
+        <div class="n">02</div>
+        <h3>Barreras</h3>
+        <p><b>Monte Carlo por tres caminos independientes.</b> Se calcula tres veces sin compartir supuestos:
+          mezclando los regímenes del modelo, remuestreando bloques del último año, y con un movimiento
+          browniano sin deriva. Cuando los tres coinciden, la lectura es firme. Cuando divergen, lo verás.</p>
+        <p class="lim"><b>Limitación declarada.</b> Las barreras son móviles: el mínimo de diez días sube si
+          el precio sube, y el máximo de veinte baja cuando expira la vela que lo marcó.</p>
+      </div>
+      <div class="motor">
+        <div class="n">03</div>
+        <h3>Tasa base</h3>
+        <p><b>Backtest Turtle 20/10 con stop de 2×ATR.</b> Cuántas veces funcionó esta regla exacta desde
+          2019, en operaciones contadas, con intervalo de Wilson sobre el acierto y bootstrap sobre el R medio.
+          Se reporta también sin la mejor operación y con costos de 0,3 % por lado.</p>
+        <p class="lim"><b>Limitación declarada.</b> La muestra es pequeña y el resultado depende de pocas
+          operaciones. La sección siguiente lo cuenta entero, con los números delante.</p>
+      </div>
+    </div>
+    <p class="nota">
+      El código que calcula los niveles y las probabilidades es público y el motor corre con semilla fija:
+      dos ejecuciones sobre los mismos datos dan el mismo número, dígito por dígito. No hay una capa secreta
+      que ajuste el resultado.
+    </p>
+  </div>
+</section>
+
+<section id="limites">
+  <div class="marco">
+    <p class="titulo">La verdad incómoda</p>
+    <h2>Lo que este sistema no sabe</h2>
+    <div class="incomoda">
+      <p>
+        Este servicio no vende una ventaja de mercado. <b>Vende su medición, incluido el tamaño del error.</b>
+        Suena a matiz y no lo es: casi todo lo que se vende en esta categoría es un porcentaje de acierto sin
+        número de operaciones y sin intervalo, y un porcentaje sin denominador no es un dato, es una afirmación.
+      </p>
+      <p class="destacado" id="verdad-numeros">—</p>
+      <p id="verdad-persistencia">—</p>
+      <p>
+        Conviene separar dos cosas que se confunden a propósito en este sector. La <b>probabilidad de barrera
+        está calibrada</b>, y la sección anterior lo demuestra con datos que el modelo nunca vio. La
+        <b>rentabilidad del sistema Turtle no está demostrada</b>, y este párrafo lo dice con sus cifras.
+        Lo que se cobra es lo primero.
+      </p>
+      <p>
+        Si esta regla tuviera una ventaja evidente no haría falta medirla: se vería a simple vista en el
+        gráfico. Lo que el motor entrega no es la promesa de que la regla gana, sino <b>la magnitud honesta
+        de lo que no se sabe</b>, para que el tamaño de la apuesta, que decides tú, sea proporcional a la
+        evidencia y no al entusiasmo.
+      </p>
+      <div class="legal">
+        <b>Sobre los resultados simulados.</b> La tasa base es un backtest, no un registro de operaciones
+        reales. Los resultados simulados no representan operaciones ejecutadas y no reflejan el impacto de
+        factores como la falta de liquidez o el deslizamiento. Se diseñan conociendo ya lo que hizo el
+        mercado, lo que les da una ventaja que ninguna cuenta real tiene. No se afirma que ninguna cuenta
+        vaya a obtener resultados similares a los mostrados. Operar con criptomonedas puede hacerte perder
+        la totalidad del capital.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="noes">
+  <div class="marco">
+    <p class="titulo">Límites del servicio</p>
+    <h2>Lo que esto no es</h2>
+    <ul class="lista">
+      <li><svg class="marca" width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#d1605e" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <span><b>No es asesoría de inversión.</b> La lectura es idéntica para todos y no se adapta a nadie.</span></li>
+      <li><svg class="marca" width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#d1605e" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <span><b>No ejecuta órdenes.</b> No se conecta a tu exchange. No pedimos claves de API y no las aceptaríamos.</span></li>
+      <li><svg class="marca" width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#d1605e" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <span><b>No es una señal de compra.</b> Es una medición con su margen de error; la decisión y la ejecución son tuyas.</span></li>
+      <li><svg class="marca" width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#d1605e" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <span><b>No promete rentabilidad.</b> La tasa base es un backtest y lleva su descargo al lado, no escondido en el pie.</span></li>
+      <li><svg class="marca" width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#d1605e" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <span><b>No publica ninguna cifra de cartera.</b> Solo datos públicos de mercado.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section id="precio">
+  <div class="marco">
+    <p class="titulo">Precio</p>
+    <h2>Un producto, dos formas de pagarlo, y una capa que no se paga</h2>
+    <p class="bajada">
+      Sin prueba gratuita: <b>la lectura pública de arriba ya es la prueba</b>, y es completa, no mutilada.
+      Se puede usar todos los días sin pagar nada y sin dejar un correo.
+    </p>
+    <div class="precios">
+      <div class="plan">
+        <span class="etiqueta">Abierto</span>
+        <span class="p">0 <small>USD</small></span>
+        <span class="eq">para siempre</span>
+        <ul>
+          <li>✓<span>Lectura diaria: régimen, niveles, gráfico</span></li>
+          <li>✓<span>Precio en vivo</span></li>
+          <li>✓<span>La curva de calibración completa</span></li>
+          <li class="no">·<span>Probabilidad por método y horizonte</span></li>
+          <li class="no">·<span>Tasa base con intervalos</span></li>
+          <li class="no">·<span>Alertas por correo</span></li>
+        </ul>
+        <a class="boton secundario" href="#lectura">Empezar a leer</a>
+      </div>
+      <div class="plan destacado">
+        <span class="etiqueta">Anual · doce meses por el precio de diez</span>
+        <span class="p">290 <small>USD al año</small></span>
+        <span class="eq">equivale a 24 USD al mes</span>
+        <ul>
+          <li>✓<span>Todo lo abierto</span></li>
+          <li>✓<span>Nueve probabilidades: 3 métodos × 3 horizontes</span></li>
+          <li>✓<span>Distribución del retorno a 20 días</span></li>
+          <li>✓<span>Tasa base con Wilson y bootstrap</span></li>
+          <li>✓<span>Estados del régimen con μ, σ y duración</span></li>
+          <li>✓<span>Alerta por correo al cruzar un nivel</span></li>
+        </ul>
+        <button class="boton" disabled>El cobro aún no está abierto</button>
+      </div>
+      <div class="plan">
+        <span class="etiqueta">Mensual</span>
+        <span class="p">29 <small>USD al mes</small></span>
+        <span class="eq">se cancela cuando quieras</span>
+        <ul>
+          <li>✓<span>Lo mismo que el anual</span></li>
+          <li>✓<span>Sin permanencia</span></li>
+          <li>✓<span>Devolución completa los primeros siete días</span></li>
+          <li class="no">·<span>Sin el descuento del año</span></li>
+        </ul>
+        <button class="boton secundario" disabled>El cobro aún no está abierto</button>
+      </div>
+    </div>
+    <p class="nota">
+      Los botones están desactivados a propósito: el procesador de pagos todavía no está dado de alta, y
+      prefiero decirlo antes que poner un botón que no cobra. Los precios de arriba son los previstos.
+      Cuando el cobro abra, la cancelación será un botón dentro de la cuenta, no un correo.
+    </p>
+  </div>
+</section>
+
+<section id="preguntas">
+  <div class="marco">
+    <p class="titulo">Preguntas</p>
+    <h2>Lo que suelen preguntar antes de pagar</h2>
+    <div class="preguntas">
+      <details><summary>¿Esto repinta?</summary>
+        <p class="r">No. Los niveles se calculan con velas cerradas anteriores a la de hoy: el máximo de 20
+          días excluye la sesión en curso. Una lectura pasada dice hoy lo mismo que dijo entonces.</p></details>
+      <details><summary>¿De dónde salen los datos?</summary>
+        <p class="r">Velas diarias de ETH/USD desde 2019, y una cotización en vivo con la hora y la fuente
+          impresas en la propia página.</p></details>
+      <details><summary>¿Por qué solo ETH?</summary>
+        <p class="r">Porque el motor está validado sobre ETH y prefiero una cosa medida a cinco estimadas.
+          Otros activos entrarán cuando pueda publicar su calibración con la misma tabla.</p></details>
+      <details><summary>¿Puedo conectar esto a un bot?</summary>
+        <p class="r">No se ofrece y no se ofrecerá. No pedir claves de API elimina de raíz esa superficie de
+          riesgo, que es la que ha producido los incidentes más caros de esta categoría.</p></details>
+      <details><summary>¿Me dices cuánto comprar?</summary>
+        <p class="r">No. El tamaño de posición depende de tu capital, y calcularlo para ti convertiría esto
+          en consejo personalizado. La lectura da la probabilidad y los niveles; el resto es tuyo.</p></details>
+      <details><summary>¿Quién está detrás?</summary>
+        <p class="r">Una persona, y el código del cálculo está a la vista en un repositorio público. Sin logos
+          de medios, sin testimonios y sin contadores de miembros.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="marco">
+    <div class="pie-fila">
+      <span>Datos del motor al <span id="pie-fecha">—</span> · semilla fija · <a href="https://github.com/afberrezueta/tradingview-mcp" rel="noopener">código del cálculo</a></span>
+      <span>Precio en vivo vía <span id="pie-fuente">—</span></span>
+    </div>
+    <div>
+      No es asesoría de inversión. Desde este sistema nunca se coloca una orden; el humano ejecuta.
+      Los resultados pasados y las simulaciones no predicen resultados futuros. Operar con criptomonedas
+      puede hacerte perder la totalidad del capital.
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var nf0 = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+  var nf2 = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var f0 = function (v) { return v == null ? '—' : nf0.format(v); };
+  var f2 = function (v) { return v == null ? '—' : nf2.format(v); };
+  var f3 = function (v) { return v == null ? '—' : v.toFixed(3).replace('.', ','); };
+  var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  function fechaLarga(s) {
+    if (!s) return '—';
+    var p = s.split('-');
+    return parseInt(p[2], 10) + ' ' + MESES[parseInt(p[1], 10) - 1] + ' ' + p[0];
+  }
+  var publico = null;
+
+  // ---------------------------------------------- capa abierta
+  function pintarLectura(d) {
+    var i = d.indicadores;
+    $('fecha-datos').textContent = 'cierre del ' + fechaLarga(i.fecha);
+    $('pie-fecha').textContent = fechaLarga(i.fecha);
+    $('f-velas').textContent = nf0.format(i.velas);
+    $('f-desde').textContent = fechaLarga(i.desde);
+    $('nivel-entrada').textContent = f0(i.entrada);
+    $('nivel-salida').textContent = f0(i.salida);
+    $('nivel-atr').textContent = f0(i.atr14) + ' (' + f2(i.atr_pct) + ' %)';
+    $('nivel-rsi').textContent = i.rsi14 == null ? '—' : f2(i.rsi14);
+    $('nivel-vol').textContent = i.vol20_anual == null ? '—' : f2(i.vol20_anual) + ' %';
+    $('nivel-smas').textContent = f0(i.sma50) + ' / ' + f0(i.sma200);
+    $('historial-velas').textContent = nf0.format(i.velas) + ' velas';
+    $('historial-desde').textContent = 'diarias, desde el ' + fechaLarga(i.desde);
+    $('h-entrada').textContent = f0(i.entrada);
+    $('h-salida').textContent = f0(i.salida);
+
+    var clases = { alcista: 'ok', mixto: 'aviso', bajista: 'critico' };
+    var reg = $('regimen');
+    reg.className = 'pastilla ' + (clases[i.regimen] || 'aviso');
+    reg.innerHTML = '<i></i>' + i.regimen;
+    $('regimen-desc').textContent = i.sobre_sma200 == null ? 'sin dato'
+      : 'cierre ' + (i.sobre_sma200 > 0 ? '+' : '') + f2(i.sobre_sma200) + ' % sobre la SMA-200';
+
+    // La señal se deriva del cierre y los niveles: aritmética pública, no motor.
+    var sen = $('senal'), desc = $('senal-desc');
+    if (i.cierre > i.entrada) {
+      sen.className = 'pastilla ok'; sen.innerHTML = '<i></i>entrada';
+      desc.textContent = 'el cierre superó el máximo de 20 días';
+    } else if (i.cierre < i.salida) {
+      sen.className = 'pastilla critico'; sen.innerHTML = '<i></i>salida';
+      desc.textContent = 'el cierre perdió el mínimo de 10 días';
+    } else {
+      sen.className = 'pastilla aviso'; sen.innerHTML = '<i></i>sin cruce';
+      desc.textContent = 'el cierre está dentro del canal';
+    }
+
+    if (d.muestra && d.muestra.p_entrada_primero != null) {
+      $('muestra-hmm20').textContent = f3(d.muestra.p_entrada_primero);
+    }
+  }
+
+  // ---------------------------------------------- la prueba
+  function pintarAuditoria(d) {
+    var a = d.auditoria;
+    if (!a || !a.calibracion) return;
+    var c = a.calibracion;
+    $('cal-n').textContent = c.n + ' predicciones · ' + a.horizonte + ' días';
+    $('cal-casos').textContent = c.n;
+    $('cal-brier').textContent = f3(c.brier);
+    $('cal-brier-base').textContent = f3(c.brier_base);
+    $('cal-mejora').textContent = (c.mejora_pct > 0 ? '+' : '') + c.mejora_pct.toFixed(0) + ' %';
+    $('cal-metodo').textContent = 'Método: ' + a.metodo + '.';
+    var cuerpo = $('cal-cuerpo');
+    cuerpo.textContent = '';
+    c.tabla.forEach(function (f) {
+      var tr = document.createElement('tr');
+      function td(txt, clase) {
+        var e = document.createElement('td');
+        if (clase) e.className = clase;
+        e.textContent = txt;
+        tr.appendChild(e);
+      }
+      td('entre ' + f3(f.desde) + ' y ' + f3(f.hasta));
+      td(String(f.n), 'n');
+      td(f3(f.dicha));
+      td(f3(f.observada), 'ocurre');
+      td(f3(f.ic95[0]) + '–' + f3(f.ic95[1]), 'n');
+      cuerpo.appendChild(tr);
+    });
+
+    var tb = a.tasa_base, pr = a.persistencia;
+    if (tb && tb.n) {
+      $('verdad-numeros').textContent =
+        'La regla Turtle 20/10 con stop de 2×ATR acumula ' + tb.n + ' operaciones sobre ETH desde 2019. ' +
+        'Acertó el ' + f3(tb.p_ganar) + ' de las veces, con un intervalo de confianza del 95 % que va de ' +
+        f3(tb.ic95_p[0]) + ' a ' + f3(tb.ic95_p[1]) + '. Ese intervalo contiene el 0,5: con esta muestra el ' +
+        'acierto no se distingue del de una moneda. El R medio es ' + f3(tb.R_media) + ' y la mediana ' +
+        f3(tb.R_mediana) + '. Si se retira la mejor operación, de ' + f2(tb.mejor) + ' R, el R medio cae a ' +
+        f3(tb.R_sin_la_mejor) + '.';
+    }
+    if (pr && pr.primera && pr.segunda && pr.primera.n && pr.segunda.n) {
+      $('verdad-persistencia').textContent =
+        'Y hay algo peor, que también se publica. Partiendo la historia en dos mitades, la regla acertó el ' +
+        f3(pr.primera.p_ganar) + ' en la primera (' + pr.primera.n + ' operaciones, R medio ' +
+        f3(pr.primera.R_media) + ') y el ' + f3(pr.segunda.p_ganar) + ' en la segunda (' + pr.segunda.n +
+        ' operaciones, R medio ' + f3(pr.segunda.R_media) + '). La ventaja no persistió. Quien venda este ' +
+        'backtest como una promesa está vendiendo la primera mitad y callando la segunda.';
+    }
+  }
+
+  // ---------------------------------------------- gráfico
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(nombre, attrs, padre) {
+    var n = document.createElementNS(NS, nombre);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (padre) padre.appendChild(n);
+    return n;
+  }
+  function pintarGrafico(serie) {
+    var cont = $('grafico');
+    if (!cont || !serie || !serie.length) return;
+    cont.textContent = '';
+    var W = 720, H = 300, m = { t: 14, r: 58, b: 24, l: 8 };
+    var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
+      'aria-label': 'Cierre diario de ETH de los últimos ' + serie.length + ' días con el canal Donchian de 20 días y la media de 200 días' }, cont);
+    var lo = Infinity, hi = -Infinity;
+    serie.forEach(function (p) { lo = Math.min(lo, p.b, p.c, p.s); hi = Math.max(hi, p.a, p.c, p.s); });
+    var pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+    var n = serie.length;
+    var x = function (i) { return m.l + (i * (W - m.l - m.r)) / (n - 1); };
+    var y = function (v) { return m.t + ((hi - v) * (H - m.t - m.b)) / (hi - lo); };
+    var paso = Math.pow(10, Math.floor(Math.log10(hi - lo))) / 2;
+    for (var v = Math.ceil(lo / paso) * paso; v <= hi; v += paso) {
+      el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: '#141c24' }, svg);
+      el('text', { x: W - m.r + 8, y: y(v) + 3.5, fill: '#5a6b7a', 'font-size': '10', 'font-family': 'IBM Plex Mono, monospace' }, svg)
+        .textContent = nf0.format(v);
+    }
+    var arriba = serie.map(function (p, i) { return x(i) + ',' + y(p.a); });
+    var abajo = serie.map(function (p, i) { return x(i) + ',' + y(p.b); }).reverse();
+    el('path', { d: 'M' + arriba.join('L') + 'L' + abajo.join('L') + 'Z', fill: 'rgba(200,212,222,.055)', stroke: '#1b2530' }, svg);
+    el('path', { d: 'M' + serie.map(function (p, i) { return x(i) + ',' + y(p.s); }).join('L'), stroke: '#b9843a', 'stroke-width': 2, fill: 'none' }, svg);
+    el('path', { d: 'M' + serie.map(function (p, i) { return x(i) + ',' + y(p.c); }).join('L'), stroke: '#22a086', 'stroke-width': 2, fill: 'none', 'stroke-linejoin': 'round' }, svg);
+    serie.forEach(function (p, i) {
+      if (p.d.slice(8, 10) === '01') {
+        el('text', { x: x(i), y: H - 6, fill: '#5a6b7a', 'font-size': '10', 'text-anchor': 'middle', 'font-family': 'IBM Plex Mono, monospace' }, svg)
+          .textContent = MESES[parseInt(p.d.slice(5, 7), 10) - 1];
+      }
+    });
+    var u = serie[n - 1];
+    el('circle', { cx: x(n - 1), cy: y(u.c), r: 3.5, fill: '#22a086', stroke: '#0c1015', 'stroke-width': 2 }, svg);
+    el('text', { x: x(n - 1) + 7, y: y(u.c) + 4, fill: '#c8d4de', 'font-size': '10.5', 'font-weight': '600', 'font-family': 'IBM Plex Mono, monospace' }, svg)
+      .textContent = nf0.format(u.c);
+  }
+
+  // ---------------------------------------------- precio en vivo
+  function estadoPulso(vivo, texto) {
+    ['pulso-barra', 'pulso-ficha'].forEach(function (id) {
+      var e = $(id); if (e) e.className = 'pulso' + (vivo ? '' : ' frio');
+    });
+    $('pulso-texto').textContent = vivo ? 'en vivo' : texto;
+  }
+  function pintarPrecio(q) {
+    var entero = Math.floor(q.precio);
+    var dec = Math.round((q.precio - entero) * 100);
+    $('precio').innerHTML = '$' + nf0.format(entero) + '<small>.' + String(dec).padStart(2, '0') + '</small>';
+    var partes = [];
+    if (q.cambio_pct != null) partes.push((q.cambio_pct > 0 ? '+' : '') + f2(q.cambio_pct) + ' % hoy');
+    if (q.min_dia != null && q.max_dia != null) partes.push('rango ' + f0(q.min_dia) + '–' + f0(q.max_dia));
+    if (q.hora_utc) partes.push(q.hora_utc + ' UTC');
+    $('precio-pie').textContent = partes.join(' · ') || 'sin marca de tiempo';
+    $('fuente-precio').textContent = q.fuente || 'fuente pública';
+    $('pie-fuente').textContent = q.fuente || 'fuente pública';
+  }
+  function respaldo() {
+    if (!publico) return;
+    var r = publico.cotizacion_respaldo || {};
+    var p = r.precio || (publico.indicadores && publico.indicadores.cierre);
+    if (p) pintarPrecio({ precio: p, hora_utc: r.hora_utc, fuente: 'instantánea guardada' });
+    $('precio-pie').textContent = 'sin conexión con la fuente en vivo · último dato guardado';
+    estadoPulso(false, 'sin conexión');
+  }
+  function refrescarPrecio() {
+    fetch('/api/precio', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)); })
+      .then(function (q) {
+        if (!q || !q.en_vivo || q.precio == null) throw new Error('sin dato en vivo');
+        pintarPrecio(q); estadoPulso(true);
+      })
+      .catch(respaldo);
+  }
+
+  // ---------------------------------------------- aviso de cambio de estado
+  fetch('datos/aviso.json', { cache: 'no-cache' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (a) {
+      if (!a || !a.avisos || !a.avisos.length) return;
+      var cont = $('avisos');
+      a.avisos.forEach(function (av) {
+        var barra = document.createElement('div');
+        barra.className = 'aviso ' + (av.severidad || 'baja');
+        var marco = document.createElement('div'); marco.className = 'marco';
+        var sello = document.createElement('span'); sello.className = 'sello';
+        sello.textContent = av.tipo === 'cerca' ? 'cerca del nivel' : av.tipo;
+        var t = document.createElement('span'); t.className = 't'; t.textContent = av.titulo;
+        var dd = document.createElement('span'); dd.className = 'd'; dd.textContent = av.detalle;
+        marco.appendChild(sello); marco.appendChild(t); marco.appendChild(dd);
+        barra.appendChild(marco); cont.appendChild(barra);
+      });
+    })
+    .catch(function () { /* sin aviso, sin franja */ });
+
+  // ---------------------------------------------- app instalable
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('/sw.js').catch(function () {});
+    });
+  }
+  var peticionInstalar = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); peticionInstalar = e;
+    var b = $('instalar'); if (b) b.hidden = false;
+  });
+  var botonInstalar = $('instalar');
+  if (botonInstalar) {
+    botonInstalar.addEventListener('click', function () {
+      if (!peticionInstalar) return;
+      peticionInstalar.prompt(); peticionInstalar = null; botonInstalar.hidden = true;
+    });
+  }
+
+  // ---------------------------------------------- arranque
+  fetch('datos/publico.json', { cache: 'no-cache' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      publico = d;
+      pintarLectura(d);
+      pintarAuditoria(d);
+      pintarGrafico(d.serie);
+      refrescarPrecio();
+      setInterval(refrescarPrecio, 30000);
+    })
+    .catch(function () {
+      $('precio-pie').textContent = 'No se pudieron cargar los datos. Recarga la página.';
+      estadoPulso(false, 'sin datos');
+    });
+})();
+</script>
+</body>
+</html>
