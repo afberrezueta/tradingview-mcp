@@ -137,3 +137,7 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## Read-only mode
+
+Set `TV_MCP_READONLY=1` in the MCP server env to run in read-only mode. Tools that persist changes, trade, or drive arbitrary UI/JS are **not registered** (alerts, drawings, layout_new, pine_save/pine_new, watchlist edits, replay_trade, ui_evaluate/ui_click/ui_mouse_click/ui_keyboard/ui_type_text, tv_update). Chart navigation, data reads, screenshots and replay stepping stay available. Use this whenever the server feeds an analysis-only pipeline.

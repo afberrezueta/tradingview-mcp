@@ -40,148 +40,196 @@
       "source_location": "L53"
     },
     {
-      "id": "src_connection_gettargetinfo",
-      "label": "getTargetInfo()",
+      "id": "src_core_data_buildgraphicsjs",
+      "label": "buildGraphicsJS()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
       "community_name": "evaluate",
       "file_type": "code",
-      "norm_label": "gettargetinfo()",
-      "source_file": "src/connection.js",
-      "source_location": "L125"
+      "norm_label": "buildgraphicsjs()",
+      "source_file": "src/core/data.js",
+      "source_location": "L86"
     },
     {
-      "id": "src_core_health_checkforupdate",
-      "label": "checkForUpdate()",
+      "id": "src_core_data_ensurestrategytesterready",
+      "label": "ensureStrategyTesterReady()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
       "community_name": "evaluate",
       "file_type": "code",
-      "norm_label": "checkforupdate()",
-      "source_file": "src/core/health.js",
+      "norm_label": "ensurestrategytesterready()",
+      "source_file": "src/core/data.js",
+      "source_location": "L216"
+    },
+    {
+      "id": "src_core_data_getdepth",
+      "label": "getDepth()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getdepth()",
+      "source_file": "src/core/data.js",
+      "source_location": "L452"
+    },
+    {
+      "id": "src_core_data_getequity",
+      "label": "getEquity()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getequity()",
+      "source_file": "src/core/data.js",
+      "source_location": "L339"
+    },
+    {
+      "id": "src_core_data_getindicator",
+      "label": "getIndicator()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getindicator()",
+      "source_file": "src/core/data.js",
+      "source_location": "L184"
+    },
+    {
+      "id": "src_core_data_getohlcv",
+      "label": "getOhlcv()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getohlcv()",
+      "source_file": "src/core/data.js",
+      "source_location": "L137"
+    },
+    {
+      "id": "src_core_data_getpineboxes",
+      "label": "getPineBoxes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getpineboxes()",
+      "source_file": "src/core/data.js",
+      "source_location": "L610"
+    },
+    {
+      "id": "src_core_data_getpinelabels",
+      "label": "getPineLabels()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getpinelabels()",
+      "source_file": "src/core/data.js",
+      "source_location": "L562"
+    },
+    {
+      "id": "src_core_data_getpinelines",
+      "label": "getPineLines()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getpinelines()",
+      "source_file": "src/core/data.js",
+      "source_location": "L538"
+    },
+    {
+      "id": "src_core_data_getpinetables",
+      "label": "getPineTables()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getpinetables()",
+      "source_file": "src/core/data.js",
+      "source_location": "L582"
+    },
+    {
+      "id": "src_core_data_getquote",
+      "label": "getQuote()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getquote()",
+      "source_file": "src/core/data.js",
+      "source_location": "L370"
+    },
+    {
+      "id": "src_core_data_getquoteinternal",
+      "label": "_getQuoteInternal()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "_getquoteinternal()",
+      "source_file": "src/core/data.js",
+      "source_location": "L378"
+    },
+    {
+      "id": "src_core_data_getstrategyresults",
+      "label": "getStrategyResults()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getstrategyresults()",
+      "source_file": "src/core/data.js",
+      "source_location": "L244"
+    },
+    {
+      "id": "src_core_data_getstudyvalues",
+      "label": "getStudyValues()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "getstudyvalues()",
+      "source_file": "src/core/data.js",
+      "source_location": "L496"
+    },
+    {
+      "id": "src_core_data_gettrades",
+      "label": "getTrades()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "gettrades()",
+      "source_file": "src/core/data.js",
+      "source_location": "L295"
+    },
+    {
+      "id": "src_core_data_roundprice",
+      "label": "roundPrice()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "roundprice()",
+      "source_file": "src/core/data.js",
       "source_location": "L13"
-    },
-    {
-      "id": "src_core_health_copymsixpackagelocal",
-      "label": "_copyMsixPackageLocal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "_copymsixpackagelocal()",
-      "source_file": "src/core/health.js",
-      "source_location": "L267"
-    },
-    {
-      "id": "src_core_health_discover",
-      "label": "discover()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "discover()",
-      "source_file": "src/core/health.js",
-      "source_location": "L85"
-    },
-    {
-      "id": "src_core_health_healthcheck",
-      "label": "healthCheck()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "healthcheck()",
-      "source_file": "src/core/health.js",
-      "source_location": "L45"
-    },
-    {
-      "id": "src_core_health_launch",
-      "label": "launch()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "launch()",
-      "source_file": "src/core/health.js",
-      "source_location": "L286"
-    },
-    {
-      "id": "src_core_health_probecdp",
-      "label": "_probeCdp()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "_probecdp()",
-      "source_file": "src/core/health.js",
-      "source_location": "L217"
-    },
-    {
-      "id": "src_core_health_resolvelaunchdeps",
-      "label": "_resolveLaunchDeps()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "_resolvelaunchdeps()",
-      "source_file": "src/core/health.js",
-      "source_location": "L204"
-    },
-    {
-      "id": "src_core_health_spawndetached",
-      "label": "_spawnDetached()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "_spawndetached()",
-      "source_file": "src/core/health.js",
-      "source_location": "L230"
-    },
-    {
-      "id": "src_core_health_spawnfailedearly",
-      "label": "_spawnFailedEarly()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "_spawnfailedearly()",
-      "source_file": "src/core/health.js",
-      "source_location": "L238"
-    },
-    {
-      "id": "src_core_health_uistate",
-      "label": "uiState()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "uistate()",
-      "source_file": "src/core/health.js",
-      "source_location": "L131"
-    },
-    {
-      "id": "src_core_health_waitforcdp",
-      "label": "_waitForCdp()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "_waitforcdp()",
-      "source_file": "src/core/health.js",
-      "source_location": "L249"
     },
     {
       "id": "src_core_pane_focus",
@@ -604,30 +652,6 @@
       "source_location": "L174"
     },
     {
-      "id": "tests_launch_test_mockchild",
-      "label": "mockChild()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "mockchild()",
-      "source_file": "tests/launch.test.js",
-      "source_location": "L17"
-    },
-    {
-      "id": "tests_launch_test_msixdeps",
-      "label": "msixDeps()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "msixdeps()",
-      "source_file": "tests/launch.test.js",
-      "source_location": "L32"
-    },
-    {
       "id": "src_core_stream_fetchallpanes",
       "label": "fetchAllPanes()",
       "_callable": true,
@@ -964,124 +988,100 @@
       "source_location": "L33"
     },
     {
-      "id": "src_connection_getchartapi",
-      "label": "getChartApi()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "getchartapi()",
-      "source_file": "src/connection.js",
-      "source_location": "L173"
-    },
-    {
-      "id": "src_connection_getchartcollection",
-      "label": "getChartCollection()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "getchartcollection()",
-      "source_file": "src/connection.js",
-      "source_location": "L177"
-    },
-    {
-      "id": "src_core_batch_batchrun",
-      "label": "batchRun()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "batchrun()",
-      "source_file": "src/core/batch.js",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_core_capture_capturescreenshot",
-      "label": "captureScreenshot()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "capturescreenshot()",
-      "source_file": "src/core/capture.js",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_wait_waitforchartrender",
-      "label": "waitForChartRender()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "waitforchartrender()",
-      "source_file": "src/wait.js",
-      "source_location": "L80"
-    },
-    {
-      "id": "src_readonly_installreadonlyguard",
-      "label": "installReadOnlyGuard()",
+      "id": "src_core_indicators_addstudyfromsearch",
+      "label": "addStudyFromSearch()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "readonly.js",
+      "community_name": "core/indicators.js",
       "file_type": "code",
-      "norm_label": "installreadonlyguard()",
-      "source_file": "src/readonly.js",
-      "source_location": "L42"
+      "norm_label": "addstudyfromsearch()",
+      "source_file": "src/core/indicators.js",
+      "source_location": "L107"
     },
     {
-      "id": "src_readonly_isreadonly",
-      "label": "isReadOnly()",
+      "id": "src_core_indicators_closedialog",
+      "label": "closeDialog()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "readonly.js",
+      "community_name": "core/indicators.js",
       "file_type": "code",
-      "norm_label": "isreadonly()",
-      "source_file": "src/readonly.js",
-      "source_location": "L29"
+      "norm_label": "closedialog()",
+      "source_file": "src/core/indicators.js",
+      "source_location": "L73"
     },
     {
-      "id": "src_readonly_iswritetool",
-      "label": "isWriteTool()",
+      "id": "src_core_indicators_delay",
+      "label": "delay()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "readonly.js",
+      "community_name": "core/indicators.js",
       "file_type": "code",
-      "norm_label": "iswritetool()",
-      "source_file": "src/readonly.js",
-      "source_location": "L34"
+      "norm_label": "delay()",
+      "source_file": "src/core/indicators.js",
+      "source_location": "L9"
     },
     {
-      "id": "tests_readonly_test_alldeclaredtools",
-      "label": "allDeclaredTools()",
+      "id": "src_core_indicators_opendialog",
+      "label": "openDialog()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "readonly.js",
+      "community_name": "core/indicators.js",
       "file_type": "code",
-      "norm_label": "alldeclaredtools()",
-      "source_file": "tests/readonly.test.js",
-      "source_location": "L15"
+      "norm_label": "opendialog()",
+      "source_file": "src/core/indicators.js",
+      "source_location": "L39"
     },
     {
-      "id": "tests_readonly_test_fakeserver",
-      "label": "fakeServer()",
+      "id": "src_core_indicators_searchstudies",
+      "label": "searchStudies()",
       "_callable": true,
       "_origin": "ast",
       "community": 18,
-      "community_name": "readonly.js",
+      "community_name": "core/indicators.js",
       "file_type": "code",
-      "norm_label": "fakeserver()",
-      "source_file": "tests/readonly.test.js",
-      "source_location": "L10"
+      "norm_label": "searchstudies()",
+      "source_file": "src/core/indicators.js",
+      "source_location": "L90"
+    },
+    {
+      "id": "src_core_indicators_setinputs",
+      "label": "setInputs()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "core/indicators.js",
+      "file_type": "code",
+      "norm_label": "setinputs()",
+      "source_file": "src/core/indicators.js",
+      "source_location": "L162"
+    },
+    {
+      "id": "src_core_indicators_togglevisibility",
+      "label": "toggleVisibility()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "core/indicators.js",
+      "file_type": "code",
+      "norm_label": "togglevisibility()",
+      "source_file": "src/core/indicators.js",
+      "source_location": "L194"
+    },
+    {
+      "id": "src_core_indicators_typequery",
+      "label": "typeQuery()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 18,
+      "community_name": "core/indicators.js",
+      "file_type": "code",
+      "norm_label": "typequery()",
+      "source_file": "src/core/indicators.js",
+      "source_location": "L58"
     },
     {
       "id": "src_core_update_resolve",
@@ -1600,102 +1600,6 @@
       "source_location": "L6"
     },
     {
-      "id": "src_core_indicators_addstudyfromsearch",
-      "label": "addStudyFromSearch()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "safeString",
-      "file_type": "code",
-      "norm_label": "addstudyfromsearch()",
-      "source_file": "src/core/indicators.js",
-      "source_location": "L107"
-    },
-    {
-      "id": "src_core_indicators_closedialog",
-      "label": "closeDialog()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "safeString",
-      "file_type": "code",
-      "norm_label": "closedialog()",
-      "source_file": "src/core/indicators.js",
-      "source_location": "L73"
-    },
-    {
-      "id": "src_core_indicators_delay",
-      "label": "delay()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "safeString",
-      "file_type": "code",
-      "norm_label": "delay()",
-      "source_file": "src/core/indicators.js",
-      "source_location": "L9"
-    },
-    {
-      "id": "src_core_indicators_opendialog",
-      "label": "openDialog()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "safeString",
-      "file_type": "code",
-      "norm_label": "opendialog()",
-      "source_file": "src/core/indicators.js",
-      "source_location": "L39"
-    },
-    {
-      "id": "src_core_indicators_searchstudies",
-      "label": "searchStudies()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "safeString",
-      "file_type": "code",
-      "norm_label": "searchstudies()",
-      "source_file": "src/core/indicators.js",
-      "source_location": "L90"
-    },
-    {
-      "id": "src_core_indicators_setinputs",
-      "label": "setInputs()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "safeString",
-      "file_type": "code",
-      "norm_label": "setinputs()",
-      "source_file": "src/core/indicators.js",
-      "source_location": "L162"
-    },
-    {
-      "id": "src_core_indicators_togglevisibility",
-      "label": "toggleVisibility()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "safeString",
-      "file_type": "code",
-      "norm_label": "togglevisibility()",
-      "source_file": "src/core/indicators.js",
-      "source_location": "L194"
-    },
-    {
-      "id": "src_core_indicators_typequery",
-      "label": "typeQuery()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "safeString",
-      "file_type": "code",
-      "norm_label": "typequery()",
-      "source_file": "src/core/indicators.js",
-      "source_location": "L58"
-    },
-    {
       "id": "src_wait_waitforchartready",
       "label": "waitForChartReady()",
       "_callable": true,
@@ -1816,6 +1720,30 @@
       "source_location": "L181"
     },
     {
+      "id": "src_connection_getchartapi",
+      "label": "getChartApi()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "getchartapi()",
+      "source_file": "src/connection.js",
+      "source_location": "L173"
+    },
+    {
+      "id": "src_connection_getchartcollection",
+      "label": "getChartCollection()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "getchartcollection()",
+      "source_file": "src/connection.js",
+      "source_location": "L177"
+    },
+    {
       "id": "src_connection_getmainseriesbars",
       "label": "getMainSeriesBars()",
       "_callable": true,
@@ -1850,6 +1778,30 @@
       "norm_label": "verifyandreturn()",
       "source_file": "src/connection.js",
       "source_location": "L165"
+    },
+    {
+      "id": "src_core_batch_batchrun",
+      "label": "batchRun()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "batchrun()",
+      "source_file": "src/core/batch.js",
+      "source_location": "L13"
+    },
+    {
+      "id": "src_core_capture_capturescreenshot",
+      "label": "captureScreenshot()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "capturescreenshot()",
+      "source_file": "src/core/capture.js",
+      "source_location": "L13"
     },
     {
       "id": "src_core_tab_closetab",
@@ -1946,6 +1898,18 @@
       "norm_label": "withtarget()",
       "source_file": "src/core/tab.js",
       "source_location": "L94"
+    },
+    {
+      "id": "src_wait_waitforchartrender",
+      "label": "waitForChartRender()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "waitforchartrender()",
+      "source_file": "src/wait.js",
+      "source_location": "L80"
     },
     {
       "id": "src_cli_commands_pine_readstdin",
@@ -2104,229 +2068,205 @@
       "source_location": "L61"
     },
     {
-      "id": "src_core_data_buildgraphicsjs",
-      "label": "buildGraphicsJS()",
+      "id": "src_connection_gettargetinfo",
+      "label": "getTargetInfo()",
       "_callable": true,
       "_origin": "ast",
       "community": 9,
-      "community_name": "core/data.js",
+      "community_name": "core/health.js",
       "file_type": "code",
-      "norm_label": "buildgraphicsjs()",
-      "source_file": "src/core/data.js",
-      "source_location": "L86"
+      "norm_label": "gettargetinfo()",
+      "source_file": "src/connection.js",
+      "source_location": "L125"
     },
     {
-      "id": "src_core_data_ensurestrategytesterready",
-      "label": "ensureStrategyTesterReady()",
+      "id": "src_core_health_checkforupdate",
+      "label": "checkForUpdate()",
       "_callable": true,
       "_origin": "ast",
       "community": 9,
-      "community_name": "core/data.js",
+      "community_name": "core/health.js",
       "file_type": "code",
-      "norm_label": "ensurestrategytesterready()",
-      "source_file": "src/core/data.js",
-      "source_location": "L216"
-    },
-    {
-      "id": "src_core_data_getdepth",
-      "label": "getDepth()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getdepth()",
-      "source_file": "src/core/data.js",
-      "source_location": "L452"
-    },
-    {
-      "id": "src_core_data_getequity",
-      "label": "getEquity()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getequity()",
-      "source_file": "src/core/data.js",
-      "source_location": "L339"
-    },
-    {
-      "id": "src_core_data_getindicator",
-      "label": "getIndicator()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getindicator()",
-      "source_file": "src/core/data.js",
-      "source_location": "L184"
-    },
-    {
-      "id": "src_core_data_getohlcv",
-      "label": "getOhlcv()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getohlcv()",
-      "source_file": "src/core/data.js",
-      "source_location": "L137"
-    },
-    {
-      "id": "src_core_data_getpineboxes",
-      "label": "getPineBoxes()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getpineboxes()",
-      "source_file": "src/core/data.js",
-      "source_location": "L610"
-    },
-    {
-      "id": "src_core_data_getpinelabels",
-      "label": "getPineLabels()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getpinelabels()",
-      "source_file": "src/core/data.js",
-      "source_location": "L562"
-    },
-    {
-      "id": "src_core_data_getpinelines",
-      "label": "getPineLines()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getpinelines()",
-      "source_file": "src/core/data.js",
-      "source_location": "L538"
-    },
-    {
-      "id": "src_core_data_getpinetables",
-      "label": "getPineTables()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getpinetables()",
-      "source_file": "src/core/data.js",
-      "source_location": "L582"
-    },
-    {
-      "id": "src_core_data_getquote",
-      "label": "getQuote()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getquote()",
-      "source_file": "src/core/data.js",
-      "source_location": "L370"
-    },
-    {
-      "id": "src_core_data_getquoteinternal",
-      "label": "_getQuoteInternal()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "_getquoteinternal()",
-      "source_file": "src/core/data.js",
-      "source_location": "L378"
-    },
-    {
-      "id": "src_core_data_getstrategyresults",
-      "label": "getStrategyResults()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getstrategyresults()",
-      "source_file": "src/core/data.js",
-      "source_location": "L244"
-    },
-    {
-      "id": "src_core_data_getstudyvalues",
-      "label": "getStudyValues()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "getstudyvalues()",
-      "source_file": "src/core/data.js",
-      "source_location": "L496"
-    },
-    {
-      "id": "src_core_data_gettrades",
-      "label": "getTrades()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "gettrades()",
-      "source_file": "src/core/data.js",
-      "source_location": "L295"
-    },
-    {
-      "id": "src_core_data_roundprice",
-      "label": "roundPrice()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "roundprice()",
-      "source_file": "src/core/data.js",
+      "norm_label": "checkforupdate()",
+      "source_file": "src/core/health.js",
       "source_location": "L13"
     },
     {
-      "id": "http",
-      "label": "http",
+      "id": "src_core_health_copymsixpackagelocal",
+      "label": "_copyMsixPackageLocal()",
+      "_callable": true,
       "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "confidence": "EXTRACTED",
+      "community": 9,
+      "community_name": "core/health.js",
       "file_type": "code",
-      "norm_label": "http",
-      "source_file": "http"
-    },
-    {
-      "id": "https",
-      "label": "https",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "confidence": "EXTRACTED",
-      "file_type": "code",
-      "norm_label": "https",
-      "source_file": "https"
-    },
-    {
-      "id": "src_core_health",
-      "label": "core/health.js",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "core/health.js",
+      "norm_label": "_copymsixpackagelocal()",
       "source_file": "src/core/health.js",
+      "source_location": "L267"
+    },
+    {
+      "id": "src_core_health_discover",
+      "label": "discover()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "discover()",
+      "source_file": "src/core/health.js",
+      "source_location": "L85"
+    },
+    {
+      "id": "src_core_health_healthcheck",
+      "label": "healthCheck()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "healthcheck()",
+      "source_file": "src/core/health.js",
+      "source_location": "L45"
+    },
+    {
+      "id": "src_core_health_launch",
+      "label": "launch()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "launch()",
+      "source_file": "src/core/health.js",
+      "source_location": "L286"
+    },
+    {
+      "id": "src_core_health_probecdp",
+      "label": "_probeCdp()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "_probecdp()",
+      "source_file": "src/core/health.js",
+      "source_location": "L217"
+    },
+    {
+      "id": "src_core_health_resolvelaunchdeps",
+      "label": "_resolveLaunchDeps()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "_resolvelaunchdeps()",
+      "source_file": "src/core/health.js",
+      "source_location": "L204"
+    },
+    {
+      "id": "src_core_health_spawndetached",
+      "label": "_spawnDetached()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "_spawndetached()",
+      "source_file": "src/core/health.js",
+      "source_location": "L230"
+    },
+    {
+      "id": "src_core_health_spawnfailedearly",
+      "label": "_spawnFailedEarly()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "_spawnfailedearly()",
+      "source_file": "src/core/health.js",
+      "source_location": "L238"
+    },
+    {
+      "id": "src_core_health_uistate",
+      "label": "uiState()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "uistate()",
+      "source_file": "src/core/health.js",
+      "source_location": "L131"
+    },
+    {
+      "id": "src_core_health_waitforcdp",
+      "label": "_waitForCdp()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "_waitforcdp()",
+      "source_file": "src/core/health.js",
+      "source_location": "L249"
+    },
+    {
+      "id": "tests_launch_test_mockchild",
+      "label": "mockChild()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "mockchild()",
+      "source_file": "tests/launch.test.js",
+      "source_location": "L17"
+    },
+    {
+      "id": "tests_launch_test_msixdeps",
+      "label": "msixDeps()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "msixdeps()",
+      "source_file": "tests/launch.test.js",
+      "source_location": "L32"
+    },
+    {
+      "id": "src_connection_known_paths",
+      "label": "KNOWN_PATHS",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "known_paths",
+      "source_file": "src/connection.js",
+      "source_location": "L14"
+    },
+    {
+      "id": "src_core_data",
+      "label": "core/data.js",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "core/data.js",
+      "source_file": "src/core/data.js",
       "source_location": "L1"
+    },
+    {
+      "id": "src_core_data_quotelock",
+      "label": "_quoteLock",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "evaluate",
+      "file_type": "code",
+      "norm_label": "_quotelock",
+      "source_file": "src/core/data.js",
+      "source_location": "L21"
     },
     {
       "id": "src_core_pane",
@@ -2382,28 +2322,6 @@
       "norm_label": "core/watchlist.js",
       "source_file": "src/core/watchlist.js",
       "source_location": "L1"
-    },
-    {
-      "id": "tests_launch_test",
-      "label": "launch.test.js",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "launch.test.js",
-      "source_file": "tests/launch.test.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "tests_launch_test_cdp_version",
-      "label": "CDP_VERSION",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "evaluate",
-      "file_type": "code",
-      "norm_label": "cdp_version",
-      "source_file": "tests/launch.test.js",
-      "source_location": "L13"
     },
     {
       "id": "claude",
@@ -2560,18 +2478,6 @@
       "norm_label": "\"practice trading with replay\"",
       "source_file": "CLAUDE.md",
       "source_location": "L54"
-    },
-    {
-      "id": "claude_read_only_mode",
-      "label": "Read-only mode",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "Decision Tree \u2014 Which Tool When",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "read-only mode",
-      "source_file": "CLAUDE.md",
-      "source_location": "L141"
     },
     {
       "id": "claude_screen_multiple_symbols",
@@ -2930,72 +2836,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_core_batch",
-      "label": "core/batch.js",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "core/batch.js",
-      "source_file": "src/core/batch.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_core_batch_dirname",
-      "label": "__dirname",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "__dirname",
-      "source_file": "src/core/batch.js",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_core_batch_screenshot_dir",
-      "label": "SCREENSHOT_DIR",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "screenshot_dir",
-      "source_file": "src/core/batch.js",
-      "source_location": "L11"
-    },
-    {
-      "id": "src_core_capture",
-      "label": "core/capture.js",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "core/capture.js",
-      "source_file": "src/core/capture.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_core_capture_dirname",
-      "label": "__dirname",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "__dirname",
-      "source_file": "src/core/capture.js",
-      "source_location": "L10"
-    },
-    {
-      "id": "src_core_capture_screenshot_dir",
-      "label": "SCREENSHOT_DIR",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "screenshot_dir",
-      "source_file": "src/core/capture.js",
-      "source_location": "L11"
-    },
-    {
       "id": "src_core_index",
       "label": "core/index.js",
       "_origin": "ast",
@@ -3137,17 +2977,6 @@
       "norm_label": "watchlist",
       "source_file": "src/core/index.js",
       "source_location": "L14"
-    },
-    {
-      "id": "src_wait",
-      "label": "wait.js",
-      "_origin": "ast",
-      "community": 12,
-      "community_name": "core/index.js",
-      "file_type": "code",
-      "norm_label": "wait.js",
-      "source_file": "src/wait.js",
-      "source_location": "L1"
     },
     {
       "id": "setup_guide",
@@ -3742,58 +3571,14 @@
       "source_location": "L70"
     },
     {
-      "id": "src_readonly",
-      "label": "readonly.js",
+      "id": "src_core_indicators",
+      "label": "core/indicators.js",
       "_origin": "ast",
       "community": 18,
-      "community_name": "readonly.js",
+      "community_name": "core/indicators.js",
       "file_type": "code",
-      "norm_label": "readonly.js",
-      "source_file": "src/readonly.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_readonly_truthy",
-      "label": "TRUTHY",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "readonly.js",
-      "file_type": "code",
-      "norm_label": "truthy",
-      "source_file": "src/readonly.js",
-      "source_location": "L27"
-    },
-    {
-      "id": "src_readonly_write_set",
-      "label": "WRITE_SET",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "readonly.js",
-      "file_type": "code",
-      "norm_label": "write_set",
-      "source_file": "src/readonly.js",
-      "source_location": "L26"
-    },
-    {
-      "id": "src_readonly_write_tools",
-      "label": "WRITE_TOOLS",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "readonly.js",
-      "file_type": "code",
-      "norm_label": "write_tools",
-      "source_file": "src/readonly.js",
-      "source_location": "L11"
-    },
-    {
-      "id": "tests_readonly_test",
-      "label": "readonly.test.js",
-      "_origin": "ast",
-      "community": 18,
-      "community_name": "readonly.js",
-      "file_type": "code",
-      "norm_label": "readonly.test.js",
-      "source_file": "tests/readonly.test.js",
+      "norm_label": "core/indicators.js",
+      "source_file": "src/core/indicators.js",
       "source_location": "L1"
     },
     {
@@ -3926,17 +3711,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_server_readonly",
-      "label": "readOnly",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "server.js",
-      "file_type": "code",
-      "norm_label": "readonly",
-      "source_file": "src/server.js",
-      "source_location": "L74"
-    },
-    {
       "id": "src_server_server",
       "label": "server",
       "_origin": "ast",
@@ -3945,7 +3719,7 @@
       "file_type": "code",
       "norm_label": "server",
       "source_file": "src/server.js",
-      "source_location": "L19"
+      "source_location": "L18"
     },
     {
       "id": "src_server_transport",
@@ -3956,7 +3730,7 @@
       "file_type": "code",
       "norm_label": "transport",
       "source_file": "src/server.js",
-      "source_location": "L101"
+      "source_location": "L93"
     },
     {
       "id": "src_tools_alerts",
@@ -4519,17 +4293,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_core_indicators",
-      "label": "core/indicators.js",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "safeString",
-      "file_type": "code",
-      "norm_label": "core/indicators.js",
-      "source_file": "src/core/indicators.js",
-      "source_location": "L1"
-    },
-    {
       "id": "tests_chart_history_test",
       "label": "chart_history.test.js",
       "_origin": "ast",
@@ -4572,7 +4335,7 @@
       "node_kind": "heading",
       "norm_label": "1. install",
       "source_file": "README.md",
-      "source_location": "L84"
+      "source_location": "L83"
     },
     {
       "id": "readme_2_launch_tradingview_with_cdp",
@@ -4584,7 +4347,7 @@
       "node_kind": "heading",
       "norm_label": "2. launch tradingview with cdp",
       "source_file": "README.md",
-      "source_location": "L92"
+      "source_location": "L91"
     },
     {
       "id": "readme_3_add_to_claude_code",
@@ -4596,7 +4359,7 @@
       "node_kind": "heading",
       "norm_label": "3. add to claude code",
       "source_file": "README.md",
-      "source_location": "L119"
+      "source_location": "L118"
     },
     {
       "id": "readme_4_verify",
@@ -4608,7 +4371,7 @@
       "node_kind": "heading",
       "norm_label": "4. verify",
       "source_file": "README.md",
-      "source_location": "L136"
+      "source_location": "L135"
     },
     {
       "id": "readme_all_commands",
@@ -4620,7 +4383,7 @@
       "node_kind": "heading",
       "norm_label": "all commands",
       "source_file": "README.md",
-      "source_location": "L166"
+      "source_location": "L165"
     },
     {
       "id": "readme_architecture",
@@ -4632,7 +4395,7 @@
       "node_kind": "heading",
       "norm_label": "architecture",
       "source_file": "README.md",
-      "source_location": "L351"
+      "source_location": "L350"
     },
     {
       "id": "readme_attributions",
@@ -4644,7 +4407,7 @@
       "node_kind": "heading",
       "norm_label": "attributions",
       "source_file": "README.md",
-      "source_location": "L362"
+      "source_location": "L361"
     },
     {
       "id": "readme_chart_control",
@@ -4656,7 +4419,7 @@
       "node_kind": "heading",
       "norm_label": "chart control",
       "source_file": "README.md",
-      "source_location": "L245"
+      "source_location": "L244"
     },
     {
       "id": "readme_chart_reading",
@@ -4668,7 +4431,7 @@
       "node_kind": "heading",
       "norm_label": "chart reading",
       "source_file": "README.md",
-      "source_location": "L223"
+      "source_location": "L222"
     },
     {
       "id": "readme_cli",
@@ -4680,7 +4443,7 @@
       "node_kind": "heading",
       "norm_label": "cli",
       "source_file": "README.md",
-      "source_location": "L140"
+      "source_location": "L139"
     },
     {
       "id": "readme_context_management",
@@ -4692,7 +4455,7 @@
       "node_kind": "heading",
       "norm_label": "context management",
       "source_file": "README.md",
-      "source_location": "L315"
+      "source_location": "L314"
     },
     {
       "id": "readme_custom_indicator_data_pine_drawings",
@@ -4704,7 +4467,7 @@
       "node_kind": "heading",
       "norm_label": "custom indicator data (pine drawings)",
       "source_file": "README.md",
-      "source_location": "L232"
+      "source_location": "L231"
     },
     {
       "id": "readme_disclaimer",
@@ -4716,7 +4479,7 @@
       "node_kind": "heading",
       "norm_label": "disclaimer",
       "source_file": "README.md",
-      "source_location": "L370"
+      "source_location": "L369"
     },
     {
       "id": "readme_drawing_alerts_ui_automation",
@@ -4728,7 +4491,7 @@
       "node_kind": "heading",
       "norm_label": "drawing, alerts, ui automation",
       "source_file": "README.md",
-      "source_location": "L301"
+      "source_location": "L300"
     },
     {
       "id": "readme_finding_tradingview_on_your_system",
@@ -4740,7 +4503,7 @@
       "node_kind": "heading",
       "norm_label": "finding tradingview on your system",
       "source_file": "README.md",
-      "source_location": "L330"
+      "source_location": "L329"
     },
     {
       "id": "readme_how_claude_knows_which_tool_to_use",
@@ -4752,7 +4515,7 @@
       "node_kind": "heading",
       "norm_label": "how claude knows which tool to use",
       "source_file": "README.md",
-      "source_location": "L204"
+      "source_location": "L203"
     },
     {
       "id": "readme_how_it_works_and_why_it_s_safe_to_run",
@@ -4776,7 +4539,7 @@
       "node_kind": "heading",
       "norm_label": "install with claude code",
       "source_file": "README.md",
-      "source_location": "L74"
+      "source_location": "L73"
     },
     {
       "id": "readme_license",
@@ -4788,7 +4551,7 @@
       "node_kind": "heading",
       "norm_label": "license",
       "source_file": "README.md",
-      "source_location": "L393"
+      "source_location": "L392"
     },
     {
       "id": "readme_multi_pane_layouts",
@@ -4800,7 +4563,7 @@
       "node_kind": "heading",
       "norm_label": "multi-pane layouts",
       "source_file": "README.md",
-      "source_location": "L258"
+      "source_location": "L257"
     },
     {
       "id": "readme_pine_script_development",
@@ -4812,7 +4575,7 @@
       "node_kind": "heading",
       "norm_label": "pine script development",
       "source_file": "README.md",
-      "source_location": "L275"
+      "source_location": "L274"
     },
     {
       "id": "readme_prerequisites",
@@ -4824,7 +4587,7 @@
       "node_kind": "heading",
       "norm_label": "prerequisites",
       "source_file": "README.md",
-      "source_location": "L51"
+      "source_location": "L50"
     },
     {
       "id": "readme_quick_examples",
@@ -4836,7 +4599,7 @@
       "node_kind": "heading",
       "norm_label": "quick examples",
       "source_file": "README.md",
-      "source_location": "L152"
+      "source_location": "L151"
     },
     {
       "id": "readme_quick_start",
@@ -4848,7 +4611,7 @@
       "node_kind": "heading",
       "norm_label": "quick start",
       "source_file": "README.md",
-      "source_location": "L82"
+      "source_location": "L81"
     },
     {
       "id": "readme_replay_mode",
@@ -4860,7 +4623,7 @@
       "node_kind": "heading",
       "norm_label": "replay mode",
       "source_file": "README.md",
-      "source_location": "L290"
+      "source_location": "L289"
     },
     {
       "id": "readme_research_context",
@@ -4872,7 +4635,7 @@
       "node_kind": "heading",
       "norm_label": "research context",
       "source_file": "README.md",
-      "source_location": "L35"
+      "source_location": "L34"
     },
     {
       "id": "readme_streaming",
@@ -4884,7 +4647,7 @@
       "node_kind": "heading",
       "norm_label": "streaming",
       "source_file": "README.md",
-      "source_location": "L186"
+      "source_location": "L185"
     },
     {
       "id": "readme_tab_management",
@@ -4896,7 +4659,7 @@
       "node_kind": "heading",
       "norm_label": "tab management",
       "source_file": "README.md",
-      "source_location": "L267"
+      "source_location": "L266"
     },
     {
       "id": "readme_testing",
@@ -4908,7 +4671,7 @@
       "node_kind": "heading",
       "norm_label": "testing",
       "source_file": "README.md",
-      "source_location": "L342"
+      "source_location": "L341"
     },
     {
       "id": "readme_tool_reference_78_mcp_tools",
@@ -4920,7 +4683,7 @@
       "node_kind": "heading",
       "norm_label": "tool reference (78 mcp tools)",
       "source_file": "README.md",
-      "source_location": "L221"
+      "source_location": "L220"
     },
     {
       "id": "readme_tradingview_mcp_bridge",
@@ -4944,7 +4707,7 @@
       "node_kind": "heading",
       "norm_label": "what it does",
       "source_file": "README.md",
-      "source_location": "L58"
+      "source_location": "L57"
     },
     {
       "id": "readme_what_this_tool_does_not_do",
@@ -4957,116 +4720,6 @@
       "norm_label": "what this tool does not do",
       "source_file": "README.md",
       "source_location": "L25"
-    },
-    {
-      "id": "scripts_pine_pull",
-      "label": "pine_pull.js",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "pine_pull.js",
-      "source_file": "scripts/pine_pull.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "scripts_pine_pull_outpath",
-      "label": "outPath",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "outpath",
-      "source_file": "scripts/pine_pull.js",
-      "source_location": "L19"
-    },
-    {
-      "id": "scripts_pine_pull_t",
-      "label": "t",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "t",
-      "source_file": "scripts/pine_pull.js",
-      "source_location": "L7"
-    },
-    {
-      "id": "scripts_pine_pull_targets",
-      "label": "targets",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "targets",
-      "source_file": "scripts/pine_pull.js",
-      "source_location": "L6"
-    },
-    {
-      "id": "scripts_pine_push",
-      "label": "pine_push.js",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "pine_push.js",
-      "source_file": "scripts/pine_push.js",
-      "source_location": "L1"
-    },
-    {
-      "id": "scripts_pine_push_escaped",
-      "label": "escaped",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "escaped",
-      "source_file": "scripts/pine_push.js",
-      "source_location": "L16"
-    },
-    {
-      "id": "scripts_pine_push_src",
-      "label": "src",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "src",
-      "source_file": "scripts/pine_push.js",
-      "source_location": "L7"
-    },
-    {
-      "id": "scripts_pine_push_srcpath",
-      "label": "srcPath",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "srcpath",
-      "source_file": "scripts/pine_push.js",
-      "source_location": "L6"
-    },
-    {
-      "id": "scripts_pine_push_t",
-      "label": "t",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "t",
-      "source_file": "scripts/pine_push.js",
-      "source_location": "L10"
-    },
-    {
-      "id": "scripts_pine_push_targets",
-      "label": "targets",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "connection.js",
-      "file_type": "code",
-      "norm_label": "targets",
-      "source_file": "scripts/pine_push.js",
-      "source_location": "L9"
     },
     {
       "id": "src_connection",
@@ -5102,6 +4755,72 @@
       "source_location": "L9"
     },
     {
+      "id": "src_core_batch",
+      "label": "core/batch.js",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "core/batch.js",
+      "source_file": "src/core/batch.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_core_batch_dirname",
+      "label": "__dirname",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "__dirname",
+      "source_file": "src/core/batch.js",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_core_batch_screenshot_dir",
+      "label": "SCREENSHOT_DIR",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "screenshot_dir",
+      "source_file": "src/core/batch.js",
+      "source_location": "L11"
+    },
+    {
+      "id": "src_core_capture",
+      "label": "core/capture.js",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "core/capture.js",
+      "source_file": "src/core/capture.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_core_capture_dirname",
+      "label": "__dirname",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "__dirname",
+      "source_file": "src/core/capture.js",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_core_capture_screenshot_dir",
+      "label": "SCREENSHOT_DIR",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "connection.js",
+      "file_type": "code",
+      "norm_label": "screenshot_dir",
+      "source_file": "src/core/capture.js",
+      "source_location": "L11"
+    },
+    {
       "id": "src_core_tab",
       "label": "core/tab.js",
       "_origin": "ast",
@@ -5113,15 +4832,15 @@
       "source_location": "L1"
     },
     {
-      "id": "ref_chrome_remote_interface",
-      "label": "chrome-remote-interface",
+      "id": "src_wait",
+      "label": "wait.js",
       "_origin": "ast",
       "community": 5,
       "community_name": "connection.js",
-      "file_type": "concept",
-      "norm_label": "chrome-remote-interface",
-      "source_file": "package.json",
-      "source_location": "L28"
+      "file_type": "code",
+      "norm_label": "wait.js",
+      "source_file": "src/wait.js",
+      "source_location": "L1"
     },
     {
       "id": "package",
@@ -5641,6 +5360,116 @@
       "source_file": "fs"
     },
     {
+      "id": "scripts_pine_pull",
+      "label": "pine_pull.js",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "pine_pull.js",
+      "source_file": "scripts/pine_pull.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "scripts_pine_pull_outpath",
+      "label": "outPath",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "outpath",
+      "source_file": "scripts/pine_pull.js",
+      "source_location": "L19"
+    },
+    {
+      "id": "scripts_pine_pull_t",
+      "label": "t",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "t",
+      "source_file": "scripts/pine_pull.js",
+      "source_location": "L7"
+    },
+    {
+      "id": "scripts_pine_pull_targets",
+      "label": "targets",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "targets",
+      "source_file": "scripts/pine_pull.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "scripts_pine_push",
+      "label": "pine_push.js",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "pine_push.js",
+      "source_file": "scripts/pine_push.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "scripts_pine_push_escaped",
+      "label": "escaped",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "escaped",
+      "source_file": "scripts/pine_push.js",
+      "source_location": "L16"
+    },
+    {
+      "id": "scripts_pine_push_src",
+      "label": "src",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "src",
+      "source_file": "scripts/pine_push.js",
+      "source_location": "L7"
+    },
+    {
+      "id": "scripts_pine_push_srcpath",
+      "label": "srcPath",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "srcpath",
+      "source_file": "scripts/pine_push.js",
+      "source_location": "L6"
+    },
+    {
+      "id": "scripts_pine_push_t",
+      "label": "t",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "t",
+      "source_file": "scripts/pine_push.js",
+      "source_location": "L10"
+    },
+    {
+      "id": "scripts_pine_push_targets",
+      "label": "targets",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "code",
+      "norm_label": "targets",
+      "source_file": "scripts/pine_push.js",
+      "source_location": "L9"
+    },
+    {
       "id": "tests_e2e_test",
       "label": "e2e.test.js",
       "_origin": "ast",
@@ -5652,37 +5481,70 @@
       "source_location": "L1"
     },
     {
-      "id": "src_connection_known_paths",
-      "label": "KNOWN_PATHS",
+      "id": "ref_chrome_remote_interface",
+      "label": "chrome-remote-interface",
       "_origin": "ast",
-      "community": 9,
-      "community_name": "core/data.js",
-      "file_type": "code",
-      "norm_label": "known_paths",
-      "source_file": "src/connection.js",
-      "source_location": "L14"
+      "community": 8,
+      "community_name": "e2e.test.js",
+      "file_type": "concept",
+      "norm_label": "chrome-remote-interface",
+      "source_file": "package.json",
+      "source_location": "L28"
     },
     {
-      "id": "src_core_data",
-      "label": "core/data.js",
+      "id": "http",
+      "label": "http",
       "_origin": "ast",
       "community": 9,
-      "community_name": "core/data.js",
+      "community_name": "core/health.js",
+      "confidence": "EXTRACTED",
       "file_type": "code",
-      "norm_label": "core/data.js",
-      "source_file": "src/core/data.js",
+      "norm_label": "http",
+      "source_file": "http"
+    },
+    {
+      "id": "https",
+      "label": "https",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "confidence": "EXTRACTED",
+      "file_type": "code",
+      "norm_label": "https",
+      "source_file": "https"
+    },
+    {
+      "id": "src_core_health",
+      "label": "core/health.js",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "core/health.js",
+      "source_file": "src/core/health.js",
       "source_location": "L1"
     },
     {
-      "id": "src_core_data_quotelock",
-      "label": "_quoteLock",
+      "id": "tests_launch_test",
+      "label": "launch.test.js",
       "_origin": "ast",
       "community": 9,
-      "community_name": "core/data.js",
+      "community_name": "core/health.js",
       "file_type": "code",
-      "norm_label": "_quotelock",
-      "source_file": "src/core/data.js",
-      "source_location": "L21"
+      "norm_label": "launch.test.js",
+      "source_file": "tests/launch.test.js",
+      "source_location": "L1"
+    },
+    {
+      "id": "tests_launch_test_cdp_version",
+      "label": "CDP_VERSION",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "core/health.js",
+      "file_type": "code",
+      "norm_label": "cdp_version",
+      "source_file": "tests/launch.test.js",
+      "source_location": "L13"
     }
   ],
   "links": [
@@ -8531,18 +8393,6 @@
       "weight": 1.0
     },
     {
-      "source": "src_readonly_installreadonlyguard",
-      "target": "src_readonly_iswritetool",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/readonly.js",
-      "source_location": "L46",
-      "weight": 1.0
-    },
-    {
       "source": "src_tools_alerts_registeralerttools",
       "target": "src_tools_format_jsonresult",
       "relation": "calls",
@@ -9985,30 +9835,6 @@
     },
     {
       "source": "src_server",
-      "target": "src_readonly_installreadonlyguard",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/server.js",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "src_server",
-      "target": "src_readonly_isreadonly",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/server.js",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "src_server",
       "target": "src_tools_health_registerhealthtools",
       "relation": "imports",
       "_origin": "ast",
@@ -10317,54 +10143,6 @@
       "context": "import",
       "source_file": "tests/launch.test.js",
       "source_location": "L9",
-      "weight": 1.0
-    },
-    {
-      "source": "tests_readonly_test",
-      "target": "src_readonly_installreadonlyguard",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "tests/readonly.test.js",
-      "source_location": "L8",
-      "weight": 1.0
-    },
-    {
-      "source": "tests_readonly_test",
-      "target": "src_readonly_isreadonly",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "tests/readonly.test.js",
-      "source_location": "L8",
-      "weight": 1.0
-    },
-    {
-      "source": "tests_readonly_test",
-      "target": "src_readonly_iswritetool",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "tests/readonly.test.js",
-      "source_location": "L8",
-      "weight": 1.0
-    },
-    {
-      "source": "tests_readonly_test",
-      "target": "src_readonly_write_tools",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "tests/readonly.test.js",
-      "source_location": "L8",
       "weight": 1.0
     },
     {
@@ -11521,18 +11299,6 @@
     },
     {
       "source": "src_server",
-      "target": "src_readonly",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/server.js",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "src_server",
       "target": "src_tools_health",
       "relation": "imports_from",
       "_origin": "ast",
@@ -12024,18 +11790,6 @@
       "weight": 1.0
     },
     {
-      "source": "tests_readonly_test",
-      "target": "src_readonly",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "tests/readonly.test.js",
-      "source_location": "L8",
-      "weight": 1.0
-    },
-    {
       "source": "tests_replay_test",
       "target": "src_core_replay",
       "relation": "imports_from",
@@ -12461,17 +12215,6 @@
     },
     {
       "source": "claude_tradingview_mcp_claude_instructions",
-      "target": "claude_read_only_mode",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "CLAUDE.md",
-      "source_location": "L141",
-      "weight": 1.0
-    },
-    {
-      "source": "claude_tradingview_mcp_claude_instructions",
       "target": "claude_decision_tree_which_tool_when",
       "relation": "contains",
       "_origin": "ast",
@@ -12863,7 +12606,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L152",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -12874,7 +12617,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L166",
+      "source_location": "L165",
       "weight": 1.0
     },
     {
@@ -12885,7 +12628,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L119",
+      "source_location": "L118",
       "weight": 1.0
     },
     {
@@ -12896,7 +12639,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L136",
+      "source_location": "L135",
       "weight": 1.0
     },
     {
@@ -12907,7 +12650,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L84",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -12918,7 +12661,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L92",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -12929,7 +12672,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L223",
+      "source_location": "L222",
       "weight": 1.0
     },
     {
@@ -12940,7 +12683,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L232",
+      "source_location": "L231",
       "weight": 1.0
     },
     {
@@ -12951,7 +12694,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L245",
+      "source_location": "L244",
       "weight": 1.0
     },
     {
@@ -12962,7 +12705,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L258",
+      "source_location": "L257",
       "weight": 1.0
     },
     {
@@ -12973,7 +12716,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L267",
+      "source_location": "L266",
       "weight": 1.0
     },
     {
@@ -12984,7 +12727,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L275",
+      "source_location": "L274",
       "weight": 1.0
     },
     {
@@ -12995,7 +12738,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L290",
+      "source_location": "L289",
       "weight": 1.0
     },
     {
@@ -13006,7 +12749,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L301",
+      "source_location": "L300",
       "weight": 1.0
     },
     {
@@ -13017,7 +12760,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L140",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -13028,7 +12771,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L186",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -13050,7 +12793,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L204",
+      "source_location": "L203",
       "weight": 1.0
     },
     {
@@ -13061,7 +12804,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L221",
+      "source_location": "L220",
       "weight": 1.0
     },
     {
@@ -13083,7 +12826,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L315",
+      "source_location": "L314",
       "weight": 1.0
     },
     {
@@ -13094,18 +12837,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L330",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_tradingview_mcp_bridge",
-      "target": "readme_testing",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L342",
+      "source_location": "L329",
       "weight": 1.0
     },
     {
@@ -13116,7 +12848,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L35",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_tradingview_mcp_bridge",
+      "target": "readme_testing",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L341",
       "weight": 1.0
     },
     {
@@ -13127,7 +12870,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L351",
+      "source_location": "L350",
       "weight": 1.0
     },
     {
@@ -13138,7 +12881,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L362",
+      "source_location": "L361",
       "weight": 1.0
     },
     {
@@ -13149,7 +12892,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L370",
+      "source_location": "L369",
       "weight": 1.0
     },
     {
@@ -13160,7 +12903,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L393",
+      "source_location": "L392",
       "weight": 1.0
     },
     {
@@ -13171,7 +12914,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L51",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -13182,7 +12925,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L58",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
@@ -13193,7 +12936,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L74",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -13204,7 +12947,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L82",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -15903,69 +15646,14 @@
       "weight": 1.0
     },
     {
-      "source": "src_readonly",
-      "target": "src_readonly_write_tools",
+      "source": "src_server",
+      "target": "src_server_server",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/readonly.js",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "src_readonly",
-      "target": "src_readonly_write_set",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/readonly.js",
-      "source_location": "L26",
-      "weight": 1.0
-    },
-    {
-      "source": "src_readonly",
-      "target": "src_readonly_truthy",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/readonly.js",
-      "source_location": "L27",
-      "weight": 1.0
-    },
-    {
-      "source": "src_readonly",
-      "target": "src_readonly_isreadonly",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/readonly.js",
-      "source_location": "L29",
-      "weight": 1.0
-    },
-    {
-      "source": "src_readonly",
-      "target": "src_readonly_iswritetool",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/readonly.js",
-      "source_location": "L34",
-      "weight": 1.0
-    },
-    {
-      "source": "src_readonly",
-      "target": "src_readonly_installreadonlyguard",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/readonly.js",
-      "source_location": "L42",
+      "source_file": "src/server.js",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -15976,29 +15664,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/server.js",
-      "source_location": "L101",
-      "weight": 1.0
-    },
-    {
-      "source": "src_server",
-      "target": "src_server_server",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/server.js",
-      "source_location": "L19",
-      "weight": 1.0
-    },
-    {
-      "source": "src_server",
-      "target": "src_server_readonly",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/server.js",
-      "source_location": "L74",
+      "source_location": "L93",
       "weight": 1.0
     },
     {
@@ -16365,28 +16031,6 @@
       "weight": 1.0
     },
     {
-      "source": "tests_readonly_test",
-      "target": "tests_readonly_test_fakeserver",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/readonly.test.js",
-      "source_location": "L10",
-      "weight": 1.0
-    },
-    {
-      "source": "tests_readonly_test",
-      "target": "tests_readonly_test_alldeclaredtools",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tests/readonly.test.js",
-      "source_location": "L15",
-      "weight": 1.0
-    },
-    {
       "source": "tests_replay_test",
       "target": "tests_replay_test_mockevaluate",
       "relation": "contains",
@@ -16496,7 +16140,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L206",
+      "source_location": "L205",
       "weight": 1.0
     },
     {
@@ -16507,7 +16151,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L49",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -16560,5 +16204,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "78bd42d5ea13f8f5fd6d000f14f8f427aff4d853"
+  "built_at_commit": "c05b8f5755ed8e64ea242de88ddbf46aa24d56a4"
 }
