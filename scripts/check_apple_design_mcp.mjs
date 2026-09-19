@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Handshake test for the MCP servers declared in apple-design.mcp.json (or --config FILE).
+ * Handshake test for the MCP servers declared in .mcp.json (the activated set) or, when that
+ * file does not exist yet, in apple-design.mcp.json. Override with --config FILE.
  *
  * For every stdio server it spawns the configured command, sends `initialize`,
  * `notifications/initialized` and `tools/list`, and reports the tool count or the failure
@@ -10,12 +11,12 @@
  *   node scripts/check_apple_design_mcp.mjs                    check every server
  *   node scripts/check_apple_design_mcp.mjs hig detent         check only these servers
  *   node scripts/check_apple_design_mcp.mjs --timeout 120      seconds to wait per server (default 60)
- *   node scripts/check_apple_design_mcp.mjs --config .mcp.json check the active project config instead
+ *   node scripts/check_apple_design_mcp.mjs --config apple-design.mcp.json   check all 13 declared servers
  *
  * Exit code 1 if any checked server failed.
  */
 import { spawn } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -23,7 +24,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const CONCURRENCY = 3;
 
 let timeoutMs = 60_000;
-let configPath = 'apple-design.mcp.json';
+let configPath = existsSync(resolve(ROOT, '.mcp.json')) ? '.mcp.json' : 'apple-design.mcp.json';
 const only = [];
 const argv = process.argv.slice(2);
 for (let i = 0; i < argv.length; i++) {
@@ -33,7 +34,7 @@ for (let i = 0; i < argv.length; i++) {
   } else if (arg === '--config') {
     configPath = argv[++i];
   } else if (arg === '-h' || arg === '--help') {
-    console.log(readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 15).join('\n'));
+    console.log(readFileSync(fileURLToPath(import.meta.url), 'utf8').split('\n').slice(1, 16).join('\n'));
     process.exit(0);
   } else {
     only.push(arg);
@@ -50,6 +51,7 @@ const expand = (value, env) =>
   value.replace(/\$\{([A-Za-z_][A-Za-z0-9_]*)(?::-([^}]*))?\}/g, (match, name, fallback) => env[name] ?? fallback ?? match);
 
 const config = JSON.parse(readFileSync(resolve(ROOT, configPath), 'utf8'));
+console.log(`checking servers from ${configPath}\n`);
 const servers = Object.entries(config.mcpServers ?? {}).filter(([name]) => only.length === 0 || only.includes(name));
 const unknown = only.filter((name) => !config.mcpServers?.[name]);
 if (unknown.length) {

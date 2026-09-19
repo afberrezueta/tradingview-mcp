@@ -3,7 +3,7 @@
     "hig": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["hig-mcp"]
+      "args": ["--with", "mcp<2", "hig-mcp"]
     },
     "apple-design": {
       "type": "stdio",
@@ -33,7 +33,7 @@
     "clarity-beta": {
       "type": "stdio",
       "command": "uv",
-      "args": ["run", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/clarity-beta", "clarity-beta"]
+      "args": ["run", "--no-sync", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/clarity-beta", "clarity-beta"]
     },
     "keynote": {
       "type": "stdio",
@@ -53,17 +53,17 @@
     "smart-photo-journal": {
       "type": "stdio",
       "command": "uv",
-      "args": ["run", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/memory-journal-mcp-server", "server.py"]
+      "args": ["run", "--no-sync", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/memory-journal-mcp-server", "server.py"]
     },
     "apple-mail": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/BastianZim/apple-mail-mcp", "apple-mail-mcp"]
+      "args": ["--from", "git+https://github.com/BastianZim/apple-mail-mcp", "--with", "mcp<2", "apple-mail-mcp"]
     },
     "harlo": {
       "type": "stdio",
       "command": "uv",
-      "args": ["run", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/Harlo", "harlo"]
+      "args": ["run", "--no-sync", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/Harlo", "harlo"]
     }
   }
 }

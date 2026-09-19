@@ -31,22 +31,24 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENDOR="$ROOT/vendor/apple-design"
 LOGS="$VENDOR/.logs"
 
-# name|kind|source|clone dir|build command (runs inside the clone)|file that must exist afterwards
+# name|kind|source|clone dir|build command (runs inside the clone; extra uvx args for kind=uvx)|file that must exist afterwards
 # kind: git = clone + build, uvx = Python package resolved by uvx at launch, npx = npm package resolved by npx at launch
+# The Python servers pin mcp<2: they import mcp.server.fastmcp, which the MCP Python SDK 2.x removed.
+# Their .mcp.json entries therefore run with "--with mcp<2" (uvx) or "uv run --no-sync" (clones).
 SERVERS='
-hig|uvx|hig-mcp|||
+hig|uvx|hig-mcp||--with mcp<2|
 apple-design|git|https://github.com/rncrosby/apple-design-mcp.git|apple-design-mcp|npm install|dist/cli.js
 orchard-hig|git|https://github.com/sophiacave/orchard-hig.git|orchard-hig||src/mcp_server.py
 better-design|npx|better-design|||
 detent|git|https://github.com/TomAs-1226/Detent.git|Detent||mcp/server.mjs
 vishwakarma|git|https://github.com/yogvidwankhede/vishwakarma.git|vishwakarma|$PNPM install && $PNPM build|packages/mcp/dist/server.js
-clarity-beta|git|https://github.com/rutika196/clarity-beta.git|clarity-beta|uv sync && uv run playwright install chromium|pyproject.toml
+clarity-beta|git|https://github.com/rutika196/clarity-beta.git|clarity-beta|uv sync && uv pip install "mcp<2" && uv run --no-sync playwright install chromium|pyproject.toml
 keynote|git|https://github.com/superdwayne/keynoteMP.git|keynoteMP|npm install && npm run build|dist/index.js
 seis|git|https://github.com/emirhankudun-ux/SEIS.git|SEIS|npm install --prefix packages/seis-ai|packages/seis-ai/bin/seis-mcp.mjs
 logomcp|git|https://github.com/gofastercloud/logoMCP.git|logoMCP|cd backend && uv sync|backend/pyproject.toml
-smart-photo-journal|git|https://github.com/Siddhant-K-code/memory-journal-mcp-server.git|memory-journal-mcp-server|uv sync|server.py
-apple-mail|uvx|git+https://github.com/BastianZim/apple-mail-mcp|||
-harlo|git|https://github.com/JosephOIbrahim/Harlo.git|Harlo|uv sync|pyproject.toml
+smart-photo-journal|git|https://github.com/Siddhant-K-code/memory-journal-mcp-server.git|memory-journal-mcp-server|uv sync && uv pip install "mcp<2"|server.py
+apple-mail|uvx|git+https://github.com/BastianZim/apple-mail-mcp||--with mcp<2|
+harlo|git|https://github.com/JosephOIbrahim/Harlo.git|Harlo|uv sync && uv pip install "mcp<2"|pyproject.toml
 '
 
 # Servers that are about Apple design itself (HIG, Liquid Glass, motion, design tokens).
@@ -130,8 +132,10 @@ while IFS='|' read -r name kind source dir build entry; do
   case "$kind" in
     uvx)
       say "==> $name: resolving Python package '$source' with uvx"
-      if [ "$DRY_RUN" = 1 ]; then record "$name" "planned" "uvx --from $source"; continue; fi
-      if uvx --from "$source" python -c 'import sys' >"$LOGS/$name.log" 2>&1; then
+      if [ "$DRY_RUN" = 1 ]; then record "$name" "planned" "uvx --from $source $build"; continue; fi
+      # $build holds extra uvx arguments (e.g. --with mcp<2); word splitting is intended
+      # shellcheck disable=SC2086
+      if uvx --from "$source" $build python -c 'import sys' >"$LOGS/$name.log" 2>&1; then
         record "$name" "ok" "uvx cache warmed"
       else
         record "$name" "failed" "see $LOGS/$name.log"
