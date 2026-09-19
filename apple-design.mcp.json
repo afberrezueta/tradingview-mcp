@@ -1,0 +1,69 @@
+{
+  "mcpServers": {
+    "hig": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--with", "mcp<2", "hig-mcp"]
+    },
+    "apple-design": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${CLAUDE_PROJECT_DIR}/vendor/apple-design/apple-design-mcp/dist/cli.js", "mcp"]
+    },
+    "orchard-hig": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["${CLAUDE_PROJECT_DIR}/vendor/apple-design/orchard-hig/src/mcp_server.py"]
+    },
+    "better-design": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "better-design", "mcp"]
+    },
+    "detent": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${CLAUDE_PROJECT_DIR}/vendor/apple-design/Detent/mcp/server.mjs"]
+    },
+    "vishwakarma": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${CLAUDE_PROJECT_DIR}/vendor/apple-design/vishwakarma/packages/mcp/dist/server.js"]
+    },
+    "clarity-beta": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--no-sync", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/clarity-beta", "clarity-beta"]
+    },
+    "keynote": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${CLAUDE_PROJECT_DIR}/vendor/apple-design/keynoteMP/dist/index.js"]
+    },
+    "seis": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${CLAUDE_PROJECT_DIR}/vendor/apple-design/SEIS/packages/seis-ai/bin/seis-mcp.mjs"]
+    },
+    "logomcp": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/logoMCP/backend", "python", "-m", "logogen.server"]
+    },
+    "smart-photo-journal": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--no-sync", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/memory-journal-mcp-server", "server.py"]
+    },
+    "apple-mail": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/BastianZim/apple-mail-mcp", "--with", "mcp<2", "apple-mail-mcp"]
+    },
+    "harlo": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--no-sync", "--directory", "${CLAUDE_PROJECT_DIR}/vendor/apple-design/Harlo", "harlo"]
+    }
+  }
+}

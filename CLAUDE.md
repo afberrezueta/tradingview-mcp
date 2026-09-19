@@ -120,6 +120,21 @@ These tools can return large payloads. Follow these rules to avoid context bloat
 - OHLCV capped at 500 bars, trades at 20 per request
 - Pine labels capped at 50 per study by default (pass `max_labels` to override)
 
+## Apple Design MCP Servers (optional)
+
+`apple-design.mcp.json` (activated as `.mcp.json`, see SETUP_GUIDE Step 7) adds design servers next to the TradingView tools. When they are connected, use them for any UI or design question instead of guessing Apple conventions:
+
+- `hig` → `hig_get_tokens` for system colors, typography, materials and layout values; `hig_check_liquid_glass` before shipping glass effects; `hig_swiftui` for component-to-SwiftUI mappings
+- `apple-design` → `hig_search` / `hig_get` to quote the actual Human Interface Guidelines text for a platform
+- `orchard-hig` → `hig_check_code` / `hig_check_file` to lint SwiftUI against 22 HIG rules
+- `better-design` → `resolve-design-system` (ask for "Apple"), `get-ui-principle`, `get-review-rules`, `search-icons`
+- `detent` → `spring`, `export_spring`, `search_presets`, `bezel_tokens` for Apple-like motion and Liquid Glass tokens
+- `vishwakarma` → design and engineering rules with platform-correct constants
+- `clarity-beta` → `render_diagram` for HIG-styled diagrams from Markdown
+- `keynote`, `seis`, `logomcp`, `smart-photo-journal`, `apple-mail`, `harlo` → Apple app integrations; call them only when the user asks for that app's data
+
+Prefer `hig` (structured tokens, about 1 KB) over `apple-design` (full guideline pages) when you only need values.
+
 ## Architecture
 
 ```
