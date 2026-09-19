@@ -5,6 +5,7 @@ temp_*
 *.log
 discovery-log.json
 rules.json
+vendor/
 
 # La capa que se cobra nunca se versiona: este repositorio es público.
 # Se publica el método (el código del motor), no el resultado del día.

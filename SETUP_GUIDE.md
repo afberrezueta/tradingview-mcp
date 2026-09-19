@@ -110,6 +110,57 @@ npm link
 
 Then `tv status`, `tv quote`, `tv pine compile`, etc. work from anywhere.
 
+## Step 7: Apple Design MCP Servers (Optional)
+
+`apple-design.mcp.json` registers the MCP servers found by the GitHub repository search **"apple design mcp"** (17 results when this was written, 16 today; 13 of them are runnable MCP servers). Together they give the agent Apple Human Interface Guidelines lookups, design tokens, Liquid Glass and motion guidance, SwiftUI HIG checks, and a few Apple-app integrations.
+
+| Server | Source | Runs via | What the agent gets |
+|--------|--------|----------|---------------------|
+| `hig` | [aka-kika/hig-mcp](https://github.com/aka-kika/hig-mcp) | `uvx hig-mcp` (PyPI) | HIG design tokens (color, typography, materials, layout), Liquid Glass checklist, SwiftUI mappings |
+| `apple-design` | [rncrosby/apple-design-mcp](https://github.com/rncrosby/apple-design-mcp) | local clone, Node 20 | Full-text search and Markdown pages of the live HIG for every Apple platform |
+| `orchard-hig` | [sophiacave/orchard-hig](https://github.com/sophiacave/orchard-hig) | local clone, Python 3.10 (stdlib only) | Checks SwiftUI code against 22 HIG rules |
+| `better-design` | [marvkr/better-design](https://github.com/marvkr/better-design) | `npx -y better-design mcp` | 31 design systems incl. Apple, UI principles, review rules, icon search. Needs `BETTER_DESIGN_API_KEY` |
+| `detent` | [TomAs-1226/Detent](https://github.com/TomAs-1226/Detent) | local clone, Node 20 | Apple-like motion: springs, gesture physics, ~110 presets, Liquid Glass "Bezel" tokens |
+| `vishwakarma` | [yogvidwankhede/vishwakarma](https://github.com/yogvidwankhede/vishwakarma) | local clone, pnpm 10 build | 32 design/engineering skills served as tools, platform-correct constants for Apple |
+| `clarity-beta` | [rutika196/clarity-beta](https://github.com/rutika196/clarity-beta) | local clone, uv + Playwright | Markdown to diagrams rendered in Apple HIG style |
+| `keynote` | [superdwayne/keynoteMP](https://github.com/superdwayne/keynoteMP) | local clone, Node | 67 tools driving Apple Keynote (macOS only) |
+| `seis` | [emirhankudun-ux/SEIS](https://github.com/emirhankudun-ux/SEIS) | local clone, Node | MCP server of the SEIS Apple-first engineering ecosystem |
+| `logomcp` | [gofastercloud/logoMCP](https://github.com/gofastercloud/logoMCP) | local clone, uv | Brand and logo design-system generation with local models (Apple Silicon only) |
+| `smart-photo-journal` | [Siddhant-K-code/memory-journal-mcp-server](https://github.com/Siddhant-K-code/memory-journal-mcp-server) | local clone, uv | Searches your Apple Photos library (macOS only) |
+| `apple-mail` | [BastianZim/apple-mail-mcp](https://github.com/BastianZim/apple-mail-mcp) | `uvx` from git | Read-only Apple Mail search (macOS only) |
+| `harlo` | [JosephOIbrahim/Harlo](https://github.com/JosephOIbrahim/Harlo) | local clone, uv + Rust toolchain | Decision coach over Apple Watch health data (macOS only) |
+
+From the same search but not registered: [palmier-pro](https://github.com/Genuscambarustangerinetree105/palmier-pro) (a Windows video editor, no MCP server), [kpa](https://github.com/alvelda/kpa) (its `kpa-mcp` server is still on the upstream roadmap) and [emasoft-complete-ios-app-authoring](https://github.com/Emasoft/emasoft-complete-ios-app-authoring) (a Claude Code plugin, not a server; `--with-plugins` installs it together with the Detent plugin).
+
+### Install and test
+
+```bash
+bash scripts/install_apple_design_mcp.sh            # all 13; add --design-only for the 7 HIG/design servers
+node scripts/check_apple_design_mcp.mjs        # handshake test: prints the tool count of every server
+```
+
+The installer clones into `vendor/apple-design/` (git-ignored) and builds there. It needs `git`, Node 20+, `uv` (`brew install uv`) and, for `vishwakarma`, pnpm 10 (falls back to `npx pnpm@10`). What it cannot do for you, printed again at the end of each run:
+
+- `better-design`: set `BETTER_DESIGN_API_KEY` (`npx better-design -y` mints a free key, or https://better-design.com/mcp)
+- `logomcp`: Apple Silicon with 24 GB+ RAM, `hf auth login`, about 12 GB of models on first use
+- `harlo`: Python 3.12 and a Rust toolchain (maturin build)
+- macOS permissions: Automation for `keynote`, Full Disk Access and Photos access for `smart-photo-journal`, Mail database access for `apple-mail`
+
+### Activate
+
+Claude Code only auto-loads a file named `.mcp.json`, so nothing runs until you activate it:
+
+```bash
+bash scripts/install_apple_design_mcp.sh --design-only --activate   # writes the servers that installed OK into .mcp.json (merges if it exists)
+# alternatives:
+cp apple-design.mcp.json .mcp.json                             # all 13, project scope
+claude --mcp-config apple-design.mcp.json                      # one session only
+```
+
+Claude Code asks you to approve project servers the first time it sees them (`claude mcp reset-project-choices` asks again). The paths use `${CLAUDE_PROJECT_DIR}`, which Claude Code expands to this directory; if you move entries into `~/.claude/.mcp.json`, replace it with the absolute path of the clone.
+
+**Read before activating everything.** `apple-mail`, `smart-photo-journal` and `harlo` give the agent read access to your email, photo library and health data; keep them only if that is what you want. Most of these projects are small (0 to 35 GitHub stars) and run with your user permissions, so treat them like any other dependency you add. The upstream tradingview-mcp project keeps `.mcp.json` files out of its repository (see CONTRIBUTING.md), which is why this fork ships the config under a separate name.
+
 ## Troubleshooting
 
 | Problem | Solution |
@@ -121,6 +172,7 @@ Then `tv status`, `tv quote`, `tv pine compile`, etc. work from anywhere.
 | `tv` command not found | Run `npm link` from the project directory |
 | Tools return stale data | TradingView may still be loading — wait a few seconds |
 | Pine Editor tools fail | Open the Pine Editor panel first (`ui_open_panel pine-editor open`) |
+| Apple design server shows "failed" in `/mcp` | Run `bash scripts/install_apple_design_mcp.sh`, then `node scripts/check_apple_design_mcp.mjs` and follow the manual steps it prints |
 
 ## What to Read Next
 
