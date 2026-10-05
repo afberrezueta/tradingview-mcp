@@ -16,13 +16,38 @@
 | Tiempo | 5–10 horas por semana |
 | Nivel | Nuevo en Claude Code |
 
-**Aún me faltan tres datos.** Cambian bastante el plan:
+### Decisiones confirmadas (5 de octubre de 2026)
 
-1. **¿En qué país venderás?** (Estados Unidos, España, México, Ecuador…). Los aranceles, los impuestos y las plataformas dependen del mercado donde vendes, no de donde vives.
-2. **¿Cuánto dinero puedes invertir** sin que te afecte perderlo? (por ejemplo: menos de $1.000, $1.000–5.000, más de $5.000).
-3. **¿Tienes ya empresa o RUC/NIF/EIN** para facturar e importar?
+| | |
+|---|---|
+| Mercado de venta | **Estados Unidos** 🇺🇸 |
+| Presupuesto | **$5.000** |
+| Empresa | **Sí, una corporación** |
+| Categorías de interés | Tecnología, belleza, accesorios para mujer, mascotas, hogar y día a día |
+| Camino aprobado | **Empezar con dropshipping** (validación) y pasar a comprar al por mayor solo con un producto probado |
 
-Mientras tanto, cuando un dato depende del país uso **Estados Unidos** como ejemplo, porque es donde hay más información pública. Lo marco con 🇺🇸.
+**Primer entregable ya preparado:** `productos-candidatos.md` (y la misma tabla en `productos-candidatos.csv`). Tiene 10 candidatos con puntuación y 3 finalistas.
+
+### Reparto recomendado de los $5.000
+
+| Bloque | Monto | Para qué |
+|---|---|---|
+| Validación (Fase 2) | $1.500 | Shopify Basic ($39/mes, o $29/mes pagando el año) × 3 meses ≈ $120; dominio ≈ $15; muestras de 3 productos ≈ $150; apps ≈ $50; **anuncios de prueba: $300 por producto × 3 = $900**; colchón ≈ $265 |
+| Tienda y marketing (Fase 3) | $1.000 | Fotos y videos, más publicidad para el producto que funcione |
+| Reserva para wholesale (Fase 4) | $2.500 | Primer lote del producto ganador. Es un lote pequeño: negocia un pedido mínimo bajo o empieza con un proveedor de India o China que acepte 100–300 unidades |
+| **Regla** | — | **No tocar la reserva de $2.500 hasta que un producto tenga 30–50 ventas con margen positivo** |
+
+### Lo que tu corporación necesita para vender en EE. UU. (revisar con tu contador)
+
+1. **EIN** (número fiscal federal): seguramente ya lo tienes.
+2. **Permiso de impuesto sobre ventas (sales tax permit) en el estado donde está tu corporación.** Allí tienes presencia física desde el primer día y debes cobrar el impuesto a los clientes de ese estado. En los demás estados solo empiezas a deberlo al superar sus umbrales ("nexus económico"; en la mayoría $100.000 en ventas al año). Shopify **no** cobra el impuesto por ti: tienes que configurarlo (Shopify Tax).
+3. **Certificado de reventa (resale certificate)** para tu proveedor de dropshipping, para que no te cobre impuesto sobre ventas en la compra mayorista.
+4. **Cuenta bancaria de la empresa** separada, para pagar proveedores, anuncios y Shopify.
+5. Más adelante, para importar al por mayor: **agente de aduanas** y fianza de importación (customs bond).
+
+**Dato que me falta:** ¿en qué **estado** está registrada tu corporación? Cambia las reglas del impuesto sobre ventas.
+
+Cuando un dato del documento depende del país, va marcado con 🇺🇸.
 
 ---
 
@@ -330,13 +355,16 @@ Este entregable no requiere instalar nada ni pagar nada, y puedes probarlo de in
 
 ---
 
-## 5. Próximos pasos (necesito tu aprobación)
+## 5. Próximos pasos
 
-1. Responde las tres preguntas de la sección 0: **país de venta, presupuesto, empresa**.
-2. Dime **2–3 temas** que te interesen o conozcas (te da ventaja vender algo que entiendes).
-3. Confirma si apruebas el camino recomendado: **validar con dropshipping desde almacén local y luego pasar a wholesale**.
+- [x] País de venta, presupuesto, empresa y categorías (sección 0)
+- [x] Camino aprobado: dropshipping primero
+- [x] Primer entregable: `productos-candidatos.md` / `.csv`
+- [ ] **Tú:** revisar los 3 finalistas en Amazon, TikTok, CJ/Spocket y Meta Ad Library (paso 3 de `productos-candidatos.md`, 3–5 h)
+- [ ] **Tú:** decirme el estado donde está registrada la corporación
+- [ ] **Juntos:** con tus números reales, elegir qué finalistas pasan a la Fase 2 (muestras y tienda mínima)
 
-Con eso preparo el **primer entregable** (tabla de 10 candidatos). Hasta que lo apruebes no se instala nada, no se escribe código y no se gasta dinero.
+No se gasta dinero hasta que confirmemos los finalistas con datos reales.
 
 ---
 
