@@ -1,212 +1,209 @@
-# Plan: evaluación de Claude Commerce Agents para mi e-commerce
+# Plan: empezar un e-commerce desde cero y evaluar Claude Commerce Agents
 
-> Documento de planificación. **No se ha escrito código ni se ha instalado nada en tu negocio.**
-> Fecha de la investigación: 5 de octubre de 2026.
+> Documento de planificación. **No se ha escrito código, no se ha instalado nada y no se ha gastado dinero.**
+> Fecha de la investigación: 5 de octubre de 2026 (versión 2).
 > Repositorio revisado: `anthropics/commerce-agents` (último commit del 31 de agosto de 2026, licencia Apache 2.0).
 
 ---
 
-## 0. Antes de empezar: falta un dato tuyo
+## 0. Tu punto de partida
 
-El campo **"Mi negocio: [DESCRIBE AQUÍ…]"** llegó vacío. Por eso el documento evalúa tres escenarios y te dice qué cambia en cada uno:
-
-| Escenario | Código en este documento |
+| | |
 |---|---|
-| Tienda en **Shopify** | **S** |
-| **Amazon FBA** (u otro marketplace) | **A** |
-| **Web propia** (WooCommerce, código propio, etc.) | **W** |
+| Producto | **Ninguno todavía** |
+| Modelos que te interesan | **Dropshipping**, o encontrar un **producto ganador** y comprarlo **al por mayor** en China o India |
+| País fabricante | Se elegirá según el producto |
+| Tiempo | 5–10 horas por semana |
+| Nivel | Nuevo en Claude Code |
 
-Cuando me digas qué vendes, dónde, cuánto vendes al mes y en qué país, ajusto el plan a tu caso y descarto lo que no aplique.
+**Aún me faltan tres datos.** Cambian bastante el plan:
 
-**Tiempo disponible que asumo:** 5–10 horas por semana. **Nivel que asumo:** nuevo en Claude Code y en programación.
+1. **¿En qué país venderás?** (Estados Unidos, España, México, Ecuador…). Los aranceles, los impuestos y las plataformas dependen del mercado donde vendes, no de donde vives.
+2. **¿Cuánto dinero puedes invertir** sin que te afecte perderlo? (por ejemplo: menos de $1.000, $1.000–5.000, más de $5.000).
+3. **¿Tienes ya empresa o RUC/NIF/EIN** para facturar e importar?
+
+Mientras tanto, cuando un dato depende del país uso **Estados Unidos** como ejemplo, porque es donde hay más información pública. Lo marco con 🇺🇸.
 
 ---
 
 ## 1. Estudio de factibilidad
 
-### 1.1 Qué es el blueprint (en lenguaje sencillo)
+### 1.1 Primero, lo honesto: el orden correcto
 
-Es un **proyecto de referencia**: código de ejemplo que muestra cómo construir dos asistentes con Claude. No es un producto que se instala y funciona solo. Tú (o un desarrollador) tienes que **conectarlo a tus sistemas**: catálogo, carrito, pedidos, inventario.
+El blueprint **Claude Commerce Agents** sirve para tiendas que **ya existen**: tienen catálogo, carrito, checkout y clientes haciendo preguntas. **Tú todavía no tienes producto ni tienda**, así que hoy el blueprint no tiene nada a lo que conectarse.
 
-El mismo README lo dice: *"This is a reference implementation; it is not maintained and does not accept contributions."* Es decir, Anthropic no lo va a actualizar ni a corregir errores. Si lo usas, el mantenimiento es tuyo.
+El orden que más probabilidades de éxito tiene es:
 
-Lo que trae:
+```
+1. Encontrar y validar un producto  →  2. Vender las primeras unidades  →  3. Montar la tienda en serio  →  4. Automatizar con agentes de IA
+```
 
-| Pieza | Qué es |
+La IA (Claude) **sí te sirve desde el primer día**, pero como **asistente de investigación**, no como agente de tienda. Te ayuda a analizar productos, comparar proveedores, calcular márgenes, redactar fichas y preparar mensajes a fábricas.
+
+### 1.2 Qué es el blueprint (resumen)
+
+Es **código de referencia**, no un producto que se instala y funciona solo. El README dice: *"This is a reference implementation; it is not maintained and does not accept contributions."* Si lo usas, el mantenimiento es tuyo.
+
+| Pieza | Qué hace |
 |---|---|
-| `shopping-agent/` | El **agente comprador**: el chat que ve tu cliente en tu tienda |
-| `merchant-agent/` | El **agente comerciante**: el asistente que usas tú (o tu equipo) para administrar la tienda |
-| `commerce-common/` | Piezas compartidas: seguridad, memoria, configuración |
-| `examples/` | 4 tiendas de demostración ficticias (retail, viajes, telecom, entradas) con su web en Next.js |
-| `plugins/commerce-builder/` | Un **plugin de Claude Code** que te entrevista y genera el esqueleto de tu propio agente |
-| `docs/` | `backends.md` (cómo conectar tus sistemas), `safety.md` (reglas de seguridad), `deployment.md` (dónde desplegar) |
+| **Agente comprador** (`shopping-agent/`) | Chat para tus clientes. Busca y compara productos, arma planes, llena el carrito, responde sobre pedidos y políticas, recuerda preferencias. **No cobra**: al final manda al cliente a tu checkout. |
+| **Agente comerciante** (`merchant-agent/`) | Asistente para ti. Explica ventas, revisa fichas, alerta de stock, propone precios, promociones y campañas. **Todo cambio espera tu aprobación.** |
+| **Plugin `commerce-builder`** | Plugin de Claude Code que te entrevista sobre tu tienda y genera el esqueleto del agente (`/scaffold-commerce-agent`). |
+| `docs/` | Cómo conectar tus sistemas, reglas de seguridad y despliegue. |
 
-Tecnología: Python 3.11+ (backend) y Node 22 / Next.js (páginas web). Modelos por defecto: **Claude Sonnet 5** para el agente comprador, **Claude Opus 5** para el comerciante y **Claude Haiku 4.5** para la memoria.
+Tecnología: Python + Next.js. Modelos por defecto: Claude Sonnet 5 (comprador), Opus 5 (comerciante) y Haiku 4.5 (memoria). El propio `docs/safety.md` aclara que las demos **no tienen autenticación ni límites de uso**: eso lo añade quien despliega.
 
-Se puede ejecutar de tres maneras: con la **Messages API** (tú alojas el servidor), con el **Agent SDK**, o con **Managed Agents** (Anthropic aloja el agente y él llama a tu servidor).
+### 1.3 ¿Encaja con tu caso?
 
-### 1.2 El agente comprador (para tus clientes)
-
-Tiene cinco "habilidades" (carpeta `shopping-agent/skills/`):
-
-1. **Búsqueda y descubrimiento** — "busco una tienda de campaña para dos personas por menos de 250 $".
-2. **Investigación de compra** — compara productos y explica diferencias.
-3. **Planificación** — arma una lista para un objetivo ("lo que necesito para acampar").
-4. **Atención al cliente** — estado de pedidos, políticas de devolución, envíos.
-5. **Memoria y personalización** — recuerda preferencias que el cliente le dio.
-
-Puntos importantes:
-
-- **No cobra ni crea pedidos.** La herramienta `checkout` solo muestra el carrito y te pasa el enlace a **tu** checkout (o al checkout alojado de la plataforma). El pago siempre lo hace tu sistema.
-- Para conectarlo tienes que programar una clase llamada `StorefrontBackend` con métodos como `search_products`, `get_product_details`, `add_to_cart`, `get_orders`, `search_policies`, `checkout_handoff`.
-- Se puede empezar pequeño: implementar solo búsqueda y detalle de producto y dejar el resto apagado.
-
-### 1.3 El agente comerciante (para ti)
-
-Cinco habilidades (`merchant-agent/skills/`):
-
-1. **Rendimiento** — "¿por qué bajaron las ventas esta semana?" (resumen, métricas, análisis con SQL).
-2. **Catálogo y fichas** — detectar y corregir fichas incompletas.
-3. **Inventario** — alertas de stock bajo, propuestas de reposición.
-4. **Precios y promociones**.
-5. **Campañas de marketing** — borradores.
-
-Punto clave de seguridad: **todo cambio queda "en espera"** hasta que una persona lo aprueba. El agente propone; tú apruebas. Para conectarlo hay que programar `MerchantBackend` (8 métodos de lectura y varios de escritura). Un piloto puede ser **solo lectura**.
-
-### 1.4 ¿Encaja con tu caso?
-
-El blueprint asume que **tú controlas la tienda**: catálogo, carrito y checkout propios, y una web donde poner el chat.
-
-| | **S — Shopify** | **A — Amazon FBA** | **W — Web propia** |
-|---|---|---|---|
-| Agente comprador | **Aplica, con trabajo.** Shopify ya ofrece un servidor MCP de tienda (Storefront MCP) con catálogo, carrito y políticas que tu backend puede llamar. Tienes que alojar el servidor y meter el chat en tu tema. | **No aplica.** No puedes poner tu propio chat dentro de Amazon. En Amazon, el asistente de compra es el de Amazon (Rufus, ahora "Alexa for Shopping"). Lo que sí puedes hacer es **optimizar tus fichas** para que ese asistente las recomiende. | **Aplica y es donde más sentido tiene**, pero tienes que programar todo el puente con tu catálogo y tu carrito. |
-| Agente comerciante | Aplica. Pero Shopify ya incluye **Sidekick** gratis en el panel, que cubre parte de esto. | **Técnicamente posible** (el README dice que puede actuar como vendedor en un marketplace), **pero Amazon lanzó el 23/09/2026 un plugin oficial para Claude** (Amazon Selling Partner, beta en EE. UU., requiere plan Professional) que ya hace inventario, precios, fichas y analítica sin programar. Construirlo tú sería reinventar algo que ya existe. | Aplica. Tendrías que conectar tu analítica, inventario y pedidos. |
-| Veredicto | **Viable pero no prioritario**: primero prueba lo que Shopify ya te da gratis. | **El blueprint no es para ti como vendedor de Amazon.** Usa el plugin oficial de Amazon + Claude. | **Viable** si tienes volumen y preguntas de clientes complejas. |
-
-**Si vendes en varios canales** (por ejemplo, Amazon + Shopify), el agente comprador solo sirve para el canal propio.
-
-### 1.5 Costos estimados
-
-**API de Claude** (precios oficiales, verificados en platform.claude.com/docs, octubre 2026; USD por millón de tokens):
-
-| Modelo | Entrada | Salida | Lectura de caché |
-|---|---|---|---|
-| Claude Sonnet 5 (comprador) | $2 | $10 | $0,20 |
-| Claude Opus 5 (comerciante) | $5 | $25 | $0,50 |
-| Claude Haiku 4.5 (memoria) | $1 | $5 | $0,10 |
-
-**Mi estimación** (no es un dato oficial; depende de cuánto hable cada cliente y del tamaño de tu catálogo):
-
-| Concepto | Estimación |
+| Etapa de tu negocio | ¿Encaja el blueprint? |
 |---|---|
-| Una conversación de cliente (5–6 mensajes, con caché activa) | ~$0,03 – $0,10 |
-| 1.000 conversaciones/mes | ~$30 – $100/mes |
-| Agente comerciante: un resumen diario + algunas preguntas | ~$10 – $40/mes |
-| Hosting del backend (servidor pequeño: Railway, Render, Fly.io o un VPS) | ~$5 – $25/mes |
-| Web del chat (Vercel; el plan gratuito no permite uso comercial, Pro cuesta ~$20/mes por persona) | $0 – $20/mes |
-| Dominio, monitoreo básico | $0 – $15/mes |
-| **Total mensual del blueprint en producción pequeña** | **~$50 – $200/mes** |
-| **Pruebas iniciales** (ejecutar la demo y experimentar) | **~$5 – $20 en créditos de API** |
+| **Ahora** (sin producto) | **No.** No hay catálogo ni clientes. |
+| Dropshipping en Shopify con pocas ventas | **No compensa.** Shopify Inbox (gratis) o un chatbot de $0–100/mes hacen lo mismo sin programar. |
+| Vendiendo en **Amazon** | **El agente comprador no aplica.** No puedes poner tu propio chat dentro de Amazon; allí el asistente es Rufus / "Alexa for Shopping". Para gestión, Amazon lanzó el 23/09/2026 un **plugin oficial para Claude** (beta en EE. UU., requiere plan Professional) que ya cubre inventario, precios y fichas. |
+| **Marca propia en tu web**, con cientos de conversaciones al mes y productos que necesitan consejo | **Sí puede compensar.** Es su caso ideal. Realísticamente, a partir del mes 6–12. |
 
-El costo grande **no es el dinero sino el tiempo**: ver la sección 4.
+### 1.4 Factibilidad de los dos modelos de negocio
 
-Para comparar:
+#### A) Dropshipping
 
-- Chatbots ya hechos para Shopify: desde gratis (Shopify Inbox) hasta ~$100–$500/mes.
-- Plugin oficial de Amazon para Claude: el conector no tiene costo publicado; necesitas un plan de Claude (Pro ~$20/mes) y el plan Professional de Amazon que ya pagas.
+**Qué es:** vendes en tu tienda online y el proveedor envía el producto directamente al cliente. No compras inventario.
 
-### 1.6 Riesgos técnicos
+| A favor | En contra |
+|---|---|
+| Poca inversión inicial ($300–1.500) | Márgenes bajos; la publicidad se come gran parte |
+| Pruebas varios productos rápido | Envíos más lentos y menos control de calidad |
+| No guardas stock | Mucha competencia vendiendo lo mismo |
+| Ideal para **validar** si un producto se vende | 🇺🇸 **Desde el 29/08/2025, EE. UU. eliminó la exención "de minimis"** para todos los países: todo paquete paga aranceles, aunque valga menos de $800 (verificado: Orden Ejecutiva 14324, CBP). El dropshipping directo desde China a EE. UU. es mucho menos rentable que antes. |
 
-| Riesgo | Gravedad | Explicación sencilla |
+**Consecuencia práctica 🇺🇸:** si haces dropshipping hacia EE. UU., conviene usar proveedores con **almacén en EE. UU.** (por ejemplo Spocket, Zendrop o los almacenes de CJ Dropshipping en EE. UU.). Así los aranceles se pagan una vez en la importación grande y no en cada paquete.
+
+#### B) Comprar al por mayor (wholesale / marca propia)
+
+**Qué es:** compras un lote a una fábrica (en China o India), lo traes a tu país y lo vendes con tu marca, en tu web o en Amazon FBA.
+
+| A favor | En contra |
+|---|---|
+| Mejor margen por unidad | Inversión inicial alta (afirmación del sector: $2.500–5.000 como mínimo realista para Amazon FBA de marca propia) |
+| Controlas calidad, empaque y marca | Riesgo de quedarte con stock que no se vende |
+| Construyes un activo (marca) | Importar exige trámites: código arancelario (HTS), agente de aduanas, certificaciones |
+| Envíos rápidos al cliente | Pedido mínimo (MOQ) típico de cientos de unidades |
+
+**Regla clave:** **no compres al por mayor un producto que no hayas validado antes.** Por eso el plan usa el dropshipping (o pocas unidades) como prueba y el wholesale como segundo paso.
+
+#### C) China o India: cómo elegir
+
+| | **China** | **India** |
 |---|---|---|
-| **No tiene mantenimiento** | Alta | Nadie va a corregir errores ni actualizar dependencias. Quedan bajo tu responsabilidad. |
-| **Faltan piezas de producción** | Alta | El propio `docs/safety.md` dice que las demos **no tienen autenticación** ni límites de uso. Tú tendrías que añadir: inicio de sesión, límites contra abuso, manejo de datos personales y registros. |
-| **Curva de aprendizaje** | Alta (para alguien nuevo) | Python, TypeScript/Next.js, APIs, despliegue. Claude Code ayuda mucho, pero hay que entender lo que se publica. |
-| **Respuestas incorrectas del agente** | Media | El blueprint trae buenas defensas (solo afirma precios que salen de tus datos, cercado de texto de terceros), pero hay que **probarlo con preguntas reales** antes de abrirlo a clientes (lo que el plugin llama *evals*). |
-| **Costos que crecen** | Media | Un bot abusado o un catálogo muy grande puede disparar el gasto. Pon un límite de gasto en la consola de Anthropic desde el primer día. |
-| **Plataforma cambiante** | Media | Shopify cambió su API de catálogo en 2026 (deprecó un endpoint en abril, migración hasta junio). Amazon acaba de abrir su plugin en beta. Las integraciones cambiarán. |
-| **Seguridad de claves** | Media | La clave de la API de Claude y las credenciales de la tienda nunca deben subirse a GitHub. |
-| **Privacidad / legal** | Depende del país | La memoria del cliente es dato personal (GDPR en Europa, leyes locales en LatAm). Necesitarás aviso de privacidad. |
+| Fuerte en | Casi todo: electrónica, hogar, herramientas, accesorios, plásticos, gadgets | Textiles y algodón, ropa, cuero, joyería y bisutería, artesanía, decoración, productos naturales |
+| Plataformas | Alibaba, 1688 (requiere agente), Made-in-China, ferias de Cantón | IndiaMART, TradeIndia, Alibaba (sección India), exportadores directos |
+| Pedido mínimo | Flexible; muchos proveedores aceptan lotes pequeños | Suele ser más alto y menos estandarizado |
+| Velocidad y logística | Muy madura (agentes, inspección, fulfillment) | Buena, pero menos ecosistema para pequeños vendedores |
+| 🇺🇸 Aranceles | **Más altos** que para casi cualquier otro país; varían mucho según el producto | **Más bajos** que China en general (fuentes del sector hablan de ~10 % de media en 2026) |
+
+⚠️ **Los aranceles cambian a menudo y dependen del código exacto del producto (HTS).** Antes de comprar cualquier lote, confirma la tasa con el buscador oficial (hts.usitc.gov en EE. UU.) o con un agente de aduanas. Las cifras de esta tabla son orientativas.
+
+**Recomendación:** elige primero el **producto** y después el **país** según dónde se fabrique mejor y cuánto arancel paga. Tú mismo lo planteaste así, y es lo correcto.
+
+### 1.5 Costos estimados (Fases 1–3, sin agentes de IA)
+
+| Concepto | Dropshipping (validación) | Wholesale (marca propia) |
+|---|---|---|
+| Tienda Shopify (plan básico, pago mensual; confirma el precio en tu país) | ~$30–40/mes (suele haber prueba barata los primeros meses) | Igual |
+| Claude Pro (asistente de investigación) | ~$20/mes | ~$20/mes |
+| App de proveedores (Spocket/Zendrop) | $0–50/mes | — |
+| Muestras de producto | $50–200 | $100–300 |
+| Publicidad de prueba (Meta/TikTok/Google) | $300–1.000 | $1.000–3.000 |
+| Primer lote de inventario | — | $1.500–3.000 (afirmación del sector) |
+| Envío internacional, aduana, agente | Incluido por el proveedor | $300–1.000+ |
+| Marca, fotos, registro de marca | Opcional | $500–2.000 |
+| **Total aproximado** | **$500–1.500** | **$3.000–8.000** |
+
+**Costo de los agentes de IA (solo más adelante):** API de Claude con precios oficiales: Sonnet 5 $2/$10, Opus 5 $5/$25, Haiku 4.5 $1/$5 por millón de tokens (entrada/salida). Mi estimación es de ~$0,03–0,10 por conversación de cliente, y de $50–200/mes para el blueprint en producción pequeña (API + hosting).
+
+### 1.6 Riesgos
+
+| Riesgo | Gravedad | Cómo reducirlo |
+|---|---|---|
+| **Perder dinero en publicidad sin vender** | Alta | Presupuesto de prueba cerrado (ej. $300) y reglas de "parar" definidas antes de empezar |
+| **Elegir un producto saturado** | Alta | Usar la ficha de puntuación de la Fase 1; evitar lo que ya venden miles de tiendas iguales |
+| **Aranceles y aduanas** | Alta 🇺🇸 | Calcular el costo puesto en destino ("landed cost") antes de fijar precio; usar almacenes en el país de venta |
+| **Proveedor poco fiable** | Media | Pedir muestras, usar pago protegido (por ejemplo Trade Assurance en Alibaba), revisar historial, inspección antes del envío |
+| **Productos regulados** | Media | Evitar al principio: suplementos, cosmética, juguetes infantiles, electrónica con baterías, alimentos y productos médicos (exigen certificaciones) |
+| **Propiedad intelectual** | Media | No vender copias de marcas ni diseños patentados |
+| **Legal e impuestos** | Depende del país | Registrar el negocio y entender el impuesto sobre ventas o IVA de tu mercado |
+| **Expectativas irreales** | Alta | Ver la sección 3: la mayoría de tiendas nuevas no llega a ser rentable el primer año |
 
 ---
 
 ## 2. Alternativas
 
-Comparo cuatro opciones. Puntuación del 1 (malo) al 5 (excelente) **para tu situación** (5–10 h/semana, principiante).
+Comparo cinco caminos. Puntuación del 1 (malo) al 5 (excelente) **para ti**: sin producto, 5–10 h por semana, principiante.
 
-| | **Opción 1: Blueprint tal cual** | **Opción 2: Agente propio simple con la API de Claude** | **Opción 3: Chatbot ya hecho** | **Opción 4 (híbrida): Herramientas ya hechas + Claude con conectores oficiales** |
-|---|---|---|---|---|
-| Qué es | Clonar `commerce-agents`, usar `/scaffold-commerce-agent`, conectar tus sistemas, desplegar | Un chat pequeño (una página + un servidor) que responde con tu catálogo y tus políticas en un archivo | Shopify Inbox (gratis), Tidio Lyro (desde ~$39/mes), Rep AI (~$99/mes), Gorgias, etc. | Cliente: chatbot ya hecho (S/W) o fichas optimizadas para Rufus (A). Tú: Claude con el conector oficial (plugin de Amazon Selling Partner, o MCP de Shopify) |
-| Tiempo hasta algo usable | 2–4 meses | 3–6 semanas | 1 semana | 1–2 semanas |
-| Horas totales estimadas | 60–120 h | 25–50 h | 5–10 h | 10–20 h |
-| Costo mensual | $50–200 | $20–80 | $0–150 | $20–150 |
-| Control y personalización | 5 | 3 | 2 | 3 |
-| Riesgo técnico | 2 | 3 | 5 | 5 |
-| Encaje con Amazon (A) | 1 | 1 | 1 | **5** |
-| Encaje con Shopify (S) | 3 | 3 | **5** | **5** |
-| Encaje con web propia (W) | **4** | 4 | 4 | 4 |
-| Probabilidad de éxito con tu tiempo | Baja–media | Media | **Alta** | **Alta** |
+| | **1. Dropshipping directo desde China** | **2. Dropshipping con almacén local + validación** | **3. Wholesale directo (China/India) en Amazon FBA** | **4. Wholesale directo en tu web** | **5. Construir ya el blueprint de agentes** |
+|---|---|---|---|---|---|
+| Inversión inicial | $300–1.000 | $500–1.500 | $3.000–8.000 | $3.000–8.000 | $50–200/mes + 60–120 h |
+| Riesgo de pérdida | Medio | **Bajo** | Alto | Alto | Alto (tiempo) |
+| Margen potencial | Bajo 🇺🇸 (aranceles por paquete) | Bajo–medio | Medio–alto | Medio–alto | No aplica sin producto |
+| Velocidad para aprender si hay demanda | Rápida | **Rápida** | Lenta (meses) | Lenta | No aplica |
+| Encaje con 5–10 h/semana | 4 | **5** | 3 | 2 | 1 |
+| Probabilidad de éxito estimada | Baja | **Media** | Media (si el producto está validado) | Baja–media | Muy baja ahora |
 
 ### Recomendación
 
-**Opción 4 (híbrida)**, aunque no sea la que propusiste. Razones:
+**Camino 2 → luego 3 o 4.** En concreto:
 
-1. **Te da resultados en 1–2 semanas**, no en meses, y con poco riesgo.
-2. **Usa piezas oficiales y mantenidas** (Amazon, Shopify, Anthropic) en vez de un código de referencia sin mantenimiento.
-3. **Mide primero si hay demanda real**: si el chatbot ya hecho recibe pocas preguntas o no sube ventas, construir el blueprint no habría tenido sentido.
-4. **No cierra la puerta al blueprint**: queda como Fase 4 opcional, con criterios claros para decidir si vale la pena.
+1. **Encuentra 3 productos candidatos** con método (Fase 1), usando Claude como investigador.
+2. **Valídalos barato**: dropshipping desde almacén local, o unas pocas unidades, con un presupuesto de publicidad cerrado.
+3. **Solo cuando un producto venda de forma repetida** (por ejemplo, 30–50 ventas con margen positivo), **pasa a comprar al por mayor** en China o India, según el producto y el arancel.
+4. **Los agentes de IA para clientes vienen después**: primero Shopify Inbox (gratis) y, mucho más adelante, el blueprint si tu marca crece.
 
-Según tu escenario:
-
-- **A (Amazon):** plugin oficial de Amazon en Claude para la gestión + optimizar fichas para Rufus/Alexa for Shopping. **No construir el blueprint.**
-- **S (Shopify):** Shopify Inbox (gratis) o un chatbot de pago para clientes + Sidekick y Claude con conector de Shopify para ti. El blueprint, solo si tras 2–3 meses ves que las herramientas ya hechas se quedan cortas.
-- **W (web propia):** chatbot ya hecho para empezar. Es el escenario donde el blueprint tiene más posibilidades de compensar más adelante.
+Por qué no empezar directamente con wholesale: arriesgas $3.000–8.000 en un producto que nadie ha comprado todavía. Por qué no construir ya el blueprint: no hay tienda ni clientes a los que conectarlo.
 
 ---
 
 ## 3. Estudio de mercado
 
-> **Cómo leer esta sección:** separo los **datos verificados** (fuente oficial o primaria que pude comprobar) de las **afirmaciones** (cifras de empresas que venden estas herramientas o de blogs, sin estudio público que las respalde). Trata las afirmaciones con escepticismo.
+> **Cómo leer esta sección:** separo los **datos verificados** (fuente oficial o primaria) de las **afirmaciones** (cifras de empresas que venden herramientas o cursos, sin estudio público). Muchas cifras sobre dropshipping vienen de quien vende software de dropshipping.
 
 ### 3.1 Datos verificados
 
 | Dato | Fuente |
 |---|---|
-| Precios de la API: Sonnet 5 $2/$10, Opus 5 $5/$25, Haiku 4.5 $1/$5 por millón de tokens. El precio de Sonnet 5 queda fijo (se canceló la subida prevista para el 1/09/2026). | [Página oficial de precios de Anthropic](https://platform.claude.com/docs/en/about-claude/pricing) |
-| Amazon anunció el 23/09/2026 (Accelerate) un plugin de Seller Assistant para Amazon Quick y Claude. | [About Amazon (oficial)](https://www.aboutamazon.com/news/innovation-at-amazon/seller-assistant-plugin-amazon-quick-claude) |
-| Shopify presentó su Spring '26 Edition centrada en *agentic commerce* (catálogo legible por agentes, Universal Commerce Protocol). | [Shopify News (oficial)](https://www.shopify.com/news/spring-26-edition-dev) |
-| Shopify Inbox es gratuito en la App Store y se describe como un asistente de ventas con IA en la tienda. | Ficha de la Shopify App Store (citada en guías del sector; confirma el precio en la App Store antes de decidir) |
-| El blueprint no cobra, no crea pedidos y no cambia listados sin aprobación humana; no trae autenticación. | Código y `README.md` / `docs/safety.md` del repo (revisados directamente) |
+| 🇺🇸 EE. UU. suspendió la exención "de minimis" ($800 libres de aranceles) para **todos los países** desde el **29/08/2025**; para China ya se había suspendido en mayo de 2025. Cada envío comercial necesita una declaración aduanera y paga aranceles. | [Casa Blanca, Orden Ejecutiva 14324](https://www.whitehouse.gov/presidential-actions/2025/07/suspending-duty-free-de-minimis-treatment-for-all-countries/), [CBP](https://www.cbp.gov/newsroom/national-media-release/cbp-ready-enforce-end-de-minimis-loophole-securing-borders-and) |
+| 🇺🇸 En junio de 2026 la suspensión pasó a ser **indefinida** para envíos que no van por correo postal. | [Federal Register, 24/06/2026](https://www.federalregister.gov/documents/2026/06/24/2026-12670/indefinite-suspension-of-the-de-minimis-exemption-for-merchandise-arriving-through-all-modes-other) |
+| Precios de la API de Claude: Sonnet 5 $2/$10, Opus 5 $5/$25, Haiku 4.5 $1/$5 por millón de tokens. | [Anthropic, precios oficiales](https://platform.claude.com/docs/en/about-claude/pricing) |
+| Amazon lanzó el 23/09/2026 un plugin de Seller Assistant para Claude y Amazon Quick. | [About Amazon](https://www.aboutamazon.com/news/innovation-at-amazon/seller-assistant-plugin-amazon-quick-claude) |
+| Shopify lanzó en 2026 funciones de *agentic commerce*: catálogo legible por asistentes de IA y el Universal Commerce Protocol. | [Shopify News](https://www.shopify.com/news/spring-26-edition-dev) |
+| El blueprint no cobra, no crea pedidos, no cambia listados sin aprobación humana y no trae autenticación. | Código y documentación del repo, revisados directamente |
 
-### 3.2 Afirmaciones de empresas o de terceros (no verificadas)
+### 3.2 Afirmaciones del sector (no verificadas)
 
 | Afirmación | Quién lo dice | Comentario |
 |---|---|---|
-| "El chat con IA multiplica la conversión por 4 (12,3 % vs 3,1 %)" | Alhena (vende asistentes de compra) | Interés comercial directo. Probablemente hay sesgo de selección: quien abre el chat ya tenía más intención de compra. |
-| "Los comercios ven +10–20 % de conversión entre quienes usan el asistente y +10–15 % en ticket medio" | Destilabs y otros proveedores | Rango típico de marketing, sin metodología pública. |
-| "El tráfico que llega desde asistentes de IA convierte un 42 % mejor" (Adobe) | Blogs que citan a Adobe | Habla de visitas que **llegan** desde ChatGPT/Perplexity, no de un chat **en tu tienda**. Es otra cosa. |
-| "El 45 % de compradores usa IA para descubrir productos" (NRF/Salesforce) | Blogs que citan la encuesta | Encuesta, no comportamiento medido. Indica tendencia, no ventas. |
-| "Rufus: más de 250 M de usuarios; quien lo usa convierte un 60 % más" | Herramientas para vendedores de Amazon, citando a Amazon | Las cifras de uso vienen de Amazon; la de conversión no la pude confirmar en fuente primaria. |
-| "Optimizar fichas para Rufus da +20–35 % de conversión en 30–60 días" | Agencias y herramientas de Amazon | Afirmación de quien vende el servicio. |
-| "Las tiendas Shopify se hicieron visibles en ChatGPT, Copilot y Gemini por defecto (5,6 M de tiendas)" | Blogs de agencias | Plausible y coherente con el anuncio oficial, pero el número exacto no lo verifiqué. |
-| Precios de chatbots (Tidio desde ~$39/mes con Lyro, Rep AI ~$99/mes, Gorgias + ~$0,90–1 por resolución) | Comparativas de blogs (eesel.ai, tidio.com, etc.) | Cambian a menudo. Confírmalos en la App Store antes de pagar. |
+| "Solo el 1–5 % de los dropshippers logra un negocio con beneficio constante; el 80–90 % fracasa el primer año" | TrueProfit y blogs del sector | No hay un estudio público con metodología. Aun así, coincide en la dirección: **la mayoría no lo logra**. |
+| "Margen neto típico: 10–20 % en productos de menos de $30, 15–25 % entre $30–100, 25–40 % por encima de $100" | TrueProfit, Printful, otros | Interés comercial, pero útil como referencia: **los productos baratos dejan muy poco**. |
+| "Un principiante factura $0–2.000 al mes" | TrueProfit (dice haber analizado 1.200 tiendas) | Ojo: es **facturación**, no ganancia. |
+| "Mínimo realista para Amazon FBA marca propia: $2.500–5.000; primer lote $1.000–3.000" | Guías de vendedores de Amazon | Rango razonable, pero depende mucho del producto. |
+| "Aranceles 🇺🇸 de China: ~25–37,5 % en muchas categorías, más en otras; India ~10 % de media" | Calculadoras y consultoras de aranceles | **Cambian con frecuencia.** Confirma siempre con el código HTS del producto concreto. |
+| "Con los aranceles, los proveedores con almacén en EE. UU. (Spocket, etc.) suelen salir más baratos por unidad que el envío directo desde China" | SaleHoo, Spocket y blogs | Lógico tras el fin de "de minimis", pero hay que hacer la cuenta con cada producto. |
+| "Shoppers que usan Rufus convierten un 60 % más" | Herramientas para vendedores de Amazon | No lo confirmé en fuente primaria. |
 
-### 3.3 Competidores y soluciones similares
+### 3.3 Competidores y herramientas que te encontrarás
 
-| Tipo | Ejemplos | Para quién |
+| Tipo | Ejemplos | Para qué |
 |---|---|---|
-| Asistentes nativos de plataforma | Shopify Inbox (cliente), Shopify Sidekick (comerciante), Amazon Rufus/Alexa for Shopping (comprador en Amazon), Amazon Seller Assistant + plugin de Claude (vendedor) | Quien ya está en esa plataforma: el punto de partida más barato |
-| Chatbots de ventas/soporte para tiendas | Tidio (Lyro), Gorgias, Rep AI, Zipchat, Ochatbot, Richpanel | Tiendas Shopify/Woo pequeñas y medianas |
-| Plataformas de agentes de soporte | Intercom Fin y similares | Volumen alto de tickets |
-| Construir a medida | Blueprint `commerce-agents`, Agent SDK, Managed Agents | Tiendas con catálogo complejo, necesidades específicas o equipo técnico |
+| Proveedores de dropshipping | CJ Dropshipping (gratis, almacenes en EE. UU./Europa), Spocket (desde ~$40/mes, almacenes EE. UU./UE), Zendrop ($0–79/mes), AliExpress | Fase 2 (validación) |
+| Mayoristas / fábricas | Alibaba, 1688, Made-in-China (China); IndiaMART, TradeIndia (India) | Fase 4 (escala) |
+| Investigación de producto | Google Trends, Amazon Best Sellers / Movers & Shakers, TikTok Creative Center, Meta Ad Library; de pago: Jungle Scout, Helium 10, Sell The Trend | Fase 1 |
+| Tiendas | Shopify (recomendado para empezar), WooCommerce, Amazon, TikTok Shop, Mercado Libre (LatAm) | Fase 3 |
+| Asistentes de IA | Claude (investigación ahora), Shopify Inbox/Sidekick, plugin de Amazon, blueprint Commerce Agents (más adelante) | Todas las fases |
 
-### 3.4 ¿Hay demanda real para tu tipo de negocio?
+### 3.4 ¿Hay demanda?
 
-**No puedo responder bien sin saber qué vendes.** Señales generales:
+Un "producto ganador" no se encuentra en una lista de internet: si aparece en una lista pública, miles de personas ya lo están vendiendo. La demanda **se demuestra con tus propias pruebas**:
 
-- La tendencia hacia la compra asistida por IA es real y la están empujando Amazon y Shopify (verificado).
-- El beneficio de un chat en tu tienda **depende mucho del producto**: rinde más donde el cliente necesita consejo (tallas, compatibilidades, cosmética, suplementos, electrónica, equipamiento) y menos en productos simples o de compra por impulso.
-- **La forma más fiable de saberlo es medir tu propio caso**: cuántas preguntas te hacen hoy los clientes (email, WhatsApp, mensajes de Amazon) y de qué tipo. Eso está en la Fase 0 del plan.
+- **Señales previas** (gratis): búsquedas estables o crecientes en Google Trends; reseñas en Amazon con quejas que tú puedas resolver; anuncios que llevan meses activos en Meta Ad Library (si alguien paga un anuncio durante meses, probablemente le funciona).
+- **Señal real** (con dinero): personas desconocidas que **pagan** por el producto con un presupuesto de anuncios pequeño.
 
 ---
 
@@ -214,119 +211,154 @@ Según tu escenario:
 
 ### 4.1 Resumen de fases
 
-| Fase | Objetivo | Horas | Semanas (a 5–10 h/sem) |
-|---|---|---|---|
-| **0. Diagnóstico** | Definir tu caso y medir el punto de partida | 4–6 h | Semana 1 |
-| **1. Primer entregable** | Algo que puedas probar en menos de una semana | 4–8 h | Semana 1 |
-| **2. Piloto de cara al cliente** | Asistente para clientes (S/W) u optimización de fichas (A) | 10–20 h | Semanas 2–4 |
-| **3. Asistente de gestión para ti** | Claude + conector oficial, solo lectura y luego cambios con aprobación | 8–15 h | Semanas 3–6 |
-| **4. (Opcional) Blueprint** | Solo si las fases 2–3 justifican construir algo propio | 60–120 h | Semanas 7–20 |
-| **5. Medición y decisión** | Comparar con el punto de partida y decidir siguiente paso | 2–4 h por revisión | Cada mes |
+| Fase | Objetivo | Horas | Semanas (a 5–10 h/sem) | Dinero |
+|---|---|---|---|---|
+| **0. Bases** | País de venta, presupuesto, reglas de riesgo | 3–5 h | Semana 1 | $0 |
+| **1. Investigación de producto** | 20 ideas → 3 finalistas con puntuación | 12–20 h | Semanas 1–3 | $0–20 (Claude Pro) |
+| **2. Validación barata** | Muestras + tienda mínima + prueba de anuncios | 15–25 h | Semanas 4–7 | $500–1.500 |
+| **3. Tienda en serio** | Marca, fichas, políticas, atención al cliente con IA básica | 15–25 h | Semanas 8–12 | $50–150/mes |
+| **4. Wholesale** | Comprar el producto ganador en China o India | 20–40 h | Semanas 12–20 | $2.500–8.000 |
+| **5. Agentes de IA avanzados** | Blueprint Commerce Agents u otra opción, si el volumen lo justifica | 60–120 h | Mes 6–12+ | $50–200/mes |
 
-### 4.2 Fase 0 — Diagnóstico (semana 1, 4–6 h)
+### 4.2 Fase 0 — Bases (semana 1, 3–5 h)
+
+1. Responder las tres preguntas de la sección 0 (país de venta, presupuesto, empresa).
+2. Escribir tus **reglas de riesgo** antes de gastar nada. Por ejemplo: "Máximo $300 por producto en anuncios de prueba. Si tras $300 no hay al menos 3 ventas, paro ese producto."
+3. Informarte (1–2 h) de qué necesitas legalmente para vender en tu país: registro de negocio e impuestos.
+
+### 4.3 Fase 1 — Investigación de producto (semanas 1–3, 12–20 h)
+
+**Ficha de puntuación** (cada criterio de 1 a 5):
+
+| Criterio | Qué buscar |
+|---|---|
+| Precio de venta | Entre $30 y $100: deja margen para publicidad |
+| Margen | Precio de venta ≥ 3 veces el costo puesto en destino (producto + envío + arancel) |
+| Tamaño y peso | Pequeño, ligero, no frágil |
+| Problema que resuelve | Resuelve algo concreto o es claramente "wow" en video |
+| Competencia | Hay demanda, pero no 500 tiendas idénticas |
+| Mejora posible | Las reseñas negativas de la competencia muestran algo que puedes mejorar |
+| Regulación | Sin certificaciones complicadas (evitar suplementos, cosmética, juguetes infantiles, baterías, alimentos) |
+| Recompra o accesorios | Se vuelve a comprar o permite vender complementos |
+| País de fabricación | Se fabrica bien en China o India; arancel razonable |
 
 Tareas:
 
-1. Completar la descripción del negocio: qué vendes, canales, pedidos/mes, país, idioma de tus clientes.
-2. Recopilar **30–50 preguntas reales** de clientes de las últimas semanas (email, chat, mensajes de Amazon, redes). Copiarlas en una hoja de cálculo.
-3. Clasificarlas: ¿producto/recomendación?, ¿estado de pedido?, ¿devoluciones?, ¿envíos?
-4. Anotar tu punto de partida: tasa de conversión, ticket medio, horas por semana que dedicas a responder y a tareas de gestión (inventario, precios, fichas).
+1. Sacar 20 ideas de Amazon Movers & Shakers, TikTok Creative Center, Meta Ad Library y Google Trends.
+2. Pedir a Claude que analice cada una con la ficha: reseñas, rango de precios, posibles códigos arancelarios, regulación.
+3. Quedarte con **3 finalistas** y calcular el costo puesto en destino de cada uno.
+4. Buscar 2–3 proveedores por finalista: uno de dropshipping con almacén local y uno de fábrica en China o India.
 
-Herramientas: hoja de cálculo (Google Sheets/Excel). Sin código.
+### 4.4 Fase 2 — Validación barata (semanas 4–7, 15–25 h)
 
-**Por qué importa:** esas 30–50 preguntas serán tu "examen" para cualquier asistente que pruebes, sea ya hecho o propio.
+1. Pedir **muestras** de los 3 finalistas. Comprobar calidad y grabar tus propios videos y fotos.
+2. Crear una **tienda Shopify mínima**: una página de producto, políticas de envío y devolución, y un pago de prueba que funcione.
+3. Conectar un proveedor con almacén local (Spocket, Zendrop o CJ) para entregar los pedidos.
+4. Lanzar anuncios con el **presupuesto cerrado** de la Fase 0.
+5. **Decidir con números:**
+   - **Seguir** si hay ventas con margen positivo después de publicidad.
+   - **Ajustar** si hay clics pero no ventas (precio, página, fotos).
+   - **Parar** si no hay interés.
 
-### 4.3 Fase 1 — Primer entregable (menos de una semana, 4–8 h)
+### 4.5 Fase 3 — Tienda en serio (semanas 8–12, 15–25 h)
 
-Elige **una** según tu escenario:
+- Nombre y marca simple, fotos propias, fichas bien escritas (Claude te ayuda a redactarlas).
+- Activar **Shopify Inbox** (gratis) para atender a clientes. Este es tu primer "agente" de IA, sin programar.
+- Usar **Sidekick** (incluido en Shopify) y Claude para el resumen semanal de ventas.
+- Guardar todas las preguntas de clientes: serán el "examen" de cualquier agente futuro.
 
-- **A (Amazon):** conectar el **plugin oficial de Amazon Selling Partner** en Claude (requiere plan Professional; está en beta en EE. UU.; si vendes en otro país, comprueba disponibilidad). Pedirle: "dame un resumen de ventas y stock de esta semana y dime qué fichas tienen problemas". Resultado: un **informe semanal** que antes hacías a mano.
-- **S (Shopify):** activar **Shopify Inbox** (gratis) en tu tienda y pasarle tus 30 preguntas de prueba. En paralelo, probar Sidekick en tu panel con preguntas de gestión. Resultado: **un chat funcionando** y una hoja con qué respuestas fueron buenas o malas.
-- **W (web propia):** probar la versión gratuita de un chatbot (por ejemplo, Tidio) con tus políticas y 20 productos; pasarle las 30 preguntas. Resultado: el mismo que en S.
-- **Alternativa para "ver" el blueprint (cualquier escenario):** ejecutar la demo `retail` en tu ordenador con Claude Code (1–2 h, ~$2–5 en créditos de API). Sirve para entender qué hace, **no** para tu tienda todavía.
+### 4.6 Fase 4 — Wholesale (semanas 12–20, 20–40 h)
 
-**Criterio de éxito:** al menos 70 % de tus preguntas de prueba con respuesta correcta, o un informe que te ahorre más de 1 h por semana.
+**Pasar a esta fase solo si:** el producto lleva al menos 30–50 ventas con margen positivo y tienes el capital sin endeudarte.
 
-### 4.4 Fase 2 — Piloto de cara al cliente (semanas 2–4, 10–20 h)
+1. Elegir el país (China o India) según calidad, MOQ y arancel del código HTS exacto.
+2. Pedir cotizaciones a 3–5 fábricas. Claude puede redactar los mensajes en inglés y comparar las respuestas.
+3. Pedir muestras finales con tu marca y empaque.
+4. Pagar con protección (Trade Assurance o similar) y contratar una **inspección antes del envío**.
+5. Contratar un **agente de aduanas o transitario** (freight forwarder) para importar.
+6. Enviar el stock a tu almacén, a un 3PL o a Amazon FBA.
 
-- **S/W:** dejar el chatbot activo 2–3 semanas. Revisar cada semana las conversaciones. Ajustar políticas y preguntas frecuentes. Medir: conversaciones, preguntas que derivó a humano, ventas atribuidas.
-- **A:** reescribir las 5–10 fichas principales en lenguaje natural que responda las preguntas reales de clientes (lo que los asistentes como Rufus usan para recomendar). Puedes usar Claude para redactar y el plugin de Amazon para aplicar los cambios **con tu aprobación**. Medir conversión por ficha antes y después.
+### 4.7 Fase 5 — Agentes de IA avanzados (mes 6–12+)
 
-### 4.5 Fase 3 — Asistente de gestión para ti (semanas 3–6, 8–15 h)
+Revisar el blueprint **Claude Commerce Agents** solo cuando:
 
-1. Conectar el conector oficial (Amazon Selling Partner o el de Shopify) a Claude.
-2. Empezar **solo lectura**: resumen semanal, alertas de stock, fichas con problemas.
-3. Pasar después a **cambios con aprobación**: borradores de precios, promociones o reposiciones que tú confirmas.
-4. Guardar las instrucciones que más usas como un *prompt* fijo o una skill para repetirlas cada semana.
+- Tengas tienda propia con **más de ~300–500 conversaciones de clientes al mes**.
+- Las herramientas ya hechas se queden cortas en algo concreto.
+- Tengas presupuesto ($50–200/mes) y tiempo (60–120 h), o un desarrollador.
 
-### 4.6 Fase 4 — Blueprint (opcional, semanas 7–20, 60–120 h)
+Pasos en ese momento:
 
-**Solo pasar a esta fase si se cumplen al menos dos condiciones:**
+1. Clonar el repo.
+2. Ejecutar la demo `retail`.
+3. Instalar el plugin `commerce-builder`.
+4. Ejecutar `/scaffold-commerce-agent`.
+5. Conectar solo búsqueda y detalle de producto.
+6. Crear el examen con tus preguntas reales (`/author-commerce-evals`).
+7. Añadir autenticación y límites.
+8. Desplegar con un límite de gasto.
 
-- Tienes más de ~300–500 conversaciones de clientes al mes.
-- Las herramientas ya hechas fallan en algo concreto y repetido (catálogo con muchas variantes, recomendaciones técnicas, varios idiomas, reglas propias).
-- Tienes tienda propia (S o W). **No aplica a A.**
-- Tienes presupuesto para ~$50–200/mes y para un desarrollador si te atascas.
+Si vendes en **Amazon**, usa el plugin oficial de Amazon para Claude en lugar del blueprint.
 
-Sub-fases:
+### 4.8 Primer entregable (menos de una semana, sin gastar dinero)
 
-| Paso | Tarea | Herramientas / repos | Horas |
-|---|---|---|---|
-| 4.1 | Instalar Python 3.11, Node 22; clonar el repo; ejecutar la demo | `anthropics/commerce-agents`, Claude Code | 3–5 |
-| 4.2 | Instalar el plugin y ejecutar `/scaffold-commerce-agent` (te entrevista sobre tu stack) | Plugin `commerce-builder` | 3–5 |
-| 4.3 | Implementar solo `search_products` y `get_product_details` contra tu catálogo (en S: Storefront MCP de Shopify) | Tu repositorio nuevo en GitHub | 15–25 |
-| 4.4 | Crear el examen automático con tus 30–50 preguntas: `/author-commerce-evals` | Plugin `commerce-builder` | 6–10 |
-| 4.5 | Añadir carrito y entrega al checkout de la plataforma (`checkout_handoff`) | Docs `backends.md` | 10–20 |
-| 4.6 | Lo que el blueprint no trae: autenticación, límites de uso, aviso de privacidad, registros | `docs/safety.md` | 10–25 |
-| 4.7 | Desplegar backend (Railway/Render/Fly) y web (Vercel); límite de gasto en la consola de Anthropic | — | 6–12 |
-| 4.8 | Prueba con un 10 % del tráfico, revisar conversaciones, ajustar | — | 6–15 |
+**"Tabla de 10 productos candidatos con puntuación y 3 finalistas"**, en una hoja de cálculo:
 
-A 5–10 h por semana, esto son **entre 2 y 5 meses**. Por eso va al final y es opcional.
+| Producto | Precio de venta | Costo estimado puesto en destino | Margen | País de fabricación | Puntuación (ficha 4.3) | Proveedores encontrados | Riesgos |
+|---|---|---|---|---|---|---|---|
 
-### 4.7 Fase 5 — Medición y decisión (mensual)
+Cómo lo haremos juntos (unas 4–6 horas en total):
 
-Comparar con el punto de partida de la Fase 0: conversión, ticket medio, horas ahorradas por semana, costo mensual. Regla simple: **si el ahorro más las ventas extra no superan el costo (incluido tu tiempo) en 2–3 meses, simplificar o parar.**
+1. Me dices país de venta, presupuesto y 2–3 temas que te gusten (por ejemplo: mascotas, cocina, deporte, hogar).
+2. Yo investigo en la web y propongo 10 candidatos con datos y fuentes.
+3. Tú revisas cada uno (Amazon, TikTok, Alibaba/IndiaMART) y ajustas las puntuaciones.
+4. Elegimos 3 finalistas para pedir muestras en la Fase 2.
 
-### 4.8 Lista de herramientas y repositorios
+Este entregable no requiere instalar nada ni pagar nada, y puedes probarlo de inmediato: es la base de todo lo demás.
+
+### 4.9 Herramientas y repositorios
 
 | Herramienta | Para qué | Fase |
 |---|---|---|
-| Hoja de cálculo | Preguntas de prueba y métricas | 0–5 |
-| Claude (claude.ai, plan Pro) + conectores oficiales | Asistente de gestión | 1, 3 |
-| Plugin Amazon Selling Partner (A) | Gestión de Amazon desde Claude | 1, 3 |
-| Shopify Inbox / Sidekick (S) | Chat para clientes / gestión | 1–3 |
-| Chatbot de terceros (Tidio, Rep AI, Gorgias…) (S/W) | Chat para clientes | 1–2 |
-| Claude Code | Ejecutar la demo y, si llega, construir el blueprint | 1 (opcional), 4 |
-| `anthropics/commerce-agents` + plugin `commerce-builder` | Blueprint | 4 |
-| Cuenta en la consola de Anthropic (clave API + límite de gasto) | Blueprint / demo | 1 (opcional), 4 |
-| GitHub (repo privado propio) | Guardar tu agente | 4 |
-| Railway / Render / Fly.io, Vercel | Alojar el agente | 4 |
+| Claude (claude.ai, plan Pro) | Investigación, cálculos, mensajes a proveedores, redacción | 1–5 |
+| Hoja de cálculo | Ficha de productos, costos, resultados | 0–5 |
+| Google Trends, Amazon Best Sellers, TikTok Creative Center, Meta Ad Library | Ideas y señales de demanda | 1 |
+| Alibaba / IndiaMART | Fábricas | 1, 4 |
+| Spocket / Zendrop / CJ Dropshipping | Dropshipping con almacén local | 2 |
+| Shopify (+ Inbox, Sidekick) | Tienda, atención y gestión | 2–3 |
+| Buscador arancelario oficial (ej. hts.usitc.gov 🇺🇸) y agente de aduanas | Costo de importación | 1, 4 |
+| `anthropics/commerce-agents` + plugin `commerce-builder` | Agentes avanzados | 5 |
 
 ---
 
 ## 5. Próximos pasos (necesito tu aprobación)
 
-1. **Dime tu caso**: qué vendes, dónde (Shopify / Amazon / web propia), pedidos o ventas por mes, país.
-2. **Confirma la recomendación** (Opción 4, híbrida) o dime si prefieres otra.
-3. Con eso, ajusto este documento a tu escenario y te guío en el **primer entregable** paso a paso.
+1. Responde las tres preguntas de la sección 0: **país de venta, presupuesto, empresa**.
+2. Dime **2–3 temas** que te interesen o conozcas (te da ventaja vender algo que entiendes).
+3. Confirma si apruebas el camino recomendado: **validar con dropshipping desde almacén local y luego pasar a wholesale**.
 
-Hasta que lo apruebes no se instala nada ni se escribe código.
+Con eso preparo el **primer entregable** (tabla de 10 candidatos). Hasta que lo apruebes no se instala nada, no se escribe código y no se gasta dinero.
 
 ---
 
 ### Fuentes
 
-- Repositorio revisado: https://github.com/anthropics/commerce-agents (README, CLAUDE.md, `docs/backends.md`, `docs/safety.md`, `docs/deployment.md`, `plugins/commerce-builder/README.md`, `*/backend.py`, `*/config.py`)
-- [Precios oficiales de la API de Claude](https://platform.claude.com/docs/en/about-claude/pricing)
-- [Amazon: Seller Assistant plugin para Amazon Quick y Claude](https://www.aboutamazon.com/news/innovation-at-amazon/seller-assistant-plugin-amazon-quick-claude)
-- [The Next Web: Amazon Seller Assistant plugin brings seller data to Claude](https://thenextweb.com/news/amazon-seller-assistant-plugin-claude-quick)
-- [Shopify: Agentic commerce for every developer, Spring '26 Edition](https://www.shopify.com/news/spring-26-edition-dev)
-- [Gamut: Shopify MCP Developer's 2026 Setup Guide](https://www.gamut.so/blog/shopify-mcp-guide)
-- [eesel.ai: 8 best AI chatbot apps for Shopify in 2026](https://www.eesel.ai/blog/best-shopify-chatbot-apps)
-- [Tidio: 13 Best Shopify Chatbot Apps for 2026](https://www.tidio.com/blog/shopify-chatbot/)
-- [Ringly: AI sidekick for Shopify](https://www.ringly.io/blog/ai-sidekick-shopify)
-- [Jarvio: Amazon Rufus, what sellers need to know in 2026](https://jarvio.io/blog/amazon-rufus-sellers-guide-2026)
-- [Amalytix: Alexa for Shopping (formerly Rufus) 2026](https://www.amalytix.com/en/knowledge/ai/amazon-rufus-guide-2026/)
-- [Alhena: AI shopping assistant conversion rates](https://alhena.ai/blog/ai-shopping-assistant-conversion-rates/) (proveedor; afirmaciones no verificadas)
-- [Digital Applied: AI traffic converts 42% better](https://www.digitalapplied.com/blog/ai-traffic-converts-42-percent-better-2026-channel-strategy)
-- [Destilabs: AI Shopping Assistant cost & ROI](https://www.destilabs.com/blog/ai-shopping-assistant-2026) (proveedor; afirmaciones no verificadas)
+**Oficiales**
+- [Casa Blanca: Suspending Duty-Free De Minimis Treatment for All Countries (EO 14324)](https://www.whitehouse.gov/presidential-actions/2025/07/suspending-duty-free-de-minimis-treatment-for-all-countries/)
+- [CBP: ready to enforce end of de minimis](https://www.cbp.gov/newsroom/national-media-release/cbp-ready-enforce-end-de-minimis-loophole-securing-borders-and)
+- [Federal Register: Indefinite Suspension of the De Minimis Exemption (24/06/2026)](https://www.federalregister.gov/documents/2026/06/24/2026-12670/indefinite-suspension-of-the-de-minimis-exemption-for-merchandise-arriving-through-all-modes-other)
+- [Anthropic: precios de la API](https://platform.claude.com/docs/en/about-claude/pricing)
+- [About Amazon: Seller Assistant plugin para Claude](https://www.aboutamazon.com/news/innovation-at-amazon/seller-assistant-plugin-amazon-quick-claude)
+- [Shopify: Spring '26 Edition](https://www.shopify.com/news/spring-26-edition-dev)
+- Repositorio: https://github.com/anthropics/commerce-agents (README, CLAUDE.md, `docs/backends.md`, `docs/safety.md`, `docs/deployment.md`, plugin `commerce-builder`)
+
+**Del sector (afirmaciones, leer con cautela)**
+- [TrueProfit: Dropshipping success rate 2026](https://trueprofit.io/blog/dropshipping-success-rate)
+- [Printful: How profitable is dropshipping](https://www.printful.com/blog/how-profitable-is-dropshipping)
+- [SaleHoo: Best dropshipping suppliers, new tariff reality](https://www.salehoo.com/learn/directories-for-the-best-dropshipping-wholesale-suppliers)
+- [Shopify blog: Dropshipping suppliers](https://www.shopify.com/blog/dropshipping-suppliers)
+- [Seller Metrics: Amazon FBA private label cost](https://sellermetrics.app/amazon-fba-private-label/)
+- [Tax Foundation: Trump tariffs tracker](https://taxfoundation.org/research/all/federal/trump-tariffs-trade-war/)
+- [Ginger Control: Importing from India, tariffs](https://gingercontrol.com/blog/importing-from-india-tariff-guide)
+- [Zonos: US tariff tracker](https://zonos.com/docs/guides/us-tariff-changes)
+- [eesel.ai: Shopify chatbot apps 2026](https://www.eesel.ai/blog/best-shopify-chatbot-apps)
+- [Jarvio: Amazon Rufus 2026](https://jarvio.io/blog/amazon-rufus-sellers-guide-2026)
