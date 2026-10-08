@@ -137,6 +137,17 @@ Replace `/path/to/tradingview-mcp` with your actual path.
 
 Ask Claude: *"Use tv_health_check to verify TradingView is connected"*
 
+### 5. Apple design MCP servers (optional)
+
+`apple-design.mcp.json` registers 13 MCP servers found by the GitHub search "apple design mcp": Human Interface Guidelines lookups, design tokens, Liquid Glass and motion guidance, SwiftUI HIG checks, Keynote automation and more.
+
+```bash
+bash scripts/install_apple_design_mcp.sh --design-only --activate   # drop --design-only for all 13
+node scripts/check_apple_design_mcp.mjs
+```
+
+Server list, prerequisites and privacy notes: [SETUP_GUIDE.md, Step 7](SETUP_GUIDE.md#step-7-apple-design-mcp-servers-optional).
+
 ## CLI
 
 Every MCP tool is also accessible as a `tv` CLI command. All output is JSON for piping with `jq`.
