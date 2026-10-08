@@ -29,6 +29,7 @@ The debug port is disabled by default and must be explicitly enabled by you usin
 - Work without a valid TradingView subscription and installed Desktop app
 - Bypass any TradingView paywall or access restriction
 - Execute real trades (chart interaction only)
+- Persist anything when started with `TV_MCP_READONLY=1` — alerts, drawings, watchlist edits, Pine saves, replay trades and raw UI/JS tools are not registered in that mode
 - Work if TradingView changes their internal Electron structure
 
 ## Research Context

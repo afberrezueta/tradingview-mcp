@@ -14,6 +14,7 @@ import { registerWatchlistTools } from './tools/watchlist.js';
 import { registerUiTools } from './tools/ui.js';
 import { registerPaneTools } from './tools/pane.js';
 import { registerTabTools } from './tools/tab.js';
+import { isReadOnly, installReadOnlyGuard } from './readonly.js';
 
 const server = new McpServer(
   {
@@ -69,6 +70,10 @@ CONTEXT MANAGEMENT:
   }
 );
 
+// Read-only mode: skip tools that persist changes, trade, or drive arbitrary UI/JS
+const readOnly = isReadOnly(process.env);
+const skippedTools = readOnly ? installReadOnlyGuard(server) : [];
+
 // Register all tool groups
 registerHealthTools(server);
 registerChartTools(server);
@@ -88,6 +93,9 @@ registerTabTools(server);
 // Startup notice (stderr so it doesn't interfere with MCP stdio protocol)
 process.stderr.write('⚠  tradingview-mcp  |  Unofficial tool. Not affiliated with TradingView Inc. or Anthropic.\n');
 process.stderr.write('   Ensure your usage complies with TradingView\'s Terms of Use.\n\n');
+if (readOnly) {
+  process.stderr.write(`🔒 TV_MCP_READONLY=1  |  ${skippedTools.length} write tools not registered: ${skippedTools.join(', ')}\n\n`);
+}
 
 // Start stdio transport
 const transport = new StdioServerTransport();
